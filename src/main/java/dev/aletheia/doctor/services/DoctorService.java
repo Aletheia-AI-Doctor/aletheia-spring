@@ -1,5 +1,7 @@
 package dev.aletheia.doctor.services;
 
+import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
+import dev.aletheia.doctor.enums.DoctorSpeciality;
 import dev.aletheia.doctor.exceptions.DoctorNotFoundException;
 import dev.aletheia.doctor.exceptions.NotFoundException;
 import dev.aletheia.doctor.models.Doctor;
@@ -16,5 +18,22 @@ public class DoctorService {
 
     public Doctor getDoctor(Long id) {
         return doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
+    }
+
+    public Doctor createDoctor(DoctorRegistrationDTO doctorDTO) {
+        Doctor doctor = new Doctor();
+
+        doctor.setName(doctorDTO.getName());
+        doctor.setUsername(doctorDTO.getUsername());
+        doctor.setEmail(doctorDTO.getUsername());
+        doctor.setPassword(doctorDTO.getPassword());
+        doctor.setBio(doctorDTO.getBio());
+        doctor.setSpeciality(doctorDTO.getSpeciality());
+
+        return save(doctor);
+    }
+
+    public Doctor save(Doctor doctor) {
+        return doctorRepository.save(doctor);
     }
 }

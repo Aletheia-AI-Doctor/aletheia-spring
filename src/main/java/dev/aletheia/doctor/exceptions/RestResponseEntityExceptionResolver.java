@@ -1,5 +1,6 @@
 package dev.aletheia.doctor.exceptions;
 
+import jakarta.validation.ConstraintViolationException;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,24 @@ public class RestResponseEntityExceptionResolver extends ResponseEntityException
     protected ResponseEntity<Object> handleNotFound(
             NotFoundException ex, WebRequest request) {
         return handleExceptionDefault(ex, HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(value
+            = { ConstraintViolationException.class })
+    protected ResponseEntity<Object> handleValidation(
+            ConstraintViolationException ex, WebRequest request) {
+
+        JSONObject response = new JSONObject();
+        JSONObject errors = new JSONObject();
+
+        ex.getConstraintViolations().forEach(violation -> {
+            errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+        });
+
+        response.put("message", errors.values().stream().findFirst().orElse("Validation error"));
+        response.put("errors", errors);
+
+        return handleExceptionInternal(ex, response, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     private ResponseEntity<Object> handleExceptionDefault(Exception ex, HttpStatus status, WebRequest request) {
