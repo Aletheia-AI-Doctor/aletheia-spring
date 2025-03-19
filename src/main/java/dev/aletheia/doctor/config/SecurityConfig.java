@@ -2,6 +2,8 @@ package dev.aletheia.doctor.config;
 
 
 import dev.aletheia.doctor.services.JWTFilter;
+import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +49,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
     // talks to the auth
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

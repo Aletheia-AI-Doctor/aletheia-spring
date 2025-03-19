@@ -1,7 +1,9 @@
 package dev.aletheia.doctor.models;
 
+import dev.aletheia.doctor.annotations.Unique;
 import dev.aletheia.doctor.enums.DoctorSpeciality;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,9 +22,13 @@ public class Doctor extends BaseModel {
     private String name;
 
     @Column(name = "username", nullable = false, unique = true)
+    @Unique(table = "doctors", value = "username", message = "Username must be unique")
+    @NotBlank(message = "Username is mandatory")
     private String username;
 
     @Column(name = "email", nullable = false, unique = true)
+    @Unique(table = "doctors", value = "email", message = "Email must be unique")
+    @Email(message = "Email should be valid")
     private String email;
 
     @Column(name = "password", nullable = false)

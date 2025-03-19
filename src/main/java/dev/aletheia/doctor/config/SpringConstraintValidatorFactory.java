@@ -1,4 +1,4 @@
-package dev.fadisarwat.bookstore.config;
+package dev.aletheia.doctor.config;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorFactory;

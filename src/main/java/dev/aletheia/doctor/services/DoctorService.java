@@ -1,9 +1,7 @@
 package dev.aletheia.doctor.services;
 
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
-import dev.aletheia.doctor.enums.DoctorSpeciality;
 import dev.aletheia.doctor.exceptions.DoctorNotFoundException;
-import dev.aletheia.doctor.exceptions.NotFoundException;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.repositories.DoctorRepository;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,7 @@ public class DoctorService {
 
         doctor.setName(doctorDTO.getName());
         doctor.setUsername(doctorDTO.getUsername());
-        doctor.setEmail(doctorDTO.getUsername());
+        doctor.setEmail(doctorDTO.getEmail());
         doctor.setPassword(doctorDTO.getPassword());
         doctor.setBio(doctorDTO.getBio());
         doctor.setSpeciality(doctorDTO.getSpeciality());

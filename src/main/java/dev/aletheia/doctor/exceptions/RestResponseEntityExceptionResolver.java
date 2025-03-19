@@ -1,6 +1,7 @@
 package dev.aletheia.doctor.exceptions;
 
 import jakarta.validation.ConstraintViolationException;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,13 @@ public class RestResponseEntityExceptionResolver extends ResponseEntityException
         JSONObject errors = new JSONObject();
 
         ex.getConstraintViolations().forEach(violation -> {
-            errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+            String key = violation.getPropertyPath().toString();
+            JSONArray messages = errors.containsKey(key)
+                    ? (JSONArray) errors.get(key)
+                    : new JSONArray();
+            messages.add(violation.getMessage());
+
+            errors.put(key, messages);
         });
 
         response.put("message", errors.values().stream().findFirst().orElse("Validation error"));

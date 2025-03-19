@@ -1,25 +1,27 @@
-package dev.fadisarwat.bookstore.services;
+package dev.aletheia.doctor.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class ValidationService {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     public boolean isUnique(String table, String column, String value) {
-        Session session = sessionFactory.getCurrentSession();
-        return session
-                .createQuery("from " + table + " where " + column + " = :value", Object.class)
-                .setParameter("value", value)
-                .getResultList()
-                .isEmpty();
+        String sql = "SELECT COUNT(*) FROM " + table + " WHERE " + column + " = :value";
+
+        try(EntityManager entityManager = this.entityManager.getEntityManagerFactory().createEntityManager()) {
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter("value", value);
+
+            int count = ((Number) query.getSingleResult()).intValue();
+            return count == 0;
+        }
     }
 }
