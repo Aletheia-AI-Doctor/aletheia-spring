@@ -5,6 +5,7 @@ import dev.aletheia.doctor.enums.DoctorSpeciality;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,6 +33,7 @@ public class Doctor extends BaseModel {
     private String email;
 
     @Column(name = "password", nullable = false)
+    @Size(min = 6, max = 255, message = "Password should be at least 6 characters")
     private String password;
 
     @Column(name = "speciality")

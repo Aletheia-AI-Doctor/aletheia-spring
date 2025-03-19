@@ -1,14 +1,12 @@
 package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
-import dev.aletheia.doctor.enums.DoctorSpeciality;
-import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DoctorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/doctors")
+@RequestMapping("/api/doctors")
 public class DoctorController {
 
 	private final DoctorService doctorService;
