@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity(name = "posts")
+@Table
 public class Post extends BaseModel {
 
     @ManyToOne
@@ -20,7 +21,7 @@ public class Post extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "parent_id", updatable = false)
-    private Post parentId;
+    private Post parent;
 
     @Column(name = "title", nullable = false)
     @NotBlank
@@ -31,7 +32,7 @@ public class Post extends BaseModel {
     @NotBlank
     private String body;
 
-    @OneToMany(mappedBy = "parentId", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Post> replies;
 
     @Formula("(SELECT COALESCE(SUM(v.value), 0) FROM votes v WHERE v.post_id = id)")

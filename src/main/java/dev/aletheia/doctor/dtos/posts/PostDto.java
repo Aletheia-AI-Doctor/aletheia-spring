@@ -5,11 +5,7 @@ import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.TimeZone;
 
 @Setter
 @Getter
