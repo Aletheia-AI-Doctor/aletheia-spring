@@ -17,12 +17,12 @@ public class DoctorController {
 
 	@GetMapping
 	public ResponseEntity<Object> index() {
-		return ResponseEntity.ok(doctorService.getDoctor(1L));
+		return ResponseEntity.ok(doctorService.find(1L));
 	}
 
 	@GetMapping("/{doctorId}")
 	public ResponseEntity<Object> show(@PathVariable Long doctorId) {
-		return ResponseEntity.ok(doctorService.getDoctor(doctorId));
+		return ResponseEntity.ok(doctorService.convertToDto(doctorService.findOrFail(doctorId)));
 	}
 
 	@PostMapping

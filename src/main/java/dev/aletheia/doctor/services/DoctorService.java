@@ -1,22 +1,22 @@
 package dev.aletheia.doctor.services;
 
+import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
-import dev.aletheia.doctor.exceptions.DoctorNotFoundException;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.repositories.DoctorRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DoctorService {
-    private final DoctorRepository doctorRepository;
+@Transactional
+public class DoctorService extends CRUDService<Doctor, DoctorDto> {
+    @Autowired
+    private DoctorRepository doctorRepository;
 
-    private DoctorService(DoctorRepository doctorRepository) {
-        this.doctorRepository = doctorRepository;
-    }
+    public DoctorRepository getRepository() { return doctorRepository; }
 
-    public Doctor getDoctor(Long id) {
-        return doctorRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
-    }
+    protected DoctorService() {super(Doctor.class, DoctorDto.class);}
 
     public Doctor createDoctor(DoctorRegistrationDTO doctorDTO) {
         Doctor doctor = new Doctor();
@@ -29,9 +29,5 @@ public class DoctorService {
         doctor.setSpeciality(doctorDTO.getSpeciality());
 
         return save(doctor);
-    }
-
-    public Doctor save(Doctor doctor) {
-        return doctorRepository.save(doctor);
     }
 }

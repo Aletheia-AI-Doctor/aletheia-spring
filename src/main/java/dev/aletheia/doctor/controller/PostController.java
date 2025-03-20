@@ -16,12 +16,12 @@ public class PostController {
 
 	@GetMapping
 	public ResponseEntity<Object> index() {
-		return ResponseEntity.ok(postService.getPost(1L));
+		return ResponseEntity.ok(postService.getAllDTO());
 	}
 
 	@GetMapping("/{postId}")
 	public ResponseEntity<Object> show(@PathVariable Long postId) {
-		return ResponseEntity.ok(postService.getPost(postId));
+		return ResponseEntity.ok(postService.convertToDto(postService.findOrFail(postId)));
 	}
 
 }
