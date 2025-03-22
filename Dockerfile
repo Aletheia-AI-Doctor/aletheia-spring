@@ -19,7 +19,7 @@ RUN ln -s ${MAVEN_HOME}/bin/mvn /usr/bin/mvn
 ARG MAVEN_VERSION=3.9.9
 ARG USER_HOME_DIR="/root"
 ENV MAVEN_CONFIG="$USER_HOME_DIR/.m2"
-CMD ["mvn"]  
+CMD ["mvn", "clean", "install"]
 WORKDIR /app
 COPY target/spring-boot-initial-0.0.1-SNAPSHOT.jar /app/spring-boot-initial-0.0.1-SNAPSHOT.jar
 RUN chmod +x /app/spring-boot-initial-0.0.1-SNAPSHOT.jar
