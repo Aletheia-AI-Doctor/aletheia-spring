@@ -1,27 +1,19 @@
-FROM eclipse-temurin:21
-RUN apt-get update \
-  && apt-get install -y ca-certificates curl git openssh-client --no-install-recommends \
-  && rm -rf /var/lib/apt/lists/*
-# common for all images
-LABEL org.opencontainers.image.title="Apache Maven"
-LABEL org.opencontainers.image.source=https://github.com/carlossg/docker-maven
-LABEL org.opencontainers.image.url=https://github.com/carlossg/docker-maven
-LABEL org.opencontainers.image.description="Apache Maven is a software project management and comprehension tool. Based on the concept of a project object model (POM), Maven can manage a project's build, reporting and documentation from a central piece of information."
+FROM eclipse-temurin:23
 
-ENV MAVEN_HOME=/usr/share/maven
+CMD ["mvn", "clean", "install", "-DskipTests"]
 
-COPY --from=maven:3.9.9-eclipse-temurin-17 ${MAVEN_HOME} ${MAVEN_HOME}
-COPY --from=maven:3.9.9-eclipse-temurin-17 /usr/local/bin/mvn-entrypoint.sh /usr/local/bin/mvn-entrypoint.sh
-COPY --from=maven:3.9.9-eclipse-temurin-17 /usr/share/maven/ref/settings-docker.xml /usr/share/maven/ref/settings-docker.xml
-
-RUN ln -s ${MAVEN_HOME}/bin/mvn /usr/bin/mvn
-
-ARG MAVEN_VERSION=3.9.9
-ARG USER_HOME_DIR="/root"
-ENV MAVEN_CONFIG="$USER_HOME_DIR/.m2"
-CMD ["mvn", "clean", "install"]
 WORKDIR /app
-COPY target/spring-boot-initial-0.0.1-SNAPSHOT.jar /app/spring-boot-initial-0.0.1-SNAPSHOT.jar
-RUN chmod +x /app/spring-boot-initial-0.0.1-SNAPSHOT.jar
-ENTRYPOINT [ "java", "-jar", "spring-boot-initial-0.0.1-SNAPSHOT.jar","/usr/local/bin/mvn-entrypoint.sh" ]
-EXPOSE  8080/tcp
+
+# COPY target/spring-boot-initial-0.0.1-SNAPSHOT.jar /app/spring-boot-initial-0.0.1-SNAPSHOT.jar
+
+COPY .env.example /app/.env
+
+COPY target/*.jar /app/app.jar
+
+# Ensure the JAR file has correct permissions
+RUN chmod +x /app/app.jar
+
+EXPOSE 9000/tcp
+
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--server.port=9000"]
