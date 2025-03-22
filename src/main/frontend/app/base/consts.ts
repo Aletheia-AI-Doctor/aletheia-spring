@@ -1,0 +1,1 @@
+export const ROOT_URL :string = import.meta.env.VITE_APP_SERVER_URL;

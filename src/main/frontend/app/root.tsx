@@ -9,6 +9,8 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import {store} from "~/base/store";
+import {Provider} from "react-redux";
 
 export const links: Route.LinksFunction = () => [
   // { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -25,7 +27,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html className="h-full bg-white" lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -33,9 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="h-full">
-        <main className="min-h-screen bg-white text-gray-900 px-4 py-4">
-          {children}
-        </main>
+        {children}
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -44,7 +44,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return <Provider store={store}>
+    <div>
+      <Outlet/>
+    </div>
+  </Provider>
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
