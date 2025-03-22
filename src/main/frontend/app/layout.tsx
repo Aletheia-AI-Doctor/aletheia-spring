@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 import {
     Dialog,
     DialogBackdrop,
@@ -12,26 +12,13 @@ import {
 import {
     Bars3Icon,
     BellIcon,
-    CalendarIcon,
-    ChartPieIcon,
-    Cog6ToothIcon,
-    DocumentDuplicateIcon,
-    FolderIcon,
+    Cog6ToothIcon, DocumentMagnifyingGlassIcon,
     HomeIcon,
-    UsersIcon,
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import {Outlet} from "react-router";
-
-const navigation = [
-    { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-    { name: 'Team', href: '#', icon: UsersIcon, current: false },
-    { name: 'Projects', href: '#', icon: FolderIcon, current: false },
-    { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-    { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
-    { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
-]
+import AppLogoIcon from "~/components/app-logo-icon";
 
 const userNavigation = [
     { name: 'Your profile', href: '#' },
@@ -45,16 +32,20 @@ function classNames(...classes : string[]) {
 export default function Example() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
+    const [navigation, setNavigation] = useState([
+        { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
+        { name: 'Diagnose', href: '/diagnose', icon: DocumentMagnifyingGlassIcon, current: false },
+    ]);
+
+    useEffect(() => {
+        setNavigation(navigation.map((item) => {
+            item.current = window.location.pathname === item.href;
+            return item;
+        }));
+    }, []);
+
     return (
         <>
-            {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
             <div>
                 <Dialog open={sidebarOpen} onClose={setSidebarOpen} className="relative z-50 lg:hidden">
                     <DialogBackdrop
@@ -78,11 +69,7 @@ export default function Example() {
                             {/* Sidebar component, swap this element with another sidebar if you like */}
                             <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
                                 <div className="flex h-16 shrink-0 items-center">
-                                    <img
-                                        alt="Your Company"
-                                        src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                                        className="h-8 w-auto"
-                                    />
+                                    <AppLogoIcon className="h-8 w-auto" />
                                 </div>
                                 <nav className="flex flex-1 flex-col">
                                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -127,11 +114,7 @@ export default function Example() {
                     {/* Sidebar component, swap this element with another sidebar if you like */}
                     <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
                         <div className="flex h-16 shrink-0 items-center">
-                            <img
-                                alt="Your Company"
-                                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                                className="h-8 w-auto"
-                            />
+                            <AppLogoIcon className="h-8 w-auto" />
                         </div>
                         <nav className="flex flex-1 flex-col">
                             <ul role="list" className="flex flex-1 flex-col gap-y-7">
