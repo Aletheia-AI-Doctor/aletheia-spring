@@ -45,4 +45,24 @@ public class Doctor extends BaseModel {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
         this.password = encoder.encode(password);
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void setSpeciality(DoctorSpeciality speciality) {
+        this.speciality = speciality;
+    }
 }
