@@ -11,26 +11,6 @@ services:
     networks:
       - app-network
 
-  frontend:
-    build:
-      context: ./src/main/frontend
-      dockerfile: Dockerfile
-      target: build-env  # Use dev stage for hot-reload
-    container_name: react_frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./src/main/frontend:/app  # Mount source code for hot-reload
-      - /app/node_modules  # Isolate node_modules from host
-      - node_modules:/usr/src/app/node_modules
-    environment:
-      - NODE_ENV=development
-      - VITE_APP_SERVER_URL=http://app:8080
-    depends_on:
-      - app
-    networks:
-      - app-network
-
   db:
     image: mysql:8
     container_name: mysql_db
