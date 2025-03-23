@@ -3,11 +3,33 @@ services:
     build: .
     container_name: ai_doctor_container
     ports:
-      - "8080:9000"  # Map port 80 on host to port 9000 in the container
+      - "8080:9000"
     depends_on:
       - db
     env_file:
       - .env
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./src/main/frontend
+      dockerfile: Dockerfile
+      target: build-env  # Use dev stage for hot-reload
+    container_name: react_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src/main/frontend:/app  # Mount source code for hot-reload
+      - /app/node_modules  # Isolate node_modules from host
+      - node_modules:/usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_APP_SERVER_URL=http://app:8080
+    depends_on:
+      - app
+    networks:
+      - app-network
 
   db:
     image: mysql:8
@@ -25,6 +47,13 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
 
 volumes:
   mysql_data:
+  node_modules:
+
+networks:
+  app-network:
+    driver: bridge
