@@ -6,9 +6,6 @@ services:
       - "8080:9000"
     depends_on:
       - db
-    volumes:
-      - ./:/app
-      - /app/target/
     env_file:
       - .env
     networks:
