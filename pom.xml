@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>dev.aletheia.doctor</groupId>
-	<artifactId>spring-boot-initial</artifactId>
+	<artifactId>aletheia</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-boot-initial</name>
+	<name>aletheia</name>
 	<description>AI Doctor</description>
 	<properties>
 		<java.version>23</java.version>

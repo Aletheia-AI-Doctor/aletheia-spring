@@ -73,9 +73,7 @@ export default function DiagnosisPage() {
                             className="p-5 text-gray-1000 hover:text-gray-800"
                             onClick={handleReturn}
                         >
-                            {/* Unicode arrow or an icon */}
-                            <FontAwesomeIcon icon={faLeftLong} size="1.5x" />
-                            &#8592; {/* Left arrow */}
+                            <FontAwesomeIcon icon={faLeftLong} size="lg" />
                         </button>
                         <h2 className="text-lg font-semibold">Type: {selectedType}</h2>
                     </div>
