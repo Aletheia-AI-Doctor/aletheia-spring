@@ -4,20 +4,21 @@ import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import {ROOT_URL} from "app/base/consts";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 
 export default function DiagnosisPage() {
-    const [selectedType, setSelectedType] = useState(null);
+    const [selectedType, setSelectedType] = useState('');
     const [fileUploaded, setFileUploaded] = useState(false);
     const [file, setFile] = useState(null);
 
-    const handleTypeSelect = (type) => {
-        setSelectedType(type);
+    const handleTypeSelect = (typeName : string) => {
+        setSelectedType(typeName);
     };
 
-    const handleFileUpload = (fileItems) => {
+    const handleFileUpload = (fileItems : any[]) => {
         if (fileItems.length > 0) {
             setFileUploaded(true);
             setFile(fileItems[0].file);
@@ -28,15 +29,16 @@ export default function DiagnosisPage() {
     };
 
     const handleReturn = () => {
-        setSelectedType(null); // Reset the selected type
-        setFileUploaded(false); // Reset file upload state
-        setFile(null); // Clear the uploaded file
+        setSelectedType('');
+        setFileUploaded(false);
+        setFile(null);
     };
 
     return (
         <div className="p-4">
             <h1 className="text-xl font-semibold">Diagnose</h1>
             <p>Diagnose image </p>
+            {ROOT_URL}
             <p>chose a scan type, attach file, and diagnose!</p>
             {!selectedType ? (
                 <div className="mt-10 p-10 border rounded">
