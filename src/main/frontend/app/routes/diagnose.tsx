@@ -4,6 +4,8 @@ import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLeftLong } from '@fortawesome/free-solid-svg-icons';
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -70,7 +72,7 @@ export default function DiagnosisPage() {
                             onClick={handleReturn}
                         >
                             {/* Unicode arrow or an icon */}
-                            &#8592; {/* Left arrow */}
+                            <FontAwesomeIcon icon={faLeftLong} size="1.5x" />
                         </button>
                         <h2 className="text-lg font-semibold">Type: {selectedType}</h2>
                     </div>
