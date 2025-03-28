@@ -7,9 +7,13 @@
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
           <factory-entry name="entityManagerFactory" value="37fc7c99-1d6b-4908-8835-7710cb68482d" />
+          <factory-entry name="spring-boot-initial" />
         </datasource-mapping>
         <naming-strategy-map />
       </configuration>
+    </facet>
+    <facet type="Python" name="Python">
+      <configuration sdkName="Python 3.9 (aletheia-spring)" />
     </facet>
   </component>
 </module>
