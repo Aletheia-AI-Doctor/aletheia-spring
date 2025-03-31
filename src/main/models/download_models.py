@@ -6,7 +6,8 @@ File_IDS = {
     "hybrid_metadata_model.h5": "1I9DLTeuMh25HSBO9qmUURgKD0fqJ8zwp"
 }
 
-OUTPUT_PATH = "models"
+OUTPUT_PATH = "weights"
+
 
 def download_models():
     """Downloads models from Google Drive"""
