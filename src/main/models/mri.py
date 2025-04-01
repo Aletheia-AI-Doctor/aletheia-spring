@@ -47,16 +47,9 @@ class MRI(Model):
             return None, None, None
 
     def predict(self, image_path: str) -> str:
-        if not self.model:
-            raise ValueError("Model not loaded")
+        img_array = preprocess_image(image_path)
+        dummy_metadata = np.zeros((1, 5))
+        prediction = self.model.predict([img_array, dummy_metadata])
+        class_idx = np.argmax(prediction, axis=1)[0]
 
-        try:
-            img_array = preprocess_image(image_path)
-            dummy_metadata = np.zeros((1, 5))
-            prediction = self.model.predict([img_array, dummy_metadata])
-            class_idx = np.argmax(prediction, axis=1)[0]
-
-            return self.class_names.get(class_idx, "Unknown")
-
-        except Exception as _:
-            raise
+        return self.class_names.get(class_idx, "Unknown")

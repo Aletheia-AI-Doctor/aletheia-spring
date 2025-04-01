@@ -1,5 +1,7 @@
 from flask import Flask
 from mri import MRI
+from flask import request
+import os
 
 app = Flask(__name__)
 
@@ -8,4 +10,6 @@ mri_model = MRI()
 
 @app.route("/mri")
 def mri():
-    return mri_model.predict("image_path")
+    project_root = os.path.dirname(os.path.abspath(__file__))
+
+    return mri_model.predict(project_root + "/../../.." + request.args.get("image_path"))

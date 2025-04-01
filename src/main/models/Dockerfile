@@ -1,9 +1,7 @@
-# Use latest version of python
-
-# https://flask.palletsprojects.com/en/stable/
+# Use version 3.12 of python
 
 # Install python requirements
 
-# Install models from google drive into /weights
+# Install models using download_models.py
 
 # Run the models script

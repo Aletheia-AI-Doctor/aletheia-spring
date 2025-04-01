@@ -27,7 +27,7 @@ public class ModelController {
 		);
 	}
 
-	@GetMapping("/{modelSlug}/predict")
+	@PutMapping("/{modelSlug}/predict")
 	public ResponseEntity<Object> predict(@ModelAttribute UploadScanDto uploadScanDto,
 										 @PathVariable String modelSlug) {
 		return ResponseEntity.ok(
