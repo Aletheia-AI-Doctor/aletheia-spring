@@ -1,9 +1,10 @@
 import {type Action, type ThunkAction} from "@reduxjs/toolkit"
 import { combineSlices, configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
+import {scansApiSlice} from "~/features/scans/scansApiSlice";
 
 const rootReducer = combineSlices(
-
+    scansApiSlice
 )
 export type RootState = ReturnType<typeof rootReducer>
 
@@ -15,6 +16,7 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
             return getDefaultMiddleware({
                 serializableCheck: false
             })
+                .concat(scansApiSlice.middleware)
         },
         preloadedState
     })

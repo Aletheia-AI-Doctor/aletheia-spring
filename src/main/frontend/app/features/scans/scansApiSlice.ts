@@ -1,59 +1,42 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {ROOT_URL} from "~/base/consts";
-import {defaultHeaders, getFromLocalStorage} from "~/base/helpers";
-import {type PageRequest, type Pagination, queryParamsFromRequest} from "~/types/pagination";
+import {defaultHeadersFileUpload} from "~/base/helpers";
 
-interface Attendance {
+interface Diagnosis {
     id: number;
-    createdAt: string;
-    date: string;
-    description: string;
-    approved: boolean;
-    coins: number;
-    userId?: number;
-    username?: string;
+    name: string;
 }
 
-export type { Attendance };
+export type { Diagnosis };
 
 // Define a service using a base URL and expected endpoints
-export const attendanceApiSlice = createApi({
+export const scansApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
-        prepareHeaders: (headers, {}) => defaultHeaders(headers),
+        prepareHeaders: (headers, {}) => defaultHeadersFileUpload(headers),
     }),
-    reducerPath: "attendanceApi",
-    tagTypes: ["Attendances", "Users"],
+    reducerPath: "scansApi",
+    tagTypes: ["Scans"],
     endpoints: build => ({
-        getAttendances: build.query<Pagination<Attendance>, PageRequest>({
-            query: (req: PageRequest) => {
-                let url = "ostaz/attendances";
-                url += queryParamsFromRequest(req);
 
-                return {url, method: "GET"};
-            },
-        }),
+        uploadScan: build.mutation<Diagnosis, { scan: File, model:string }>({
+            query: ({scan, model}) => {
 
-        approveAttendance: build.mutation<string, { attendanceId: number, username:string }>({
-            query: ({attendanceId}) => {
+                const formData = new FormData();
+                formData.append("scan", scan);
+
                 return {
-                    url: `ostaz/attendances/${attendanceId}`,
-                    method: "PATCH",
+                    url: `api/models/${model}/predict`,
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "multipart/form-data;"
+                    },
+                    body: formData,
+                    formData: true,
                 };
             },
-            invalidatesTags: (_, __, {username}) => [{type: "Users", id: username}],
-        }),
-
-        deleteAttendance: build.mutation<string, { attendanceId: number, username:string }>({
-            query: ({attendanceId}) => {
-                return {
-                    url: `ostaz/attendances/${attendanceId}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (_, __, {username}) => [{type: "Users", id: username}],
         }),
     }),
 })
 
-export const {useGetAttendancesQuery, useApproveAttendanceMutation, useDeleteAttendanceMutation} = attendanceApiSlice
+export const {useUploadScanMutation} = scansApiSlice

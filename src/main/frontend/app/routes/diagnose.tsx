@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
@@ -7,6 +7,7 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import {ROOT_URL} from "app/base/consts";
+import {useUploadScanMutation} from "~/features/scans/scansApiSlice";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -15,6 +16,14 @@ export default function DiagnosisPage() {
     const [selectedType, setSelectedType] = useState('');
     const [fileUploaded, setFileUploaded] = useState(false);
     const [file, setFile] = useState(null);
+
+    const [uploadScan, {isLoading: isUploading, isSuccess, data}] = useUploadScanMutation();
+
+    useEffect(() => {
+        if (!isUploading && isSuccess) {
+            console.log("Diagnosis result: ", data.name);
+        }
+    }, [isSuccess, isUploading]);
 
     const handleTypeSelect = (typeName : string) => {
         setSelectedType(typeName);
@@ -27,6 +36,11 @@ export default function DiagnosisPage() {
         } else {
             setFileUploaded(false);
             setFile(null);
+        }
+
+        // Upload the file when it's selected
+        if (fileItems.length > 0) {
+            uploadScan({scan: fileItems[0].file, model: selectedType.toLowerCase()});
         }
     };
 
