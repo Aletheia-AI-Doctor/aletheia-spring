@@ -5,23 +5,38 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Setter
 @Getter
+@NoArgsConstructor
 @Entity(name = "models")
 public class Model extends BaseModel {
 
-    @Column(name = "name", nullable = false)
+    public Model(String name, String path) {
+        this.name = name;
+        this.path = path;
+    }
+
+    @Column(name = "name", nullable = false, unique = true)
     @NotBlank(message = "Name is required")
     private String name;
 
-    @Column(name = "path", nullable = false)
+    @Column(name = "path", nullable = false, unique = true)
     @NotBlank(message = "Path is required")
     private String path;
 
     @OneToMany(mappedBy = "model")
     private List<Diagnosis> diagnoses;
+
+    public void addDiagnosis(Diagnosis diagnosis) {
+        if (this.diagnoses == null) {
+            this.diagnoses = new java.util.ArrayList<>();
+        }
+
+        this.diagnoses.add(diagnosis);
+    }
 }
