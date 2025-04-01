@@ -1,6 +1,8 @@
 weights
 ./weights
 
+models.iml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -133,11 +135,13 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.venv*
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+images
 
 # Spyder project settings
 .spyderproject
