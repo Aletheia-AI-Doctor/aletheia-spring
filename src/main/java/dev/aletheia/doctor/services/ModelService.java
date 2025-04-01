@@ -1,7 +1,9 @@
 package dev.aletheia.doctor.services;
 
+import dev.aletheia.doctor.dtos.models.DiagnosisDto;
 import dev.aletheia.doctor.dtos.models.ModelDto;
 import dev.aletheia.doctor.exceptions.NotFoundException;
+import dev.aletheia.doctor.helpers.Response;
 import dev.aletheia.doctor.models.Diagnosis;
 import dev.aletheia.doctor.models.Model;
 import dev.aletheia.doctor.repositories.ModelRepository;
@@ -13,19 +15,34 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional
 public class ModelService extends CRUDService<Model, ModelDto> {
-    @Autowired
-    private ModelRepository modelRepository;
+    private final ModelRepository modelRepository;
+    private final HttpService httpService;
+    private final DiagnosisService diagnosisService;
+    private final FileService fileService;
 
     public ModelRepository getRepository() { return modelRepository; }
 
-    protected ModelService() {super(Model.class, ModelDto.class);}
+    protected ModelService(ModelRepository modelRepository, HttpService httpService, DiagnosisService diagnosisService, FileService fileService) {super(Model.class, ModelDto.class);
+        this.modelRepository = modelRepository;
+        this.httpService = httpService;
+        this.diagnosisService = diagnosisService;
+        this.fileService = fileService;
+    }
 
     public Model getBySlug(String slug) {
         return modelRepository.findByPath(slug)
                 .orElseThrow(() -> new NotFoundException("Model not found"));
     }
 
-    public Diagnosis predict(Model model, MultipartFile image) {
-        return new Diagnosis("Non Demented");
+    public DiagnosisDto predict(Model model, MultipartFile image) {
+        String image_path = fileService.saveFile(image);
+
+        Response response = httpService.get("/" + model.getPath() + "?image_path=" + image_path);
+
+        if(response.isSuccessful()) {
+            return diagnosisService.convertToDto(diagnosisService.getByName(response.getBody()));
+        }
+
+        return diagnosisService.convertToDto(new Diagnosis("No Result"));
     }
 }

@@ -1,5 +1,6 @@
 package dev.aletheia.doctor.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -29,14 +31,15 @@ public class Model extends BaseModel {
     @NotBlank(message = "Path is required")
     private String path;
 
-    @OneToMany(mappedBy = "model")
+    @OneToMany(mappedBy = "model", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Diagnosis> diagnoses;
 
     public void addDiagnosis(Diagnosis diagnosis) {
         if (this.diagnoses == null) {
-            this.diagnoses = new java.util.ArrayList<>();
+            this.diagnoses = new ArrayList<>();
         }
 
+        diagnosis.setModel(this);
         this.diagnoses.add(diagnosis);
     }
 }

@@ -28,6 +28,6 @@ public class Diagnosis extends BaseModel {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "model_id")
+    @JoinColumn(name = "model_id", nullable = false)
     private Model model;
 }

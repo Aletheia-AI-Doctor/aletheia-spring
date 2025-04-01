@@ -26,20 +26,20 @@ public class ModelLoader implements CommandLineRunner {
 
         Model mri = new Model("MRI", "mri");
         mri.addDiagnosis(new Diagnosis("Non Demented"));
-        mri.addDiagnosis(new Diagnosis("Mild Dementia"));
         mri.addDiagnosis(new Diagnosis("Very Mild Dementia"));
-        mri.addDiagnosis(new Diagnosis("Very Severe Dementia"));
-        modelService.create(mri);
+        mri.addDiagnosis(new Diagnosis("Mild Dementia"));
+        mri.addDiagnosis(new Diagnosis("Moderate Dementia"));
+        modelService.save(mri);
 
         Model chestXray = new Model("Chest Xray", "chest-xray");
         chestXray.addDiagnosis(new Diagnosis("Normal"));
         chestXray.addDiagnosis(new Diagnosis("Pneumonia"));
         chestXray.addDiagnosis(new Diagnosis("Tuberculosis"));
-        modelService.create(chestXray);
+        modelService.save(chestXray);
 
         Model breastCancer = new Model("Breast Cancer", "breast-cancer");
         breastCancer.addDiagnosis(new Diagnosis("Cancer"));
         breastCancer.addDiagnosis(new Diagnosis("No Cancer"));
-        modelService.create(breastCancer);
+        modelService.save(breastCancer);
     }
 }
