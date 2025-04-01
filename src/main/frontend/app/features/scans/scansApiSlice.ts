@@ -6,8 +6,14 @@ interface Diagnosis {
     id: number;
     name: string;
 }
+interface Model {
+    id: string;
+    name: string;
+    path: string;
+    slug: string;
+}
 
-export type { Diagnosis };
+export type { Diagnosis, Model };
 
 // Define a service using a base URL and expected endpoints
 export const scansApiSlice = createApi({
@@ -16,8 +22,16 @@ export const scansApiSlice = createApi({
         prepareHeaders: (headers, {}) => defaultHeadersFileUpload(headers),
     }),
     reducerPath: "scansApi",
-    tagTypes: ["Scans"],
+    tagTypes: ["Scans", "Models"],
     endpoints: build => ({
+
+        // -we need that the buttons from the frontend to have the texts automatically from the backend
+        // in diagnose in use effect you will find that it returns the diagnosis in the console.log we need for the user to see it.
+
+        getModels: build.query<Model[], void>({
+            query: () => "api/models",
+            providesTags: ['Models'] // Models-specific tag
+        }),
 
         uploadScan: build.mutation<Diagnosis, { scan: File, model:string }>({
             query: ({scan, model}) => {
@@ -39,4 +53,6 @@ export const scansApiSlice = createApi({
     }),
 })
 
-export const {useUploadScanMutation} = scansApiSlice
+
+
+export const {useUploadScanMutation, useGetModelsQuery} = scansApiSlice
