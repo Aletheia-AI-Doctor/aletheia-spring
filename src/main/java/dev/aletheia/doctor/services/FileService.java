@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.UUID;
+
 
 @Service
 public class FileService {
@@ -13,24 +15,32 @@ public class FileService {
     @Autowired
     private HttpServletRequest request;
 
+    private static final String UPLOAD_DIR = "/uploads/";
+
     public String saveFile(MultipartFile file) {
         try {
-            String uploadsDir = "/uploads/";
-            String realPathtoUploads = request.getServletContext().getRealPath(uploadsDir);
-            if(! new File(realPathtoUploads).exists())
-            {
-                new File(realPathtoUploads).mkdir();
+            File uploadDir = new File(UPLOAD_DIR);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
             }
 
-            String orgName = file.getOriginalFilename();
-            String filePath = realPathtoUploads + orgName;
+            // Generate a unique file name
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            String uniqueFileName = UUID.randomUUID() + extension;
+
+            // Construct the file path
+            String filePath = UPLOAD_DIR + uniqueFileName;
             File dest = new File(filePath);
+
             file.transferTo(dest);
             return filePath;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 }

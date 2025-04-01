@@ -35,9 +35,9 @@ public class ModelService extends CRUDService<Model, ModelDto> {
     }
 
     public DiagnosisDto predict(Model model, MultipartFile image) {
-        String image_path = fileService.saveFile(image);
+        String imagePath = fileService.saveFile(image);
 
-        Response response = httpService.get("/" + model.getPath() + "?image_path=" + image_path);
+        Response response = httpService.get("/" + model.getPath() + "?image_path=" + imagePath);
 
         if(response.isSuccessful()) {
             return diagnosisService.convertToDto(diagnosisService.getByName(response.getBody()));

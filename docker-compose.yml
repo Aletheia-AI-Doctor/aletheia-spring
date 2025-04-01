@@ -10,6 +10,10 @@ services:
       - .env
     networks:
       - app-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./uploads:/uploads
 
   frontend:
     build:
