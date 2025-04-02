@@ -30,7 +30,7 @@ export const scansApiSlice = createApi({
 
         getModels: build.query<Model[], void>({
             query: () => "api/models",
-            providesTags: ['Models'] // Models-specific tag
+            providesTags: ['Models'],
         }),
 
         uploadScan: build.mutation<Diagnosis, { scan: File, model:string }>({

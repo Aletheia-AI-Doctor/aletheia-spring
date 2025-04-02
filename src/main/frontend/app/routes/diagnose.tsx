@@ -7,13 +7,23 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { useUploadScanMutation, useGetModelsQuery } from "~/features/scans/scansApiSlice";
+import type { Route } from "./+types/diagnose";
+import {Link, useParams} from "react-router";
+import Loading from "~/components/Loading";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 
+export function meta({}: Route.MetaArgs) {
+    return [
+        { title: "Diagnose" },
+        { name: "description", content: "Welcome to React Router!" },
+    ];
+}
+
 export default function DiagnosisPage() {
-    // State management
-    const [selectedModel, setSelectedModel] = useState<string | null>(null);
+    const {model: selectedModel} = useParams();
+
     const [file, setFile] = useState<File | null>(null);
     const [isDiagnosing, setIsDiagnosing] = useState(false);
     const [diagnosisResult, setDiagnosisResult] = useState<string | null>(null);
@@ -21,13 +31,6 @@ export default function DiagnosisPage() {
     // API hooks
     const { data: models = [], isLoading: isLoadingModels } = useGetModelsQuery();
     const [uploadScan] = useUploadScanMutation();
-
-    // Event handlers
-    const handleModelSelect = (modelSlug: string) => {
-        setSelectedModel(modelSlug);
-        setFile(null);
-        setDiagnosisResult(null);
-    };
 
     const handleFileUpload = (fileItems: any[]) => {
         if (fileItems.length > 0) {
@@ -56,48 +59,36 @@ export default function DiagnosisPage() {
         }
     };
 
-    const handleReset = () => {
-        setSelectedModel(null);
-        setFile(null);
-        setDiagnosisResult(null);
-    };
-
     return (
         <div className="p-4 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-4">Medical Scan Diagnosis</h1>
 
             {!selectedModel ? (
-                // Model selection view
                 <div className="bg-white rounded-lg shadow p-6">
                     <h2 className="text-xl font-semibold mb-4">Select Scan Type</h2>
-                    {isLoadingModels ? (
-                        <p>Loading available models...</p>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {models.map((model) => (
-                                <button
-                                    key={model.id}
-                                    className="p-6 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-                                    onClick={() => handleModelSelect(model.slug)}
-                                >
-                                    <h3 className="font-medium text-blue-800">{model.name}</h3>
-                                    <p className="text-sm text-gray-600 mt-1">{model.description || ''}</p>
-                                </button>
-                            ))}
-                        </div>
-                    )}
+                    {isLoadingModels && <Loading message="Loading available models" />}
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {models.map((model) => (
+                            <Link
+                                key={model.id}
+                                to={`/diagnose/${model.slug}`}
+                                className="p-6 bg-blue-50 hover:bg-blue-100 rounded-lg text-center transition-colors"
+                            >
+                                <h3 className="font-medium text-blue-800">{model.name}</h3>
+                            </Link>
+                        ))}
+                    </div>
                 </div>
             ) : (
-                // Diagnosis workflow view
                 <div className="bg-white rounded-lg shadow overflow-hidden">
-                    {/* Header with back button */}
                     <div className="bg-gray-50 p-4 flex items-center border-b">
-                        <button
-                            onClick={handleReset}
+                        <Link
+                            to={`/diagnose`}
                             className="p-2 text-gray-600 hover:text-gray-900 mr-4"
                         >
-                            <FontAwesomeIcon icon={faLeftLong} size="lg" />
-                        </button>
+                            <FontAwesomeIcon icon={faLeftLong} size="lg"/>
+                        </Link>
                         <h2 className="text-xl font-semibold">
                             {models.find(m => m.slug === selectedModel)?.name || selectedModel}
                         </h2>
@@ -120,13 +111,14 @@ export default function DiagnosisPage() {
                             <button
                                 onClick={handleDiagnose}
                                 disabled={!file || isDiagnosing}
-                                className={`px-6 py-3 rounded-md font-medium ${
-                                    !file || isDiagnosing
-                                        ? 'bg-gray-300 cursor-not-allowed'
-                                        : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                }`}
+                                className="px-6 py-3 rounded-md font-medium bg-blue-600 hover:bg-blue-700 text-white disabled:text-gray-400 disabled:bg-gray-300 disabled:cursor-not-allowed"
                             >
-                                {isDiagnosing ? 'Processing...' : 'Run Diagnosis'}
+                                {isDiagnosing ? (
+                                    <div className="flex space-x-2 items-center">
+                                        <Loading size="size-6" color="text-gray-800"/>
+                                        <span className="text-gray-800">Running Diagnosis</span>
+                                    </div>
+                                ) : 'Run Diagnosis'}
                             </button>
 
                             {diagnosisResult && (
