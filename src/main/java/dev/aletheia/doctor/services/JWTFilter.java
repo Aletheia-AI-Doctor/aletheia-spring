@@ -1,5 +1,7 @@
 package dev.aletheia.doctor.services;
 
+import dev.aletheia.doctor.exceptions.UnauthorizedException;
+import dev.aletheia.doctor.models.Doctor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,36 +31,29 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        String token = null;
-        Long userId = null;
-        boolean isAdmin = false;
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            userId = jwtService.extractUserId(token);
-            isAdmin = jwtService.isAdmin(token);
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
-//        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//            AuthenticatableService authService = isAdmin
-//                    ? context.getBean(AdminService.class)
-//                    : context.getBean(UserService.class);
-//
-//            Authenticatable auth = authService.getAuthenticatableById(userId);
-//
-//            Details userDetail = isAdmin
-//                    ? new AdminDetail((Admin) auth)
-//                    : new UserDetail((User) auth);
-//
-//            if (jwtService.isTokenValid(token, userDetail)) {
-//                UsernamePasswordAuthenticationToken authToken =
-//                        new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
-//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//                SecurityContextHolder.getContext().setAuthentication(authToken);
-//            } else{
-//                throw new UnauthorizedAccessException("Token is invalid, unauthorized access");
-//            }
-//        }
+        String token = authHeader.substring(7);
+        Long id = jwtService.extractUserId(token);
+
+        if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            DoctorService authService = context.getBean(DoctorService.class);
+
+            Doctor doctor = authService.find(id);
+
+            if (doctor.isConfirmed() && jwtService.isTokenValid(token)) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(doctor, null, doctor.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+
         filterChain.doFilter(request, response);
     }
 }

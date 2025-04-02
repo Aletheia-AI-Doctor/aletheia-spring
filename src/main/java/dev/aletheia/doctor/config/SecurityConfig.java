@@ -34,13 +34,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/login").permitAll()
-//                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/register").permitAll()
 //                        .requestMatchers("/schoolYears").permitAll()
 //                        .requestMatchers("/admin/login").permitAll()
-                        .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/**").permitAll()
 //                        .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
-//                        .anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
