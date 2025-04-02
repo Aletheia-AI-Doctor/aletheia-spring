@@ -28,7 +28,7 @@ services:
       - /app/node_modules/  # Isolate node_modules from host
     environment:
       - NODE_ENV=development
-      - VITE_APP_SERVER_URL=http://app:8080
+      - VITE_APP_SERVER_URL=http://localhost:8080
     depends_on:
       - app
     networks:
