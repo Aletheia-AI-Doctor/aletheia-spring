@@ -20,10 +20,11 @@ import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import {Navigate, Outlet} from "react-router";
 import AppLogoIcon from "~/components/app-logo-icon";
 import {getFromLocalStorage} from "~/base/helpers";
+import {useAppDispatch, useAppSelector} from "~/base/hooks";
+import {clearAuth} from "~/features/authentication/authenticationApiSlice";
 
 const userNavigation = [
     { name: 'Your profile', href: '#' },
-    { name: 'Sign out', href: '#' },
 ]
 
 function classNames(...classes : string[]) {
@@ -42,6 +43,13 @@ export default function Layout() {
         { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
         { name: 'Diagnose', href: '/diagnose', icon: DocumentMagnifyingGlassIcon, current: false },
     ]);
+
+    const doctor = useAppSelector((state) => state.auth.doctor);
+    const dispatch = useAppDispatch();
+
+    function handleLogout() {
+        dispatch(clearAuth());
+    }
 
     useEffect(() => {
         setNavigation(navigation.map((item) => {
@@ -201,11 +209,11 @@ export default function Layout() {
                                             className="size-8 rounded-full bg-gray-50"
                                         />
                                         <span className="hidden lg:flex lg:items-center">
-                      <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-gray-900">
-                        Tom Cook
-                      </span>
-                      <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-400" />
-                    </span>
+                                          <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-gray-900">
+                                            Tom Cook
+                                          </span>
+                                          <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-400" />
+                                        </span>
                                     </MenuButton>
                                     <MenuItems
                                         transition
@@ -221,6 +229,15 @@ export default function Layout() {
                                                 </a>
                                             </MenuItem>
                                         ))}
+                                        <MenuItem>
+                                            <button
+                                                type="button"
+                                                onClick={handleLogout}
+                                                className="block w-full px-3 py-1 text-left text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
+                                            >
+                                                Sign out
+                                            </button>
+                                        </MenuItem>
                                     </MenuItems>
                                 </Menu>
                             </div>
