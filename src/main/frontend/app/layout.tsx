@@ -17,8 +17,9 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import {Outlet} from "react-router";
+import {Navigate, Outlet} from "react-router";
 import AppLogoIcon from "~/components/app-logo-icon";
+import {getFromLocalStorage} from "~/base/helpers";
 
 const userNavigation = [
     { name: 'Your profile', href: '#' },
@@ -29,7 +30,12 @@ function classNames(...classes : string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+function PrivateRoute () {
+    const user = getFromLocalStorage('token');
+    return user ? <Outlet /> : <Navigate to="/login" replace />;
+}
+
+export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     const [navigation, setNavigation] = useState([
@@ -223,7 +229,7 @@ export default function Example() {
 
                     <main className="py-10">
                         <div className="px-4 sm:px-6 lg:px-8">
-                            <Outlet />
+                            <PrivateRoute />
                         </div>
                     </main>
                 </div>

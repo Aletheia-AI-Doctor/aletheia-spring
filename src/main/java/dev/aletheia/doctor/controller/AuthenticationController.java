@@ -23,7 +23,7 @@ public class AuthenticationController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<Object> signIn(@RequestBody SignInDto signInDto) {
         Doctor doctor = doctorService.getByIdentifier(signInDto.getEmail())
                 .orElseThrow(InvalidCredentialsException::new);
@@ -34,7 +34,8 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(Map.of(
                         "message", "Login successful",
-                        "token", jwtService.generateToken(doctor)
+                        "token", jwtService.generateToken(doctor),
+                        "doctor", doctorService.convertToDto(doctor)
                 )
         );
     }

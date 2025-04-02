@@ -12,10 +12,10 @@ export const getToken = () => {
 }
 
 export const defaultHeaders = (headers : Headers) => {
-    // const token = getFromLocalStorage("token");
-    // if (token) {
-    //     headers.set("Authorization", `Bearer ${token}`);
-    // }
+    const token = getFromLocalStorage("token");
+    if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+    }
 
     headers.set("Content-Type", "application/json");
 
@@ -23,10 +23,10 @@ export const defaultHeaders = (headers : Headers) => {
 }
 
 export const defaultHeadersFileUpload = (headers : Headers) => {
-    // const token = getFromLocalStorage("token");
-    // if (token) {
-    //     headers.set("Authorization", `Bearer ${token}`);
-    // }
+    const token = getFromLocalStorage("token");
+    if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+    }
 
     if (headers.get("Content-Type") === "multipart/form-data;") {
         headers.delete("Content-Type");

@@ -6,4 +6,8 @@ export default [
         route("/diagnose/:model?", "routes/diagnose.tsx"),
     ]),
 
+    layout("./routes/auth/layout.tsx", [
+        route("login", "./routes/auth/login.tsx"),
+    ]),
+
 ] satisfies RouteConfig;
