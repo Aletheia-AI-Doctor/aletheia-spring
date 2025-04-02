@@ -7,6 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @Order(1)
 public class DoctorLoader implements CommandLineRunner {
@@ -31,6 +33,7 @@ public class DoctorLoader implements CommandLineRunner {
         doctor.setUsername("johndoe");
         doctor.setEmail("johndoe@aletheia.dev");
         doctor.setBio("Experienced cardiologist with over 10 years in the field. Passionate about heart health and patient care.");
+        doctor.setConfirmedAt(LocalDateTime.now());
 
         doctorService.save(doctor);
     }

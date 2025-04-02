@@ -17,25 +17,39 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import {Outlet} from "react-router";
+import {Navigate, Outlet} from "react-router";
 import AppLogoIcon from "~/components/app-logo-icon";
+import {getFromLocalStorage} from "~/base/helpers";
+import {useAppDispatch, useAppSelector} from "~/base/hooks";
+import {clearAuth} from "~/features/authentication/authenticationApiSlice";
 
 const userNavigation = [
     { name: 'Your profile', href: '#' },
-    { name: 'Sign out', href: '#' },
 ]
 
 function classNames(...classes : string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+function PrivateRoute () {
+    const user = getFromLocalStorage('token');
+    return user ? <Outlet /> : <Navigate to="/login" replace />;
+}
+
+export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     const [navigation, setNavigation] = useState([
         { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
         { name: 'Diagnose', href: '/diagnose', icon: DocumentMagnifyingGlassIcon, current: false },
     ]);
+
+    const doctor = useAppSelector((state) => state.auth.doctor);
+    const dispatch = useAppDispatch();
+
+    function handleLogout() {
+        dispatch(clearAuth());
+    }
 
     useEffect(() => {
         setNavigation(navigation.map((item) => {
@@ -195,11 +209,11 @@ export default function Example() {
                                             className="size-8 rounded-full bg-gray-50"
                                         />
                                         <span className="hidden lg:flex lg:items-center">
-                      <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-gray-900">
-                        Tom Cook
-                      </span>
-                      <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-400" />
-                    </span>
+                                          <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-gray-900">
+                                            Tom Cook
+                                          </span>
+                                          <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-400" />
+                                        </span>
                                     </MenuButton>
                                     <MenuItems
                                         transition
@@ -215,6 +229,15 @@ export default function Example() {
                                                 </a>
                                             </MenuItem>
                                         ))}
+                                        <MenuItem>
+                                            <button
+                                                type="button"
+                                                onClick={handleLogout}
+                                                className="block w-full px-3 py-1 text-left text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
+                                            >
+                                                Sign out
+                                            </button>
+                                        </MenuItem>
                                     </MenuItems>
                                 </Menu>
                             </div>
@@ -223,7 +246,7 @@ export default function Example() {
 
                     <main className="py-10">
                         <div className="px-4 sm:px-6 lg:px-8">
-                            <Outlet />
+                            <PrivateRoute />
                         </div>
                     </main>
                 </div>

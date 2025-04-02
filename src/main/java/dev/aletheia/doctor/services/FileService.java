@@ -2,6 +2,7 @@ package dev.aletheia.doctor.services;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,8 @@ public class FileService {
     @Autowired
     private HttpServletRequest request;
 
-    private static final String UPLOAD_DIR = "/uploads/";
+    @Value("${models.upload_path}")
+    private String UPLOAD_DIR;
 
     public String saveFile(MultipartFile file) {
         try {
@@ -27,7 +29,7 @@ public class FileService {
             // Generate a unique file name
             String originalFilename = file.getOriginalFilename();
             String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
+            if (originalFilename.contains(".")) {
                 extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
             String uniqueFileName = UUID.randomUUID() + extension;
@@ -37,7 +39,7 @@ public class FileService {
             File dest = new File(filePath);
 
             file.transferTo(dest);
-            return filePath;
+            return uniqueFileName;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

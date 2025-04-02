@@ -1,0 +1,85 @@
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
+import {ROOT_URL} from "~/base/consts";
+import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
+import {getFromLocalStorage, removeFromLocalStorage, setToLocalStorage} from "~/base/helpers";
+
+
+const doctorInit = getFromLocalStorage('doctor');
+
+const initialState : LoginApiResponse = {
+    token: getFromLocalStorage('token') || undefined,
+    doctor: doctorInit ? (JSON.parse(doctorInit) as Doctor) : undefined,
+};
+
+const authSlice = createSlice({
+    name: 'auth',
+    initialState,
+    reducers: {
+        setToken: (state, action: PayloadAction<string>) => {
+            state.token = action.payload;
+            setToLocalStorage('token', action.payload);
+        },
+        setDoctor: (state, action : PayloadAction<Doctor>) => {
+            state.doctor = action.payload;
+            setToLocalStorage('doctor', JSON.stringify(action.payload));
+        },
+        clearAuth: (state) => {
+            state.token = undefined;
+            state.doctor = undefined;
+
+            removeFromLocalStorage('token');
+            removeFromLocalStorage('doctor');
+        },
+    },
+});
+
+export const {setToken, setDoctor, clearAuth} = authSlice.actions;
+
+export { authSlice };
+
+interface LoginApiResponse {
+    token?: string;
+    doctor?: Doctor;
+}
+
+interface Doctor {
+    id: number;
+    name: string;
+    username: string;
+    email: string;
+    bio: string;
+}
+
+interface LoginApiRequest {
+    email: string;
+    password: string;
+}
+
+// Define a service using a base URL and expected endpoints
+export const authenticationApiSlice = createApi({
+    baseQuery: fetchBaseQuery({
+        baseUrl: ROOT_URL,
+        prepareHeaders: (headers, {}) => {
+            headers.set("Content-Type", "application/json");
+
+            return headers;
+        },
+    }),
+    reducerPath: "authenticationApi",
+    tagTypes: ["Auth"],
+    endpoints: build => ({
+        login: build.mutation<LoginApiResponse, LoginApiRequest>({
+            query: (req : LoginApiRequest) => {
+                return {
+                        url: "/api/login",
+                        method: "POST",
+                        body: {email: req.email, password: req.password},
+                    };
+            },
+
+        }),
+
+    }),
+})
+
+export const { useLoginMutation} = authenticationApiSlice

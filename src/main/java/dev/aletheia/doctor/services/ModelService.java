@@ -8,7 +8,6 @@ import dev.aletheia.doctor.models.Diagnosis;
 import dev.aletheia.doctor.models.Model;
 import dev.aletheia.doctor.repositories.ModelRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
