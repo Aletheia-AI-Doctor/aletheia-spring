@@ -4,3 +4,6 @@ tensorflow==2.19.0
 numpy
 keras
 pillow
+torch
+torchvision
+scikit-learn
