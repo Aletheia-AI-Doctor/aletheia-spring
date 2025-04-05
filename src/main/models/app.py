@@ -12,4 +12,4 @@ mri_model = MRI()
 def mri():
     project_root = os.path.dirname(os.path.abspath(__file__))
 
-    return mri_model.predict(project_root + "/../../../uploads/" + request.args.get("image_path"))
+    return mri_model.predict(project_root + "/uploads/" + request.args.get("image_path"))

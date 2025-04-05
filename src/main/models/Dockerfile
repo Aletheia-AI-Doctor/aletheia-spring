@@ -1,7 +1,16 @@
-# Use version 3.12 of python
+FROM python:3.12-slim
 
-# Install python requirements
+WORKDIR /app
 
-# Install models using download_models.py
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Run the models script
+# Copy model code and download script
+COPY . .
+
+# Create weights folder and download weights
+RUN python download_models.py
+
+EXPOSE 4000/tcp
+
+CMD ["python","-m","flask", "run", "--host=0.0.0.0", "--port=4000"]
