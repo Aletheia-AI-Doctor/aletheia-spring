@@ -9,6 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create weights folder and download weights
-RUN mkdir -p weights && python download_models.py
+RUN python download_models.py
 
-CMD ["python","-m","flask", "run", "--host=0.0.0.0", "--port=4000", "--debug"]
+EXPOSE 4000/tcp
+
+CMD ["python","-m","flask", "run", "--host=0.0.0.0", "--port=4000"]
