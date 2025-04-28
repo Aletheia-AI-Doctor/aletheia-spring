@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 public class DoctorService extends CRUDService<Doctor, DoctorDto> {
@@ -17,6 +19,10 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     public DoctorRepository getRepository() { return doctorRepository; }
 
     protected DoctorService() {super(Doctor.class, DoctorDto.class);}
+
+    public Optional<Doctor> getByIdentifier(String identifier) {
+        return doctorRepository.findByEmailOrUsername(identifier);
+    }
 
     public Doctor createDoctor(DoctorRegistrationDTO doctorDTO) {
         Doctor doctor = new Doctor();

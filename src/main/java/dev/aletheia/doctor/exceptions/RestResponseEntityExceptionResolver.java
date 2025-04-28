@@ -22,6 +22,20 @@ public class RestResponseEntityExceptionResolver extends ResponseEntityException
     }
 
     @ExceptionHandler(value
+            = { InvalidCredentialsException.class })
+    protected ResponseEntity<Object> handleInvalidCreds(
+            InvalidCredentialsException ex, WebRequest request) {
+        return handleExceptionDefault(ex, HttpStatus.UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler(value
+            = { UnauthorizedException.class })
+    protected ResponseEntity<Object> handleUnauthorized(
+            UnauthorizedException ex, WebRequest request) {
+        return handleExceptionDefault(ex, HttpStatus.UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler(value
             = { ConstraintViolationException.class })
     protected ResponseEntity<Object> handleValidation(
             ConstraintViolationException ex, WebRequest request) {

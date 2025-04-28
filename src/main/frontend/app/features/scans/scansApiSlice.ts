@@ -25,9 +25,6 @@ export const scansApiSlice = createApi({
     tagTypes: ["Scans", "Models"],
     endpoints: build => ({
 
-        // -we need that the buttons from the frontend to have the texts automatically from the backend
-        // in diagnose in use effect you will find that it returns the diagnosis in the console.log we need for the user to see it.
-
         getModels: build.query<Model[], void>({
             query: () => "api/models",
             providesTags: ['Models'],

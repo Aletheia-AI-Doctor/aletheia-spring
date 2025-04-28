@@ -18,7 +18,7 @@ def download_models():
         if not os.path.exists(output_path):
             print(f"Downloading {file_name}...")
             url = f"https://drive.google.com/uc?id={file_id}"
-            gdown.download(url, output_path, quiet=False)
+            gdown.download(url, output_path, quiet=False, fuzzy=True)
             print(f"Downloaded {file_name} to {output_path}")
         else:
             print(f"{file_name} already exists")
