@@ -15,6 +15,4 @@ public class PatientDto {
     private  Gender sex;
     private LocalDate addmissionDate ;
     private String status;
-
-
 }

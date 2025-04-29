@@ -10,16 +10,24 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.TimeZone;
 
 @Service
 @Transactional
 public class PatientService extends CRUDService<Patient, PatientDto> {
    
+    protected PatientService() {
+        super(Patient.class, PatientDto.class);
+    }
     @Autowired
     private PatientRepository PatientRepository;
+    
+    public PatientRepository getRepository() {
+        return PatientRepository;
+    }
+    public Optional<Patient> getByIdentifier(String identifier) {
+        return PatientRepository.findById(Long.valueOf(identifier));
+    }
 
     public Patient createPatient(PatientRegistrationDTO PatientDTO) {
         Patient patient = new Patient();
@@ -27,9 +35,7 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
         patient.setSex(PatientDTO.getSex());
         patient.setName(PatientDTO.getName());
         patient.setAddmissionDate(LocalDate.now());
+        patient.setStatus(PatientDTO.getStatus());
         return save(patient);
     }
-
-
-    
 }
