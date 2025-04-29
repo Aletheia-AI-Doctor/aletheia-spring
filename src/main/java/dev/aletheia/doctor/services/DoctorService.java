@@ -4,9 +4,15 @@ import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.repositories.DoctorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Optional;
 
@@ -36,4 +42,10 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
 
         return save(doctor);
     }
+
+    public Doctor getCurrentDoctor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (Doctor) authentication.getPrincipal();
+    }
+
 }
