@@ -36,4 +36,5 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
 
         return save(doctor);
     }
+    
 }

@@ -1,15 +1,20 @@
 package dev.aletheia.doctor.dtos.patient;
 
 
+import java.time.LocalDate;
+
+import dev.aletheia.doctor.enums.Gender;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
 public class PatientDto {
-    private Long id;
+    private Long doctor_id;
     private String name;
-    private String username;
-    private String bio;
-    
+    private  Gender sex;
+    private LocalDate addmissionDate ;
+    private String status;
+
+
 }

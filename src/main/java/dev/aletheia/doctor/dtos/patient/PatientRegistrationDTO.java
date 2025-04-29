@@ -1,5 +1,9 @@
 package dev.aletheia.doctor.dtos.patient;
 
+
+import java.time.LocalDate;
+
+import dev.aletheia.doctor.enums.Gender;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +11,6 @@ import lombok.Setter;
 @Setter
 public class PatientRegistrationDTO {
     private String name;
-    private String email;
-    private String bio;
-
+    private LocalDate birthdate;
+    private Gender sex;
 }
