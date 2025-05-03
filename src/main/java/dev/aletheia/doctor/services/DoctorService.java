@@ -44,8 +44,9 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     }
 
     public Doctor getCurrentDoctor() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (Doctor) authentication.getPrincipal();
+        String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getByIdentifier(identifier)
+                .orElseThrow(() -> new EntityNotFoundException("Doctor not found"));
     }
 
 }

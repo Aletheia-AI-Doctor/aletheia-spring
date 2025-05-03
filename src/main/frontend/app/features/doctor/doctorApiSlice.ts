@@ -20,6 +20,7 @@ export type { Doctor };
 export const doctorApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
+        credentials: 'include',
         prepareHeaders: (headers, {}) => defaultHeaders(headers),
     }),
     reducerPath: "doctorApi",

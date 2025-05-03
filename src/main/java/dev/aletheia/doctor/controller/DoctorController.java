@@ -2,6 +2,7 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
+import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DoctorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,7 +31,8 @@ public class DoctorController {
 	}
 	@GetMapping("/{doctorId}")
 	public ResponseEntity<Object> show(@PathVariable Long doctorId) {
-		return ResponseEntity.ok(doctorService.convertToDto(doctorService.findOrFail(doctorId)));
+		DoctorDto doctor = doctorService.convertToDto(doctorService.findOrFail(doctorId));
+		return ResponseEntity.ok(doctor);
 	}
 
 
