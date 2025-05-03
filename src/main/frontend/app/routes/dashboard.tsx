@@ -4,59 +4,51 @@ import {faHeartPulse, faUserDoctor} from "@fortawesome/free-solid-svg-icons";
 const lana_del_rey = {
     id: "222",
     name: "Lana Del Rey",
-    username: "LDR_love",
-    email: "insane@IHeart.com",
-    specialty: "Cardiology",
-    bio: "Board-certified cardiologist with an amazing soul, and a perfect sass."
+    totalPatients: 24,
+    diagnosed: 16,
+    pending: 8
 };
-
+const activityLog = [
+    "Diagnosed patient John Doe",
+    "Added scan for patient Jane Smith",
+    "Reviewed MRI result for patient Tom Hardy"
+];
 export default  function DrDashboard(){
     return(
-        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
             <div className="flex items-center space-x-4 mb-6">
-                <div className="p-3 rounded-full bg-blue-50 text-blue-600">
-                    <FontAwesomeIcon icon={faUserDoctor} size="3x" />
-                </div>
-                <h1 className="text-3xl font-bold text-gray-800">
-                    Dr. {doctor.name}
-                    <span className="ml-2 text-blue-600 text-lg">MD</span>
+                <h1 className="text-4xl font-bold text-blue-600">
+                     Hello! Dr. {lana_del_rey.name}
+                    <span className="ml-2 text-blue-400 text-lg">MD</span>
                 </h1>
             </div>
-            <div className="mb-6">
-                <p className="text-gray-600 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    {doctor.bio}
-                </p>
-            </div>
-            <div className="bg-blue-50 rounded-lg p-5 mb-6 border-l-4 border-blue-400">
-                <div className="space-y-4">
-                    <div className="flex items-center">
-                        <p className="text-gray-700">
-                            <span className="font-semibold">Username:</span> @{doctor.username}
-                        </p>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                        <p className="text-gray-700">
-                            <span className="font-semibold">Specialty:</span> {doctor.specialty}
-                        </p>
-
-                        <FontAwesomeIcon
-                            icon={faHeartPulse}
-                            className="text-red-400 text-lg"
-                        />
-                    </div>
-
-                    <div className="flex items-center">
-                        <p className="text-gray-700">
-                            <span className="font-semibold">Email:</span> {doctor.email}
-                        </p>
-                    </div>
+            <div className="mb-4">
+                <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                    <p className="text-gray-700 mb-2">
+                        <strong>Number of Patients:</strong> {lana_del_rey.totalPatients}
+                    </p>
+                    <p className="text-gray-700 mb-2">
+                        <strong>Diagnosed Patients:</strong> {lana_del_rey.diagnosed}
+                    </p>
+                    <p className="text-gray-700 mb-2">
+                        <strong>Pending Patients:</strong> {lana_del_rey.pending}
+                    </p>
                 </div>
+
             </div>
-            <div className="flex space-x-3">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
-                    Edit Profile
-                </button>
+            <div className="mb-4">
+                <h2 className="text-2xl font-semibold text-gray-700 mb-2">Activity Log:</h2>
+                <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                    {activityLog.length > 0 ? (
+                        <ul className="list-disc pl-5 text-gray-700">
+                            {activityLog.map((activity, index) => (
+                                <li key={index}>{activity}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-gray-500 italic">\\ no recent activity</p>
+                    )}
+                </div>
             </div>
         </div>
     );
