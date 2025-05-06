@@ -13,6 +13,7 @@ export const getToken = () => {
 
 export const defaultHeaders = (headers : Headers) => {
     const token = getFromLocalStorage("token");
+    console.log("token", token);
     if (token) {
         headers.set("Authorization", `Bearer ${token}`);
     }

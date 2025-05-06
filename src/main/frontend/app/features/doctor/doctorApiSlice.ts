@@ -1,17 +1,15 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {ROOT_URL} from "~/base/consts";
-import {defaultHeaders, defaultHeadersFileUpload} from "~/base/helpers";
+import {defaultHeaders} from "~/base/helpers";
 import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 
 
 interface Doctor{
-    id: string;
+    id: number;
     name: string;
     username: string,
     email: string,
-    specialty: DoctorSpeciality
-    bio: string
-
+    bio: string,
 }
 
 export type { Doctor };
@@ -20,13 +18,12 @@ export type { Doctor };
 export const doctorApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
-        credentials: 'include',
         prepareHeaders: (headers, {}) => defaultHeaders(headers),
     }),
     reducerPath: "doctorApi",
     tagTypes: ["Doctor"],
-    endpoints: (builder) => ({
-        getDoctorAttributes: builder.query<Doctor, void>({
+    endpoints: build => ({
+        getDoctorAttributes: build.query<Doctor, void>({
             query: () => "api/doctors/currentUser",
             providesTags: ['Doctor']
         }),

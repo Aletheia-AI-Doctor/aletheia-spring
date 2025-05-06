@@ -12,6 +12,7 @@ export default function Home() {
       <div className="flex flex-col space-y-6">
         <a>Home</a>
         <a href="/diagnose">Diagnose</a>
+        <a href="/profile">Profile</a>
       </div>
   );
 }

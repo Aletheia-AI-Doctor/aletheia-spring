@@ -44,7 +44,13 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     }
 
     public Doctor getCurrentDoctor() {
-        String identifier = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Current authentication: " + auth); // Debug logging
+        System.out.println("Principal: " + auth.getPrincipal()); // Debug logging
+
+        String identifier = auth.getName();
+        System.out.println("Identifier from auth: " + identifier); // Debug logging
+
         return getByIdentifier(identifier)
                 .orElseThrow(() -> new EntityNotFoundException("Doctor not found"));
     }
