@@ -73,6 +73,11 @@ export default function DrProfilePage(){
 
             <div className="bg-blue-50 rounded-lg p-5 mb-6 border-l-4 border-blue-400">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">Professional Details</h2>
+                <div className="flex items-center">
+                    <p className="text-gray-700">
+                        <span className="font-semibold">Hospital:</span> {"Louran Hospital"}
+                    </p>
+                </div>
                 <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                         <p className="text-gray-700">
