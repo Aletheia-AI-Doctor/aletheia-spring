@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { ROOT_URL } from "~/base/consts";
-import { defaultHeaders, defaultHeadersFileUpload } from "~/base/helpers";
+import { defaultHeaders } from "~/base/helpers";
 
 interface Patient {
     id: number;
@@ -34,8 +34,4 @@ export const patientsApiSlice = createApi({
 });
 
 export const { useGetPatientsQuery, useAddPatientMutation } = patientsApiSlice;
-
-function defaultHeader(headers: any) {
-    throw new Error("Function not implemented.");
-}
 

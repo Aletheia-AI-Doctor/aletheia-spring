@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Loading from "~/components/Loading";
 import { useGetPatientsQuery, useAddPatientMutation } from "~/features/patient/patientApiSlice";
 import type { Route } from "./+types/showPatient";
-import { Link } from 'react-router';
+import { Link } from "@remix-run/react";
 export function meta() {
     return [
         { title: "Patient Management" },
@@ -133,8 +133,7 @@ export default function PatientPage() {
                                 required
                             >
                                 <option value="pending">Pending</option>
-                                <option value="active">Active</option>
-                                <option value="discharged">Discharged</option>
+                                <option value="dignosis">DIAGNOSED</option>
                             </select>
                         </div>
                     </div>
@@ -185,7 +184,7 @@ export default function PatientPage() {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                             patient.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                            patient.status === 'active' ? 'bg-green-100 text-green-800' :
+                                            patient.status === 'dignosis' ? 'bg-green-100 text-green-800' :
                                             'bg-gray-100 text-gray-800'
                                         }`}>
                                             {patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
