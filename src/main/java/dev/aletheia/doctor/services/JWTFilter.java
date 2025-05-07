@@ -45,7 +45,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             Doctor doctor = authService.find(id);
 
-            if (doctor.isConfirmed() && jwtService.isTokenValid(token)) {
+            if (jwtService.isTokenValid(token)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(doctor, null, doctor.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

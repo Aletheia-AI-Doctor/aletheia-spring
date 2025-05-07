@@ -4,14 +4,11 @@ import org.springframework.security.access.method.P;
 
 public enum PatientStatus {
     PENDING,
-    ACTIVE,
-    DISCHARGED;
+    DIAGNOSED;
     public static PatientStatus fromString(String value){
-        switch (value.toUpperCase()) {
-            case "ACTIVE":
-            return ACTIVE;    
-            case "DISCHARGED":
-                return DISCHARGED;
+        switch (value.toUpperCase()) {  
+            case "DIAGNOSED":
+                return DIAGNOSED;
             default:
                 return PENDING;
         }

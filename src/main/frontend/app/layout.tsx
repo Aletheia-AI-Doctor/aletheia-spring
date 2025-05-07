@@ -15,6 +15,7 @@ import {
     Cog6ToothIcon, DocumentMagnifyingGlassIcon,
     HomeIcon,
     XMarkIcon,
+    UserIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import {Navigate, Outlet} from "react-router";
@@ -40,7 +41,8 @@ export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     const [navigation, setNavigation] = useState([
-        { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
+        { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
+        {name: 'Profile', href: '/profile', icon: UserIcon, current: false},
         { name: 'Diagnose', href: '/diagnose', icon: DocumentMagnifyingGlassIcon, current: false },
         { name: 'Patients', href: '/patients', icon: DocumentMagnifyingGlassIcon, current: false },
     ]);

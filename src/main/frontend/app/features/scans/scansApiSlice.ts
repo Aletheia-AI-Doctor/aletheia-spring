@@ -24,6 +24,7 @@ export const scansApiSlice = createApi({
     reducerPath: "scansApi",
     tagTypes: ["Scans", "Models"],
     endpoints: build => ({
+
         getModels: build.query<Model[], void>({
             query: () => "api/models",
             providesTags: ['Models'],

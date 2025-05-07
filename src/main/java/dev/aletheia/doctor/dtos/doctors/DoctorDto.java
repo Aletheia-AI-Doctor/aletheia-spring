@@ -10,14 +10,15 @@ public class DoctorDto {
     private Long id;
     private String name;
     private String username;
+    private String email;
     private DoctorSpeciality speciality;
     private String bio;
 
-    private String getSpeciality() {
+  /*  public String getSpeciality() {
         return speciality.toString();
     }
 
-    private void setSpeciality(String speciality) {
-        this.speciality = DoctorSpeciality.valueOf(speciality);
-    }
+    public void setSpeciality(DoctorSpeciality speciality) {
+        this.speciality = speciality;
+    }*/
 }
