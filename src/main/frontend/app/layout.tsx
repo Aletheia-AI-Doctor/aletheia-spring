@@ -44,6 +44,7 @@ export default function Layout() {
         { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
         {name: 'Profile', href: '/profile', icon: UserIcon, current: false},
         { name: 'Diagnose', href: '/diagnose', icon: DocumentMagnifyingGlassIcon, current: false },
+        { name: 'Patients', href: '/patients', icon: DocumentMagnifyingGlassIcon, current: false },
     ]);
 
     const doctor = useAppSelector((state) => state.auth.doctor);

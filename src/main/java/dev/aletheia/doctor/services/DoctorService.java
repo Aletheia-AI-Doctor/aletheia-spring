@@ -50,5 +50,4 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     public Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId) {
         return doctorRepository.countDoctorPatients(doctorId);
     }
-
 }

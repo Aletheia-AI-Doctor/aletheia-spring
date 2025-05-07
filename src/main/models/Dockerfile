@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS base 
 
 WORKDIR /app
 
@@ -7,9 +7,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy model code and download script
 COPY . .
-
 # Create weights folder and download weights
 RUN python download_models.py
+
 
 EXPOSE 4000/tcp
 
