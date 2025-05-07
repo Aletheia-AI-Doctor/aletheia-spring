@@ -30,7 +30,7 @@ public class DoctorController {
 	@GetMapping("/currentUser")
 	public DoctorDto getCurrentDoctor() {
 		Doctor doctor = doctorService.getCurrentDoctor();
-
+		System.out.println(doctor);
 		return doctorService.convertToDto(doctor);
 	}
 

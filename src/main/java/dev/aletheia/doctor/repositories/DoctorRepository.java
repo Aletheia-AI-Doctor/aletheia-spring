@@ -14,8 +14,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     @Query("SELECT " +
             "new dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto(" +
             "COUNT(p), " +
-            "SUM(CASE WHEN p.status = 'pending' THEN 1 ELSE 0 END), " +
-            "SUM(CASE WHEN p.status = 'diagnosed' THEN 1 ELSE 0 END)) " +
+            "SUM(CASE WHEN p.status = 'PENDING' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN p.status = 'DIAGNOSED' THEN 1 ELSE 0 END)) " +
             "FROM patients p WHERE p.doctor.id = ?1")
     Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId);
 }

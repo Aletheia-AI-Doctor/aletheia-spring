@@ -9,6 +9,7 @@ interface Doctor{
     name: string;
     username: string,
     email: string,
+    speciality: string,
     bio: string,
 }
 
