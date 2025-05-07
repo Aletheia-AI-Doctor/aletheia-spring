@@ -4,11 +4,13 @@ import { setupListeners } from "@reduxjs/toolkit/query"
 import {scansApiSlice} from "~/features/scans/scansApiSlice";
 import {authenticationApiSlice, authSlice} from "~/features/authentication/authenticationApiSlice";
 import { doctorApiSlice } from "~/features/doctor/doctorApiSlice";
+import {doctorDashboardApiSlice} from "~/features/doctor/doctorDashboardApiSlice";
 const rootReducer = combineSlices(
     scansApiSlice,
     authenticationApiSlice,
     authSlice,
     doctorApiSlice,
+    doctorDashboardApiSlice,
 )
 export type RootState = ReturnType<typeof rootReducer>
 
@@ -22,7 +24,8 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
             })
                 .concat(scansApiSlice.middleware)
                 .concat(authenticationApiSlice.middleware)
-                .concat(doctorApiSlice.middleware);
+                .concat(doctorApiSlice.middleware)
+                .concat(doctorDashboardApiSlice.middleware);
         },
         preloadedState
     })

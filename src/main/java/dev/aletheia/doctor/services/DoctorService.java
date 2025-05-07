@@ -1,10 +1,10 @@
 package dev.aletheia.doctor.services;
 
 import dev.aletheia.doctor.dtos.doctors.DoctorDto;
+import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.repositories.DoctorRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -45,6 +45,10 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         Doctor doctor = (Doctor) auth.getPrincipal();
 
         return findOrFail(doctor.getId());
+    }
+
+    public Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId) {
+        return doctorRepository.countDoctorPatients(doctorId);
     }
 
 }
