@@ -68,4 +68,18 @@ public class Doctor extends BaseModel {
     public boolean isConfirmed() {
         return this.confirmedAt != null;
     }
+
+    @Override
+    public String toString() {
+        return "Doctor{" +
+                "id='" + getId() + '\'' +
+                " name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", speciality=" + speciality +
+                ", bio='" + bio + '\'' +
+                ", confirmedAt=" + confirmedAt +
+                '}';
+    }
 }

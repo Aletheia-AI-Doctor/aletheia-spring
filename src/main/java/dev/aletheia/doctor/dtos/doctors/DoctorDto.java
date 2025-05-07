@@ -10,6 +10,7 @@ public class DoctorDto {
     private Long id;
     private String name;
     private String username;
+    private String email;
     private DoctorSpeciality speciality;
     private String bio;
 
