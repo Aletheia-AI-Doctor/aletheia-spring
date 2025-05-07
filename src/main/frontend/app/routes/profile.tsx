@@ -75,10 +75,10 @@ export default function DrProfilePage(){
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">Professional Details</h2>
                 <div className="space-y-4">
                     <div className="flex items-center space-x-3">
-                        <FontAwesomeIcon icon={faHeartPulse} className="text-red-400 text-lg" />
                         <p className="text-gray-700">
-                            <span className="font-semibold">Speciality:</span> {"Not specified"}
+                            <span className="font-semibold">Speciality:</span> {doctor.speciality || "Not specified"}
                         </p>
+                        <FontAwesomeIcon icon={faHeartPulse} className="text-red-400 text-lg" />
                     </div>
 
                     <div className="flex items-center">
