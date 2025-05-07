@@ -4,20 +4,12 @@ import java.util.List;
 
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import dev.aletheia.doctor.dtos.patient.PatientDto;
 import dev.aletheia.doctor.dtos.patient.PatientRegistrationDTO;
 import dev.aletheia.doctor.services.PatientService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import dev.aletheia.doctor.models.Patient;
-import org.springframework.web.bind.annotation.GetMapping;
-
-
 
 
 @RestController
@@ -32,7 +24,7 @@ public class PatientController {
 
 
     @GetMapping("/{patientId}")
-    public ResponseEntity<Object> show(Long patientId) {
+    public ResponseEntity<Object> show(@PathVariable Long patientId) {
         return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
     }
     

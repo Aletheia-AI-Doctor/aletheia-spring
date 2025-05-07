@@ -16,7 +16,10 @@ import java.util.Optional;
 @Service
 @Transactional
 public class PatientService extends CRUDService<Patient, PatientDto> {
-   
+
+    @Autowired
+    private DoctorService doctorService;
+
     protected PatientService() {
         super(Patient.class, PatientDto.class);
     }
@@ -33,7 +36,7 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
 
     public Patient createPatient(PatientRegistrationDTO PatientDTO) {
         Patient patient = new Patient();
-        patient.setDoctor(DoctorService.findOrFail());
+        patient.setDoctor(doctorService.getCurrentDoctor());
         patient.setBirthdate(PatientDTO.getBirthdate());
         patient.setSex(Gender.fromString(PatientDTO.getSex()));
         patient.setName(PatientDTO.getName());

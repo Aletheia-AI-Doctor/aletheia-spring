@@ -133,8 +133,7 @@ export default function PatientPage() {
                                 required
                             >
                                 <option value="pending">Pending</option>
-                                <option value="active">Active</option>
-                                <option value="discharged">Discharged</option>
+                                <option value="discharged">Diagnosed</option>
                             </select>
                         </div>
                     </div>
@@ -188,7 +187,7 @@ export default function PatientPage() {
                                             patient.status === 'active' ? 'bg-green-100 text-green-800' :
                                             'bg-gray-100 text-gray-800'
                                         }`}>
-                                            {patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
+                                            {patient.status}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
