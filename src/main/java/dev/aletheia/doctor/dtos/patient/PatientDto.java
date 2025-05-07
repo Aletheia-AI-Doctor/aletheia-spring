@@ -12,7 +12,7 @@ import lombok.Setter;
 public class PatientDto {
     private Long doctor_id;
     private String name;
-    private  Gender sex;
+    private  String sex;
     private LocalDate addmissionDate ;
     private String status;
 }

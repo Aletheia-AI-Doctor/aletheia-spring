@@ -1,5 +1,7 @@
 package dev.aletheia.doctor.controller;
 
+import java.util.List;
+
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import dev.aletheia.doctor.models.Patient;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 
@@ -25,24 +30,21 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @RequestMapping
-    public ResponseEntity<Object> index() {
-        return ResponseEntity.ok(patientService.find(1L));
-    }
-    
-    @RequestMapping("/{patientId}")
+
+    @GetMapping("/{patientId}")
     public ResponseEntity<Object> show(Long patientId) {
         return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
     }
     
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<Object> create(@RequestBody PatientRegistrationDTO patientDTO) {
         return ResponseEntity.ok(
                 patientService.createPatient(patientDTO)
         );
     }
     
-    @RequestMapping
+    @GetMapping
+
     public ResponseEntity<Object> getAllPatient(){
         return ResponseEntity.ok(patientService.getAll());
     }

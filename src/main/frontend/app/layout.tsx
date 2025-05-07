@@ -42,6 +42,7 @@ export default function Layout() {
     const [navigation, setNavigation] = useState([
         { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
         { name: 'Diagnose', href: '/diagnose', icon: DocumentMagnifyingGlassIcon, current: false },
+        { name: 'Patients', href: '/patients', icon: DocumentMagnifyingGlassIcon, current: false },
     ]);
 
     const doctor = useAppSelector((state) => state.auth.doctor);
