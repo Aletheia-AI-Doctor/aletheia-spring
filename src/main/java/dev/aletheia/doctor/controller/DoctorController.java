@@ -2,6 +2,7 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
+import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DoctorService;
 import jakarta.servlet.http.HttpSession;
 import org.hibernate.annotations.Cache;
@@ -23,18 +24,18 @@ public class DoctorController {
 		return ResponseEntity.ok(doctorService.find(1L));
 	}
 
-	@GetMapping("/{doctorId}")
-	public ResponseEntity<Object> show(@PathVariable Long doctorId, HttpSession session) {
+	@GetMapping("/currentUser")
+	public DoctorDto getCurrentDoctor() {
+		Doctor doctor = doctorService.getCurrentDoctor();
+
+		return doctorService.convertToDto(doctor);
+	}
+
+	@GetMapping("/{doctorId}/show")
+	public ResponseEntity<Object> show(@PathVariable Long doctorId) {
 		DoctorDto doctor = doctorService.convertToDto(doctorService.findOrFail(doctorId));
-		session.setAttribute("currentDoctor", doctor);
 		return ResponseEntity.ok(doctor);
 	}
-	@GetMapping("/currentUser")
-	public DoctorDto getCurrentDoctor(HttpSession session) {
-		return (DoctorDto) session.getAttribute("currentDoctor");
-	}
-
-
 
 	@PostMapping
 	public ResponseEntity<Object> create(@RequestBody DoctorRegistrationDTO doctorDTO) {
