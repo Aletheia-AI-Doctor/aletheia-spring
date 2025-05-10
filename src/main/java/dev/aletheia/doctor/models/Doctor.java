@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +20,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity(name = "doctors")
+@DynamicUpdate
 public class Doctor extends BaseModel {
 
     @Column(name = "name", nullable = false)
@@ -25,12 +28,12 @@ public class Doctor extends BaseModel {
     private String name;
 
     @Column(name = "username", nullable = false, unique = true)
-    @Unique(table = "doctors", value = "username", message = "Username must be unique")
+    // @Unique(table = "doctors", value = "username", message = "Username must be unique")
     @NotBlank(message = "Username is mandatory")
     private String username;
 
     @Column(name = "email", nullable = false, unique = true)
-    @Unique(table = "doctors", value = "email", message = "Email must be unique")
+    // @Unique(table = "doctors", value = "email", message = "Email must be unique")
     @Email(message = "Email should be valid")
     private String email;
 

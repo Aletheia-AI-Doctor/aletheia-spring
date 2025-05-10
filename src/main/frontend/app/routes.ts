@@ -5,7 +5,8 @@ export default [
         index("routes/home.tsx"),
         route("/diagnose/:model?", "routes/diagnose.tsx"),
         route("/patients", "routes/patient/showPatient.tsx"),
-        route("/profile", "routes/profile.tsx"),
+        route("/profile", "routes/profile/profile.tsx"),
+        route("/profile/edit", "routes/profile/edit.tsx"),
         route("/dashboard","routes/dashboard.tsx")
     ]),
 
@@ -15,3 +16,4 @@ export default [
     
 
 ] satisfies RouteConfig;
+
