@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { ROOT_URL } from "~/base/consts";
-import { defaultHeaders, defaultHeadersFileUpload } from "~/base/helpers";
+import { defaultHeaders } from "~/base/helpers";
 
 interface Patient {
-    id: number;
     name: string;
     sex: string;
-    admissionDate: string;
+    Birthday: string;
     status: string;
 }
 
@@ -19,14 +18,14 @@ export const patientsApiSlice = createApi({
     tagTypes: ["Patients"],
     endpoints: (build) => ({
         getPatients: build.query<Patient[], void>({
-            query: () => "api/patient",
+            query: () => "api/patients",
             providesTags: ['Patients'],
         }),
         addPatient: build.mutation<Patient, Partial<Patient>>({
             query: (newPatient) => ({
-                url: "api/patient/add",
-                method: "POST",
-                body: newPatient,
+                url: "api/patients/add",
+                method: "PUT",
+            body: newPatient,
             }),
             invalidatesTags: ['Patients'],
         }),
@@ -34,8 +33,3 @@ export const patientsApiSlice = createApi({
 });
 
 export const { useGetPatientsQuery, useAddPatientMutation } = patientsApiSlice;
-
-function defaultHeader(headers: any) {
-    throw new Error("Function not implemented.");
-}
-

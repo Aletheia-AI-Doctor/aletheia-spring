@@ -36,12 +36,12 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
 
     public Patient createPatient(PatientRegistrationDTO PatientDTO) {
         Patient patient = new Patient();
-        patient.setDoctor(doctorService.getCurrentDoctor());
         patient.setBirthdate(PatientDTO.getBirthdate());
         patient.setSex(Gender.fromString(PatientDTO.getSex()));
         patient.setName(PatientDTO.getName());
         patient.setAddmissionDate(LocalDate.now());
         patient.setStatus(PatientStatus.fromString(PatientDTO.getStatus()));
+        System.out.println("Patient DTO in create patient: " + PatientDTO);
         return save(patient);
     }
 }

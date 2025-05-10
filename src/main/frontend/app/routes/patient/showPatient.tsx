@@ -184,7 +184,7 @@ export default function PatientPage() {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                             patient.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                            patient.status === 'active' ? 'bg-green-100 text-green-800' :
+                                            patient.status === 'discharged' ? 'bg-green-100 text-green-800' :
                                             'bg-gray-100 text-gray-800'
                                         }`}>
                                             {patient.status}
@@ -192,7 +192,7 @@ export default function PatientPage() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <Link 
-                                            to={`/patients/${patient.id}`} 
+                                            to={`/patient/${patient.id}`} 
                                             className="text-blue-600 hover:text-blue-900 mr-4"
                                         >
                                             View

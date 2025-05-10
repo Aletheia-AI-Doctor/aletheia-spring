@@ -13,7 +13,7 @@ import dev.aletheia.doctor.models.Patient;
 
 
 @RestController
-@RequestMapping("api/patient")
+@RequestMapping("api/patients")
 
 public class PatientController {
     private final PatientService patientService;
@@ -23,14 +23,16 @@ public class PatientController {
     }
 
 
-    @GetMapping("/{patientId}")
-    public ResponseEntity<Object> show(@PathVariable Long patientId) {
-        return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
-    }
+    // @GetMapping("/{patientId}")
+    // public ResponseEntity<Object> show(@PathVariable Long patientId) {
+    //     return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
+    // }
     
-    @PostMapping("/add")
+    @PutMapping("/add")
     public ResponseEntity<Object> create(@RequestBody PatientRegistrationDTO patientDTO) {
+        System.out.println("Patient DTO: " + patientDTO);
         return ResponseEntity.ok(
+
                 patientService.createPatient(patientDTO)
         );
     }
