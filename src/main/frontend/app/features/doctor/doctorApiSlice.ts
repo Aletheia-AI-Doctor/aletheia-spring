@@ -1,36 +1,68 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import {ROOT_URL} from "~/base/consts";
-import {defaultHeaders} from "~/base/helpers";
+// features/doctor/doctorApiSlice.ts
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { ROOT_URL } from "~/base/consts";
+import { defaultHeaders } from "~/base/helpers";
 import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 
-
-interface Doctor{
+interface Doctor {
     id: number;
     name: string;
-    username: string,
-    email: string,
-    speciality: DoctorSpeciality,
-    bio: string,
+    username: string;
+    email: string;
+    speciality: DoctorSpeciality;
+    bio: string;
 }
 
-export type { Doctor };
+interface DoctorUpdate {
+    name: string;
+    email: string;
+    password?: string;
+    
+}
 
-// Define a service using a base URL and expected endpoints
+interface ActivityLog {
+    id: number;
+    action: string;
+    description: string;
+    createdAt: string;
+}
+
+
 export const doctorApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
-        prepareHeaders: (headers, {}) => defaultHeaders(headers),
+        prepareHeaders: (headers) => defaultHeaders(headers),
     }),
     reducerPath: "doctorApi",
     tagTypes: ["Doctor"],
-    endpoints: build => ({
+    endpoints: (build) => ({
         getDoctorAttributes: build.query<Doctor, void>({
             query: () => "api/doctors/currentUser",
             providesTags: ['Doctor']
         }),
+        
+    updateDoctorProfile: build.mutation<Doctor, {name:string,email:string,password:string}>({
+            query: (updates) => ({
+            url: "api/doctors/update",
+            method: "PUT",
+            body: updates
+        }),
+            invalidatesTags: ['Doctor']
     }),
-})
+    
+    getDoctorActivityLog: build.query<ActivityLog[], void>({
+        query: () => "api/doctors/activity-log"
+    }),
+    
+    }),
+
+    
+});
 
 
+export const { 
+    useGetDoctorAttributesQuery,
+    useUpdateDoctorProfileMutation,
+    useGetDoctorActivityLogQuery
 
-export const {useGetDoctorAttributesQuery} = doctorApiSlice
+} = doctorApiSlice;

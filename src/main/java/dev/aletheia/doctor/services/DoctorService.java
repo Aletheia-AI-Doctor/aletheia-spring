@@ -3,15 +3,21 @@ package dev.aletheia.doctor.services;
 import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
+import dev.aletheia.doctor.models.ActivityLog;
 import dev.aletheia.doctor.models.Doctor;
+import dev.aletheia.doctor.repositories.ActivityLogRepository;
 import dev.aletheia.doctor.repositories.DoctorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
+import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
 import java.util.Optional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.util.List;
+
 
 @Service
 @Transactional
@@ -50,4 +56,23 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     public Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId) {
         return doctorRepository.countDoctorPatients(doctorId);
     }
+
+    
+
+    @Autowired
+    private ActivityLogRepository activityLogRepository;
+
+    public List<ActivityLog> getActivityLogs(Long doctorId) {
+        return activityLogRepository.findByDoctorIdOrderByCreatedAtDesc(doctorId);
+    }
+
+    public void logActivity(Doctor doctor, String action, String description) {
+        ActivityLog log = new ActivityLog();
+        log.setDoctor(doctor);
+        log.setAction(action);
+        log.setDescription(description);
+    activityLogRepository.save(log);
+}
+
+ 
 }

@@ -4,7 +4,10 @@ import { faHeartPulse, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import React from "react";
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/profile";
+
+
 import Loading from "~/components/Loading";
+import EditProfile from "./edit";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -46,8 +49,6 @@ export default function DrProfilePage(){
             </div>
         );
     }
-
-
 
     return (
         <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
@@ -94,7 +95,10 @@ export default function DrProfilePage(){
                 </div>
             </div>
 
+            
+
             <div className="flex space-x-3">
+                
                 <button
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center"
                     onClick={() => navigate('/profile/edit')}
