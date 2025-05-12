@@ -20,11 +20,14 @@ services:
       - app-network
     environment:
       - SPRING_DEVTOOLS_RESTART_ENABLED=true
+      - JAVA_OPTS=-Dspring.devtools.restart.enabled=true -Dspring.devtools.livereload.enabled=true
+      - SPRING_PROFILES_ACTIVE=dev
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./uploads:/uploads
       - ./src:/app/src
+      - ~/.m2:/root/.m2
 
   frontend:
     develop:

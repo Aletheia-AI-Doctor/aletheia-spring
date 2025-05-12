@@ -42,6 +42,10 @@ public class ModelService extends CRUDService<Model, ModelDto> {
             return diagnosisService.convertToDto(diagnosisService.getByName(response.getBody()));
         }
 
-        return diagnosisService.convertToDto(new Diagnosis("No Result"));
+        DiagnosisDto diagnosisDto = diagnosisService.convertToDto(new Diagnosis("No Result"));
+
+        diagnosisDto.setImagePath(imagePath);
+
+        return diagnosisDto;
     }
 }

@@ -24,6 +24,8 @@ public class FileService {
             File uploadDir = new File(UPLOAD_DIR);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
+
+
             }
 
             // Generate a unique file name
