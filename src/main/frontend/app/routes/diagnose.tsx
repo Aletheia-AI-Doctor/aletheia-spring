@@ -10,6 +10,7 @@ import { useUploadScanMutation, useGetModelsQuery } from "~/features/scans/scans
 import type { Route } from "./+types/diagnose";
 import {Link, useParams} from "react-router";
 import Loading from "~/components/Loading";
+import Button from "~/components/button";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -52,7 +53,6 @@ export default function DiagnosisPage() {
             }).unwrap();
             setDiagnosisResult(result.name);
         } catch (error) {
-            console.error("Diagnosis failed:", error);
             setDiagnosisResult("Diagnosis failed. Please try again.");
         } finally {
             setIsDiagnosing(false);
@@ -102,24 +102,26 @@ export default function DiagnosisPage() {
                                 allowMultiple={false}
                                 acceptedFileTypes={['image/*']}
                                 onupdatefiles={handleFileUpload}
+                                credits={false}
                                 labelIdle='Drag & Drop your scan or <span class="filepond--label-action">Browse</span>'
                             />
                         </div>
 
                         {/* Diagnosis button and results */}
                         <div className="mt-6">
-                            <button
-                                onClick={handleDiagnose}
-                                disabled={!file || isDiagnosing}
-                                className="px-6 py-3 rounded-md font-medium bg-blue-600 hover:bg-blue-700 text-white disabled:text-gray-400 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                            >
-                                {isDiagnosing ? (
-                                    <div className="flex space-x-2 items-center">
-                                        <Loading size="size-6" color="text-gray-800"/>
-                                        <span className="text-gray-800">Running Diagnosis</span>
-                                    </div>
-                                ) : 'Run Diagnosis'}
-                            </button>
+                            <div className="flex items-center">
+                                <Button
+                                    onClick={handleDiagnose}
+                                    disabled={!file || isDiagnosing}
+                                >
+                                    {isDiagnosing ? (
+                                        <div className="flex space-x-2 items-center">
+                                            <Loading size="size-6" color="text-gray-800"/>
+                                            <span className="text-gray-800">Running Diagnosis</span>
+                                        </div>
+                                    ) : 'Run Diagnosis'}
+                                </Button>
+                            </div>
 
                             {diagnosisResult && (
                                 <div className="mt-6 p-4 bg-blue-50 rounded-md">

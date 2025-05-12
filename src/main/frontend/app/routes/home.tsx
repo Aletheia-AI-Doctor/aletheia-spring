@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/home";
 import{useGetDoctorPatientsQuery} from "~/features/doctor/doctorDashboardApiSlice";
-import { useGetDoctorAttributesQuery } from "~/features/doctor/doctorApiSlice";
+import { useGetDoctorAttributesQuery, useGetDoctorActivityLogQuery } from "~/features/doctor/doctorApiSlice";
 import Loading from "~/components/Loading";
 
 
@@ -13,37 +13,26 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-const activityLog = [
-    "Diagnosed patient John Doe",
-    "Added scan for patient Jane Smith",
-    "Reviewed MRI result for patient Tom Hardy"
-];
-
 export default function Home(){
     const navigate = useNavigate();
 
     const {
         data: doctor,
         isLoading: isLoadingDoctor,
-        isError: isErrorDoctor,
     } = useGetDoctorAttributesQuery();
 
     const{
         data: patientsData,
         isLoading: isLoadingPatients,
-        isError: isErrorPatients,
-        error
     } = useGetDoctorPatientsQuery();
 
-    if (isLoadingDoctor || isLoadingPatients) {
-        return <Loading />;
-    }
+    const{
+        data: activityLog,
+        isLoading: isActivityLoading,
+    } = useGetDoctorActivityLogQuery();
 
-    if (isErrorPatients || isErrorDoctor) {
-        return (
-            <div className="max-w-2xl mx-auto p-6 text-red-500">
-                Error loading profile. Please try again later.
-            </div>);
+    if (isLoadingDoctor || isLoadingPatients || isActivityLoading || !activityLog || !doctor || !patientsData) {
+        return <Loading />;
     }
 
     return(
@@ -74,7 +63,7 @@ export default function Home(){
                     {activityLog.length > 0 ? (
                         <ul className="list-disc pl-5 text-gray-700">
                             {activityLog.map((activity, index) => (
-                                <li key={index}>{activity}</li>
+                                <li key={index}>{activity.action}</li>
                             ))}
                         </ul>
                     ) : (
