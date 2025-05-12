@@ -18,7 +18,7 @@ import {
     UserIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import {Navigate, Outlet} from "react-router";
+import {Navigate, Outlet, useNavigate} from "react-router";
 import AppLogoIcon from "~/components/app-logo-icon";
 import {getFromLocalStorage} from "~/base/helpers";
 import {useAppDispatch, useAppSelector} from "~/base/hooks";
@@ -33,15 +33,23 @@ function classNames(...classes : string[]) {
 }
 
 function PrivateRoute () {
-    const user = getFromLocalStorage('token');
-    return user ? <Outlet /> : <Navigate to="/login" replace />;
+    const navigate = useNavigate();
+    const token = useAppSelector((state) => state.auth.token);
+
+    useEffect(() => {
+        if (! token) {
+            navigate("/login", { replace: true });
+        }
+    }, [token, navigate]);
+
+    return token ? <Outlet/> : null;
 }
 
 export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     const [navigation, setNavigation] = useState([
-        { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
+        { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
         {name: 'Profile', href: '/profile', icon: UserIcon, current: false},
         { name: 'Diagnose', href: '/diagnose', icon: DocumentMagnifyingGlassIcon, current: false },
         { name: 'Patients', href: '/patients', icon: DocumentMagnifyingGlassIcon, current: false },

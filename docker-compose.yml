@@ -1,6 +1,13 @@
 services:
   app:
-    build: .
+    develop:
+      watch:
+        - action: rebuild
+          path: ./pom.xml
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
     container_name: ai_doctor_container
     ports:
       - "8080:9000"
@@ -11,12 +18,19 @@ services:
       - .env
     networks:
       - app-network
+    environment:
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./uploads:/uploadsf
+      - ./uploads:/uploads
+      - ./src:/app/src
 
   frontend:
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src/main/frontend/package.json
     build:
       context: ./src/main/frontend
       dockerfile: Dockerfile
