@@ -1,15 +1,20 @@
-import {Navigate, Outlet} from "react-router";
-import {getFromLocalStorage} from "~/base/helpers";
-
-function AnonymousRoute () {
-    const user = getFromLocalStorage('token');
-    return user ? <Navigate to="/" replace /> : <Outlet />;
-}
+import {Outlet, useNavigate} from "react-router";
+import {useEffect} from "react";
+import {useAppSelector} from "~/base/hooks";
 
 export default function LoginLayout() {
+    const navigate = useNavigate();
+    const token = useAppSelector((state) => state.auth.token);
+
+    useEffect(() => {
+        if (token) {
+            navigate("/", { replace: true });
+        }
+    }, [token, navigate]);
+
     return (
         <div>
-            <AnonymousRoute />
+            {!token ? <Outlet/> : null};
         </div>
     );
 }
