@@ -1,22 +1,27 @@
 {
-  "name": "Full Stack AI Doctor",
-  "dockerComposeFile": "../docker-compose.yml",
-  "service": "app",  // Main workspace (can switch to "python_models" too)
-  "workspaceFolder": "/app",
-  "settings": {
-    "python.pythonPath": "/usr/local/bin/python",
-    "terminal.integrated.defaultProfile.linux": "bash"
-  },
-  "extensions": [
-    "ms-python.python",
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint",
-    "ms-azuretools.vscode-docker"
-  ],
-  "remoteUser": "root",
-  "mounts": [
-    "source=${localWorkspaceFolder}/src/main/frontend,target=/frontend,type=bind",
-    "source=${localWorkspaceFolder}/src/main/models,target=/models,type=bind"
-  ],
-  "postCreateCommand": "pip install -r requirements.txt || true"
+    "name": "React and Python Dev Container",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/app",
+    "settings": {
+        "python.pythonPath": "/usr/local/bin/python",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true
+    },
+    "extensions": [
+        "ms-python.python",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "ms-azuretools.vscode-docker",
+        "dsznajder.es7-react-js-snippets",
+        "formulahendry.auto-close-tag",
+        "formulahendry.auto-rename-tag"
+    ],
+    "remoteUser": "root",
+    "mounts": [
+        "source=${localWorkspaceFolder}/src/main/frontend,target=/frontend,type=bind",
+        "source=${localWorkspaceFolder}/src/main/models,target=/models,type=bind"
+    ],
+    "postCreateCommand": "pip install -r requirements.txt || true && cd /frontend && npm install"
 }
+
