@@ -5,9 +5,10 @@ export default [
         index("routes/home.tsx"),
         route("/diagnose/:model?", "routes/diagnose.tsx"),
         route("/patients", "routes/patient/showPatient.tsx"),
-        route("/patients/show", "routes/patient/patientview.tsx"),
+        route("/patients/:patientId/show", "routes/patient/patientview.tsx"),
         route("/profile", "routes/profile/profile.tsx"),
         route("/profile/edit", "routes/profile/edit.tsx"),
+        route("/dashboard","routes/dashboard.tsx")
     ]),
 
     layout("./routes/auth/layout.tsx", [

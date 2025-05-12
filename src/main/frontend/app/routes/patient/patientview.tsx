@@ -12,8 +12,8 @@ export function meta() {
 }
 export default function ShowPatientPage() {
   const { id } = useParams();
-  const { data: patients, isLoading,isError,error } = useGetPatientByIdQuery();
-  const [patient, setPatient] = useState<any>(null);
+  const { data: patients, isLoading,isError,error } = useGetPatientByIdQuery(id);
+  const [patient] = useState();
 
   // if (isLoading || !patient) return <Loading message="Loading patient data..." />;
 if (isError) {
