@@ -123,7 +123,6 @@ export default function DiagnosisPage() {
                                 </Button>
                             </div>
 
-
                             {diagnosisResult && (
                                 <div className="mt-6 p-4 bg-blue-50 rounded-md">
                                     <h3 className="font-medium text-blue-800 mb-2">Diagnosis Result</h3>

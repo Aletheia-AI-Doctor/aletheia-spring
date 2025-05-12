@@ -18,7 +18,7 @@ import {
     UserIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import {Navigate, Outlet, useNavigate} from "react-router";
+import {Link, Navigate, Outlet, useNavigate} from "react-router";
 import AppLogoIcon from "~/components/app-logo-icon";
 import {getFromLocalStorage} from "~/base/helpers";
 import {useAppDispatch, useAppSelector} from "~/base/hooks";
@@ -102,8 +102,9 @@ export default function Layout() {
                                             <ul role="list" className="-mx-2 space-y-1">
                                                 {navigation.map((item) => (
                                                     <li key={item.name}>
-                                                        <a
-                                                            href={item.href}
+                                                        <Link
+                                                            to={item.href}
+
                                                             className={classNames(
                                                                 item.current
                                                                     ? 'bg-gray-800 text-white'
@@ -113,7 +114,7 @@ export default function Layout() {
                                                         >
                                                             <item.icon aria-hidden="true" className="size-6 shrink-0" />
                                                             {item.name}
-                                                        </a>
+                                                        </Link>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -232,12 +233,12 @@ export default function Layout() {
                                     >
                                         {userNavigation.map((item) => (
                                             <MenuItem key={item.name}>
-                                                <a
-                                                    href={item.href}
+                                                <Link
+                                                    to={item.href}
                                                     className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
                                                 >
                                                     {item.name}
-                                                </a>
+                                                </Link>
                                             </MenuItem>
                                         ))}
                                         <MenuItem>
