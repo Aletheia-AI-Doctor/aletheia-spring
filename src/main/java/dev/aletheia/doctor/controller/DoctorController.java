@@ -15,11 +15,6 @@ import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
 
 import java.util.Optional;
 
-import javax.print.Doc;
-
-
-
-
 @RestController
 @RequestMapping("/api/doctors")
 public class DoctorController {
