@@ -51,6 +51,10 @@ public class Doctor extends BaseModel {
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "hospital_id")
+    private Hospital hospital;
+
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Patient> patients;
 
@@ -83,6 +87,7 @@ public class Doctor extends BaseModel {
                 ", speciality=" + speciality +
                 ", bio='" + bio + '\'' +
                 ", confirmedAt=" + confirmedAt +
+                ", hospital=" + hospital +
                 '}';
     }
 }
