@@ -19,6 +19,8 @@ public class Patient extends BaseModel {
     @NotBlank(message = "Name is required")
     private String name;
 
+    
+
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;

@@ -4,6 +4,7 @@ import { ROOT_URL } from "~/base/consts";
 import { defaultHeaders } from "~/base/helpers";
 import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 
+
 interface Doctor {
     id: number;
     name: string;
