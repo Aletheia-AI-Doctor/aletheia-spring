@@ -4,6 +4,7 @@ import {Link} from 'react-router';
 import PatientForm from "~/components/patient-form";
 import Loading from "~/components/Loading";
 import Modal from "~/components/modal";
+import Button from "~/components/button";
 
 export function meta() {
     return [
@@ -29,12 +30,12 @@ export default function PatientPage() {
             <h1 className="text-2xl font-bold mb-6">Patients</h1>
 
             <div className="flex justify-between items-center mb-6">
-                <button
+                <Button
+                    width="w-auto"
                     onClick={() => setShowAddForm(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
                 >
-                    Add new patient
-                </button>
+                    Add patient
+                </Button>
             </div>
 
             <Modal open={showAddForm} onClose={() => setShowAddForm(false)}>

@@ -37,8 +37,8 @@ public class PatientController {
     
     @GetMapping
 
-    public ResponseEntity<Object> getAllPatient(){
-        return ResponseEntity.ok(patientService.getAll());
+    public ResponseEntity<Object> getAllPatient() {
+        return ResponseEntity.ok(patientService.getAllDTO());
     }
     
 

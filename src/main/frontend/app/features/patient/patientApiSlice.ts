@@ -10,6 +10,8 @@ interface Patient {
     addmissionDate: Date;
 }
 
+export type { Patient };
+
 export const patientsApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,

@@ -1,6 +1,7 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {ROOT_URL} from "~/base/consts";
 import {defaultHeadersFileUpload} from "~/base/helpers";
+import type {Patient} from "~/features/patient/patientApiSlice";
 
 interface Diagnosis {
     id: number;
@@ -20,6 +21,24 @@ interface SaveScanApiRequest {
     doctorDiagnosis: string;
     imagePath: string;
     model: string;
+}
+
+interface Diagnosis {
+    id: number;
+    name: string;
+}
+
+interface Scan {
+    id: number;
+    patient: Patient;
+    modelDiagnosis: Diagnosis;
+    doctorDiagnosis: Diagnosis;
+    imageUrl: string;
+    model: Model;
+}
+
+interface GetScansApiResponse {
+    scans: Scan[]
 }
 
 export type { Diagnosis, Model };
@@ -64,9 +83,13 @@ export const scansApiSlice = createApi({
                 body: req,
             }),
         }),
+
+        getScans: build.query<GetScansApiResponse, void>({
+            query: () => `api/scans`,
+        }),
     }),
 })
 
 
 
-export const {useUploadScanMutation, useGetModelsQuery} = scansApiSlice
+export const {useUploadScanMutation, useGetModelsQuery, useSaveScanMutation, useGetScansQuery} = scansApiSlice

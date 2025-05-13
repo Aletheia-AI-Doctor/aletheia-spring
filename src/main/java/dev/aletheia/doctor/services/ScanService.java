@@ -2,13 +2,12 @@ package dev.aletheia.doctor.services;
 
 import dev.aletheia.doctor.dtos.scans.SaveScanDto;
 import dev.aletheia.doctor.dtos.scans.ScanDto;
-import dev.aletheia.doctor.models.Diagnosis;
-import dev.aletheia.doctor.models.Model;
-import dev.aletheia.doctor.models.Patient;
-import dev.aletheia.doctor.models.Scan;
+import dev.aletheia.doctor.models.*;
 import dev.aletheia.doctor.repositories.ScanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ScanService extends CRUDService<Scan, ScanDto> {
@@ -20,6 +19,8 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
     private DiagnosisService diagnosisService;
     @Autowired
     private PatientService patientService;
+    @Autowired
+    private DoctorService doctorService;
 
     protected ScanService() {super(Scan.class, ScanDto.class);}
 
@@ -37,7 +38,13 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
             scan.setPatient(patient);
         }
         scan.setImage(saveScanDto.getImagePath());
+        scan.setDoctor(doctorService.getCurrentDoctor());
 
         return scanRepository.save(scan);
+    }
+
+    public List<ScanDto> getAllForDoctor(Doctor doctor) {
+        List<Scan> scans = scanRepository.findAllByDoctor(doctor);
+        return scans.stream().map(this::convertToDto).toList();
     }
 }

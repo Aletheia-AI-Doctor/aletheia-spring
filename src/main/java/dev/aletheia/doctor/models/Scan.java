@@ -14,6 +14,10 @@ public class Scan extends BaseModel {
     private Patient patient;
 
     @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
+
+    @ManyToOne
     @JoinColumn(name = "model_diagnosis_id")
     private Diagnosis modelDiagnosis;
 

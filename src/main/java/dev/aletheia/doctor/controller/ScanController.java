@@ -1,36 +1,39 @@
 package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.scans.SaveScanDto;
-import dev.aletheia.doctor.models.Diagnosis;
-import dev.aletheia.doctor.models.Model;
-import dev.aletheia.doctor.models.Patient;
-import dev.aletheia.doctor.models.Scan;
-import dev.aletheia.doctor.services.DiagnosisService;
-import dev.aletheia.doctor.services.ModelService;
-import dev.aletheia.doctor.services.PatientService;
-import dev.aletheia.doctor.services.ScanService;
+import dev.aletheia.doctor.dtos.scans.ScanDto;
+import dev.aletheia.doctor.services.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/api/scans")
 @RestController
 public class ScanController {
 
     private final ScanService scanService;
+    private final DoctorService doctorService;
 
-    public ScanController(ScanService scanService) {
+    public ScanController(ScanService scanService, DoctorService doctorService) {
         this.scanService = scanService;
+        this.doctorService = doctorService;
     }
 
     @PostMapping
     public ResponseEntity<Object> save(@RequestBody SaveScanDto saveScanDto) {
-        Scan scan = scanService.create(saveScanDto);
+        scanService.create(saveScanDto);
+
+        return ResponseEntity.ok(Map.of("message", "Scan created"));
+    }
 
 
-        return ResponseEntity.ok("Scan saved");
+    @GetMapping
+    public ResponseEntity<Object> index() {
+        List<ScanDto> scans = scanService.getAllForDoctor(doctorService.getCurrentDoctor());
+
+        return ResponseEntity.ok(Map.of("scans", scans, "message", "Scans fetched"));
     }
 
 }
