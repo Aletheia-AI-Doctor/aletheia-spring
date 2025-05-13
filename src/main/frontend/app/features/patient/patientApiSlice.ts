@@ -3,11 +3,12 @@ import { ROOT_URL } from "~/base/consts";
 import { defaultHeaders } from "~/base/helpers";
 
 interface Patient {
+    id: number;
     name: string;
     sex: string;
     Birthday: string;
     status: string;
-    addmissionDate: Date;
+    admissionDate: Date;
 }
 
 export type { Patient };
