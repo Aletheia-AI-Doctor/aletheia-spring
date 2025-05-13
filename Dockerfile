@@ -24,6 +24,7 @@ ENTRYPOINT ["/wait-for-it.sh", "db:3306", "--", "java", "-jar", "/app/app.jar", 
 
 
 FROM base AS development
-RUN apt-get install -y procps findutils && rm -rf /var/lib/apt/lists/*
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 EXPOSE 9000 5005
-ENTRYPOINT ["./wait-for-it.sh", "db:3306", "--", "mvn", "spring-boot:run", "-Dspring-boot.run.profiles=dev", "-Dspring.devtools.restart.enabled=true", "-Dspring.devtools.livereload.enabled=true"]
+ENTRYPOINT ["./entrypoint.sh"]
