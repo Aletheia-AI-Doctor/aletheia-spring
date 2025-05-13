@@ -111,6 +111,7 @@ export default function DiagnosisPage() {
                         <div className="mt-6">
                             <div className="flex items-center">
                                 <Button
+                                    color="light-blue"
                                     onClick={handleDiagnose}
                                     disabled={!file || isDiagnosing}
                                 >
@@ -124,9 +125,15 @@ export default function DiagnosisPage() {
                             </div>
 
                             {diagnosisResult && (
-                                <div className="mt-6 p-4 bg-blue-50 rounded-md">
-                                    <h3 className="font-medium text-blue-800 mb-2">Diagnosis Result</h3>
-                                    <p className="text-gray-800">{diagnosisResult}</p>
+                                <div>
+                                    <div className="mt-6 p-4 bg-blue-50 rounded-md">
+                                        <h3 className="font-medium text-blue-800 mb-2">Diagnosis Result</h3>
+                                        <p className="text-gray-800">{diagnosisResult}</p>
+                                    </div>
+                                    <div className="mt-6 flex items-center space-x-6 justify-center">
+                                        <Button color="gray">Save as guest</Button>
+                                        <Button>Save to patient</Button>
+                                    </div>
                                 </div>
                             )}
                         </div>

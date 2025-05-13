@@ -7,6 +7,7 @@ interface Patient {
     sex: string;
     Birthday: string;
     status: string;
+    addmissionDate: Date;
 }
 
 export const patientsApiSlice = createApi({

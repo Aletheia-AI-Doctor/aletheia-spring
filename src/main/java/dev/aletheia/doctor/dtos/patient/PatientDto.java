@@ -13,6 +13,6 @@ public class PatientDto {
     private Long doctor_id;
     private String name;
     private  String sex;
-    private LocalDate addmissionDate ;
+    private LocalDate admissionDate;
     private String status;
 }

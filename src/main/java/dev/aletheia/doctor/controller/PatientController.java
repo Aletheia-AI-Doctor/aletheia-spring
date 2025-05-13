@@ -30,9 +30,7 @@ public class PatientController {
     
     @PutMapping("/add")
     public ResponseEntity<Object> create(@RequestBody PatientRegistrationDTO patientDTO) {
-        System.out.println("Patient DTO: " + patientDTO);
         return ResponseEntity.ok(
-
                 patientService.createPatient(patientDTO)
         );
     }

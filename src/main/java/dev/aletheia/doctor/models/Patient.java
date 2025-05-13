@@ -37,6 +37,6 @@ public class Patient extends BaseModel {
     @Enumerated(EnumType.STRING)
     private PatientStatus status;
 
-    @Column(name = "addmission_date")
-    private LocalDate addmissionDate;
+    @Column(name = "admission_date")
+    private LocalDate admissionDate;
 }

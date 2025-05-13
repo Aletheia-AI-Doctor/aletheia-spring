@@ -14,6 +14,14 @@ interface Model {
     slug: string;
 }
 
+interface SaveScanApiRequest {
+    patientId?: number;
+    modelDiagnosis: string;
+    doctorDiagnosis: string;
+    imagePath: string;
+    model: string;
+}
+
 export type { Diagnosis, Model };
 
 // Define a service using a base URL and expected endpoints
@@ -47,6 +55,14 @@ export const scansApiSlice = createApi({
                     formData: true,
                 };
             },
+        }),
+
+        saveScan: build.mutation<void, SaveScanApiRequest>({
+            query: (req) => ({
+                url: `api/scans`,
+                method: "POST",
+                body: req,
+            }),
         }),
     }),
 })
