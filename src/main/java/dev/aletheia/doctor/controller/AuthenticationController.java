@@ -1,6 +1,7 @@
 package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.auth.SignInDto;
+import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
 import dev.aletheia.doctor.exceptions.InvalidCredentialsException;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DoctorService;
@@ -37,6 +38,15 @@ public class AuthenticationController {
                         "token", jwtService.generateToken(doctor),
                         "doctor", doctorService.convertToDto(doctor)
                 )
+        );
+    }
+
+    @PostMapping("/api/register")
+    public ResponseEntity<Object> create(@RequestBody DoctorRegistrationDTO doctorDTO) {
+        System.out.println("Doctor DTO: " + doctorDTO);
+        Doctor doctor = doctorService.createDoctor(doctorDTO);
+        return ResponseEntity.ok(
+                doctorService.convertToDto(doctor)
         );
     }
 }

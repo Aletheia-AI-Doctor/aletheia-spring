@@ -49,12 +49,7 @@ public class DoctorController {
 		return ResponseEntity.ok(allCounts);
 	}
 
-	@PostMapping
-	public ResponseEntity<Object> create(@RequestBody DoctorRegistrationDTO doctorDTO) {
-		return ResponseEntity.ok(
-				doctorService.createDoctor(doctorDTO)
-		);
-	}
+
 
 
 	

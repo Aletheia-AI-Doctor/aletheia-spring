@@ -12,9 +12,10 @@ public class DoctorRegistrationDTO {
     private String email;
     private String password;
     private String speciality;
-    private String bio;
+    private String licenseNumber;
+    private Long hospitalId;
 
-    public DoctorSpeciality getSpeciality() {
+   /* public DoctorSpeciality getSpeciality() {
         return DoctorSpeciality.valueOf(speciality);
-    }
+    }*/
 }

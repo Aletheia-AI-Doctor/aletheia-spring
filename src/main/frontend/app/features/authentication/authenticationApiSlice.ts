@@ -2,6 +2,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {ROOT_URL} from "~/base/consts";
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 import {getFromLocalStorage, removeFromLocalStorage, setToLocalStorage} from "~/base/helpers";
+import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 
 
 const doctorInit = getFromLocalStorage('doctor');
@@ -42,17 +43,36 @@ interface LoginApiResponse {
     doctor?: Doctor;
 }
 
+interface RegisterApiResponse {
+    token: string;
+    doctor: Doctor;
+}
+
 interface Doctor {
     id: number;
     name: string;
     username: string;
     email: string;
     bio: string;
+    specialty: DoctorSpeciality;
+    license: string;
+    HospitalId: number;
 }
 
 interface LoginApiRequest {
     email: string;
     password: string;
+}
+
+interface RegisterApiRequest {
+    name: string;
+    email: string;
+    username: string;
+    password: string;
+    speciality: DoctorSpeciality;
+    licenseNumber: string;
+    hospitalId: number;
+
 }
 
 // Define a service using a base URL and expected endpoints
@@ -78,8 +98,24 @@ export const authenticationApiSlice = createApi({
             },
 
         }),
+        register: build.mutation<Doctor, RegisterApiRequest>({
+            query: (req: RegisterApiRequest) => ({
+                url: "/api/register",
+                method: "POST",
+                body: {
+                    name: req.name,
+                    email: req.email,
+                    username: req.username,
+                    password: req.password,
+                    speciality: req.speciality,
+                    licenseNumber: req.licenseNumber,
+                    hospitalId: req.hospitalId,
+                },
+            }),
+            invalidatesTags: ['Auth'],
+        }),
 
     }),
-})
+});
 
-export const { useLoginMutation} = authenticationApiSlice
+export const { useLoginMutation, useRegisterMutation } = authenticationApiSlice;
