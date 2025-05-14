@@ -3,6 +3,7 @@ package dev.aletheia.doctor.services;
 import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
+import dev.aletheia.doctor.enums.DoctorSpeciality;
 import dev.aletheia.doctor.models.ActivityLog;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.repositories.ActivityLogRepository;
@@ -40,8 +41,9 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         doctor.setUsername(doctorDTO.getUsername());
         doctor.setEmail(doctorDTO.getEmail());
         doctor.setPassword(doctorDTO.getPassword());
-        doctor.setBio(doctorDTO.getBio());
-        doctor.setSpeciality(doctorDTO.getSpeciality());
+        doctor.setSpeciality(DoctorSpeciality.valueOf(doctorDTO.getSpeciality()));
+        doctor.setLicense_number(Integer.valueOf(doctorDTO.getLicense_number()));
+        //doctor.setHospital(doctorDTO.getHospital_id());
 
         return save(doctor);
     }

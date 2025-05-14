@@ -13,12 +13,14 @@ public class DoctorDto {
     private String email;
     private DoctorSpeciality speciality;
     private String bio;
+    private String license_number;
+    private Long hospital_id;
 
-  /*  public String getSpeciality() {
+   public String getSpeciality() {
         return speciality.toString();
     }
 
     public void setSpeciality(DoctorSpeciality speciality) {
         this.speciality = speciality;
-    }*/
+    }
 }

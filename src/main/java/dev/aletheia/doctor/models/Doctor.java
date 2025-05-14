@@ -32,6 +32,11 @@ public class Doctor extends BaseModel {
     @NotBlank(message = "Username is mandatory")
     private String username;
 
+    @Column(name = "license_number", nullable = false, unique = true)
+    // @Unique(table = "doctors", value = "license_number", message = "license_number must be unique")
+    @NotBlank(message = "license_number is mandatory")
+    private Integer license_number;
+
     @Column(name = "email", nullable = false, unique = true)
     // @Unique(table = "doctors", value = "email", message = "Email must be unique")
     @Email(message = "Email should be valid")
@@ -84,6 +89,7 @@ public class Doctor extends BaseModel {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", license_number='" + license_number + '\'' +
                 ", speciality=" + speciality +
                 ", bio='" + bio + '\'' +
                 ", confirmedAt=" + confirmedAt +

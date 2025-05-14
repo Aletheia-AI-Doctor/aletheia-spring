@@ -1,8 +1,8 @@
-import type {Route} from "./+types/login";
+import type {Route} from "./+types/registration";
 import Input from "~/components/input";
 import Button from "~/components/button";
 import {
-    useLoginMutation,
+    useRegisterMutation,
     setDoctor,
     setToken,
 } from "~/features/authentication/authenticationApiSlice";
@@ -12,16 +12,20 @@ import Logo from "~/components/app-logo-icon";
 
 export function meta({}: Route.MetaArgs) {
     return [
-        {title: "Login"},
+        {title: "registration"},
     ];
 }
 
-export default function Login() {
+export default function registration() {
 
-    const [login, {isLoading, isSuccess, isError, error, data}] = useLoginMutation();
+    const [registration, {isLoading, isSuccess, isError, error, data}] = useRegisterMutation();
+    const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-
+    const [passwordConfirmation, setPasswordConfirmation] = React.useState("");
+    const[speciality, setSpeciality] = React.useState("");
+    const[licence, setLicense] = React.useState("");
+    const[Hospital, setHospital] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
     const dispatch = useAppDispatch();
@@ -29,7 +33,7 @@ export default function Login() {
     function submit(e: React.FormEvent) {
         e.preventDefault();
 
-        login({email, password});
+        registration({email, password});
     }
 
     useEffect(() => {
@@ -53,13 +57,21 @@ export default function Login() {
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     <Logo className="mx-auto h-10 w-auto" />
                     <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-                        Sign in to your account
+                        create your account
                     </h2>
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
                     <div className="bg-white px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
                         <form onSubmit={submit} className="space-y-6">
+                            <Input
+                                id="name"
+                                name="name"
+                                required={true}
+                                label="Name"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                            />
                             <Input
                                 id="email"
                                 name="email"
@@ -78,22 +90,44 @@ export default function Login() {
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
                             />
+                            <Input
+                                id="passwordConfirmation"
+                                name="passwordConfirmation"
+                                type="password"
+                                required={true}
+                                label="Password Confirmation"
+                                value={passwordConfirmation}
+                                onChange={e => setPasswordConfirmation(e.target.value)}
+                            />
+                            <Input
+                                id="speciality"
+                                name="speciality"
+                                required={true}
+                                label="Speciality"
+                                value={speciality}
+                                onChange={e => setSpeciality(e.target.value)}
+                            />
+                            <Input
+                                id="licence"
+                                name="licence"
+                                required={true}
+                                label="Licence"
+                                value={licence}
+                                onChange={e => setLicense(e.target.value)}
+                            />
+                            <Input
+                                id="Hospital"
+                                name="Hospital"
+                                required={true}
+                                label="Hospital"
+                                value={Hospital}
+                                onChange={e => setHospital(e.target.value)}
+                            />
 
                             <div>
                                 <Button type="submit" disabled={isLoading}>
                                     {isLoading ? "Loading..." : "Sign In"}
                                 </Button>
-                                <a href="/registration">
-                                    <span className="text-sm text-gray-500 hover:text-gray-700">
-                                        Don't have an account? Register now!
-                                    </span>
-                                </a>
-                                <a href="/hospital_subscription">
-                                    <span className="text-sm text-gray-500 hover:text-gray-700">
-                                        New hospital? subscribe now!
-                                    </span>
-                                </a>
-
                             </div>
 
                             {errorMessage && <div className="text-red-600 text-sm/6">{errorMessage}</div>}
