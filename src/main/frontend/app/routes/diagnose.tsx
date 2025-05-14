@@ -21,6 +21,7 @@ import PatientForm from "~/components/patient-form";
 import type {Patient} from "~/features/patient/patientApiSlice";
 import If from "~/components/if";
 import ScansTable from "~/components/ScansTable";
+import Card from "~/components/Card";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -195,7 +196,9 @@ export default function DiagnosisPage() {
             )}
         </div>
 
-            <ScansTable />
+            <Card>
+                <ScansTable />
+            </Card>
         </>
     );
 }

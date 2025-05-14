@@ -83,6 +83,16 @@ export const scansApiSlice = createApi({
 
         getScans: build.query<Pagination<Scan>, PageRequest>({
             query: (req) => `api/scans` + queryParamsFromRequest(req),
+            providesTags: ['Scans'],
+            transformResponse: (response: Pagination<Scan>, meta, arg) => {
+                return {
+                    ...response,
+                    data: response.data.map(item => ({
+                        ...item,
+                        imageUrl: ROOT_URL + item.imageUrl,
+                    })),
+                };
+            },
         }),
     }),
 })

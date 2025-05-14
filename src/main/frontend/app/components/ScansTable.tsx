@@ -3,7 +3,7 @@ import If from "~/components/if";
 import Loading from "~/components/Loading";
 import React from "react";
 import {Table, Td, Th} from "~/components/Table/table";
-import {useParams, useSearchParams} from "react-router";
+import {useSearchParams} from "react-router";
 
 interface ScansTableProps {
 
@@ -36,9 +36,12 @@ export default function ScansTable({}: ScansTableProps) {
 
                 body={(item: Scan) => (
                     <tr key={item.id}>
-                        <Td first>{item.id}</Td>
+                        <Td first>#{item.id}</Td>
                         <Td>
-                            <img src={item.imageUrl} alt="Scan" style={{ width: "100px", height: "100px" }} />
+                            <img
+                                src={item.imageUrl}
+                                alt="Scan"
+                                style={{ width: "100px", height: "100px" }} />
                         </Td>
                         <Td>{item.model.name}</Td>
                         <Td>{item.modelDiagnosis.name}</Td>
