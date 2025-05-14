@@ -18,6 +18,7 @@ interface SelectProps {
 const defaultProps: SelectProps = {
     id: 'input-' + Math.random().toString(36).substring(7),
     dir: 'auto',
+    options: [],
 }
 
 export default function Select(props: SelectProps) {

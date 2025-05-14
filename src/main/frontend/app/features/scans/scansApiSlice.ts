@@ -2,6 +2,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {ROOT_URL} from "~/base/consts";
 import {defaultHeadersFileUpload} from "~/base/helpers";
 import type {Patient} from "~/features/patient/patientApiSlice";
+import {type PageRequest, type Pagination, queryParamsFromRequest} from "~/types/pagination";
 
 interface Diagnosis {
     id: number;
@@ -37,11 +38,7 @@ interface Scan {
     model: Model;
 }
 
-interface GetScansApiResponse {
-    scans: Scan[]
-}
-
-export type { Diagnosis, Model };
+export type { Diagnosis, Model, Scan };
 
 // Define a service using a base URL and expected endpoints
 export const scansApiSlice = createApi({
@@ -84,8 +81,8 @@ export const scansApiSlice = createApi({
             }),
         }),
 
-        getScans: build.query<GetScansApiResponse, void>({
-            query: () => `api/scans`,
+        getScans: build.query<Pagination<Scan>, PageRequest>({
+            query: (req) => `api/scans` + queryParamsFromRequest(req),
         }),
     }),
 })
