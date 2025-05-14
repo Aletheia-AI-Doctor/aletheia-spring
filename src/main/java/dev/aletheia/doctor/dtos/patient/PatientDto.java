@@ -13,6 +13,7 @@ import lombok.Setter;
 @Getter
 public class PatientDto {
     private DoctorDto doctor;
+    private Long id;
     private String name;
     private String sex;
     private LocalDate admissionDate;

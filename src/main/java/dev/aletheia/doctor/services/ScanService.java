@@ -5,6 +5,8 @@ import dev.aletheia.doctor.dtos.scans.ScanDto;
 import dev.aletheia.doctor.models.*;
 import dev.aletheia.doctor.repositories.ScanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,8 +45,8 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
         return scanRepository.save(scan);
     }
 
-    public List<ScanDto> getAllForDoctor(Doctor doctor) {
-        List<Scan> scans = scanRepository.findAllByDoctor(doctor);
-        return scans.stream().map(this::convertToDto).toList();
+    public Page<ScanDto> getAllForDoctor(Doctor doctor, Pageable pageable) {
+        Page<Scan> scans = scanRepository.findAllByDoctor(doctor, pageable);
+        return scans.map(this::convertToDto);
     }
 }

@@ -1,4 +1,4 @@
-package com.stgsporting.piehmecup.dtos;
+package dev.aletheia.doctor.dtos;
 
 import lombok.Getter;
 import org.springframework.data.domain.Page;

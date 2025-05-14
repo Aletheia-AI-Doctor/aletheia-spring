@@ -18,6 +18,6 @@ public class ScanDto {
     private ModelDto model;
 
     public String getImageUrl() {
-        return image != null ? image : "";
+        return "/api/scans/" + image + "/image";
     }
 }
