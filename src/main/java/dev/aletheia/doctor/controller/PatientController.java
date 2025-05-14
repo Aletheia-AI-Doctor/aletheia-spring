@@ -28,17 +28,14 @@ public class PatientController {
     
     @PutMapping("/add")
     public ResponseEntity<Object> create(@RequestBody PatientRegistrationDTO patientDTO) {
-        System.out.println("Patient DTO: " + patientDTO);
         return ResponseEntity.ok(
-
-                patientService.createPatient(patientDTO)
+                patientService.convertToDto(patientService.createPatient(patientDTO))
         );
     }
     
     @GetMapping
-
-    public ResponseEntity<Object> getAllPatient(){
-        return ResponseEntity.ok(patientService.getAll());
+    public ResponseEntity<Object> getAllPatient() {
+        return ResponseEntity.ok(patientService.getAllDTO());
     }
 
     @GetMapping("/{patientId}/show")

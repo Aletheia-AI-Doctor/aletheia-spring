@@ -39,8 +39,8 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
         patient.setBirthdate(PatientDTO.getBirthdate());
         patient.setSex(Gender.fromString(PatientDTO.getSex()));
         patient.setName(PatientDTO.getName());
-        patient.setAddmissionDate(LocalDate.now());
-        patient.setStatus(PatientStatus.fromString(PatientDTO.getStatus()));
+        patient.setAdmissionDate(LocalDate.now());
+        patient.setStatus(PatientStatus.PENDING);
         return save(patient);
     }
 }

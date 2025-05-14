@@ -27,4 +27,4 @@ FROM base AS development
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 EXPOSE 9000 5005
-ENTRYPOINT ["./entrypoint.sh","/wait-for-it.sh"]
+ENTRYPOINT ["./entrypoint.sh"]

@@ -32,6 +32,11 @@ public class Doctor extends BaseModel {
     @NotBlank(message = "Username is mandatory")
     private String username;
 
+    @Column(name = "license_number", nullable = false, unique = true)
+    // @Unique(table = "doctors", value = "license_number", message = "license_number must be unique")
+    @NotBlank(message = "license_number is mandatory")
+    private String licenseNumber;
+
     @Column(name = "email", nullable = false, unique = true)
     // @Unique(table = "doctors", value = "email", message = "Email must be unique")
     @Email(message = "Email should be valid")
@@ -50,6 +55,10 @@ public class Doctor extends BaseModel {
 
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "hospital_id")
+    private Hospital hospital;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Patient> patients;
@@ -80,9 +89,11 @@ public class Doctor extends BaseModel {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", license_number='" + licenseNumber + '\'' +
                 ", speciality=" + speciality +
                 ", bio='" + bio + '\'' +
                 ", confirmedAt=" + confirmedAt +
+                ", hospital=" + hospital +
                 '}';
     }
 }
