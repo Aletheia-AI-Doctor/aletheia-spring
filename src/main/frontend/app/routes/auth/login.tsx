@@ -88,12 +88,13 @@ export default function Login() {
                                         Don't have an account? Register now!
                                     </span>
                                 </a>
+                            </div>
+                            <div>
                                 <a href="/hospital_subscription">
                                     <span className="text-sm text-gray-500 hover:text-gray-700">
                                         New hospital? subscribe now!
                                     </span>
                                 </a>
-
                             </div>
 
                             {errorMessage && <div className="text-red-600 text-sm/6">{errorMessage}</div>}

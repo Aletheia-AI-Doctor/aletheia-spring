@@ -23,13 +23,16 @@ export const hospitalApiSlice = createApi({
     endpoints: (build) => ({
         register: build.mutation<Hospital, RegisterHospitalRequest>({
             query: (body) => ({
-                url: "api/hospital/register",
+                url: "api/hospitals/register",
                 method: "POST",
                 body,
             }),
-            // invalidatesTags: ['Hospital'] // Uncomment if needed
+        }),
+        getHospitals: build.query<Hospital[], void>({
+            query: () => "api/hospitals/gethospitals",
+            providesTags: ["Hospital"],
         }),
     }),
 });
 
-export const { useRegisterMutation } = hospitalApiSlice;
+export const { useRegisterMutation, useGetHospitalsQuery } = hospitalApiSlice;

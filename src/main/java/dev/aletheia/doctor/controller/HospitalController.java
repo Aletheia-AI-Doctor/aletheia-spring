@@ -17,7 +17,7 @@ public class HospitalController {
     @GetMapping
     public ResponseEntity<Object> index(){return ResponseEntity.ok(hospitalService.find(1L));}
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<Object> create(@RequestBody HospitalDto hospitalDto){
         return ResponseEntity.ok(
           hospitalService.createHospital(hospitalDto)
@@ -29,5 +29,10 @@ public class HospitalController {
         HospitalDto hospital = hospitalService.convertToDto(hospitalService.findOrFail(hospitalId));
         return ResponseEntity.ok(hospital);
 
+    }
+
+    @GetMapping("/gethospitals")
+    public ResponseEntity<Object> getHospitals(){
+        return ResponseEntity.ok(hospitalService.getAll());
     }
 }
