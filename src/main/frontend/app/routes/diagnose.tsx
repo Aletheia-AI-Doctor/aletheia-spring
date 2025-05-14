@@ -65,7 +65,6 @@ export default function DiagnosisPage() {
     }
 
     async function handleSavePatient(patient: Patient) {
-        console.log(patient.id)
         const response = await saveScan({
             modelDiagnosis: diagnosisResult!,
             imagePath: imagePath!,
@@ -84,6 +83,7 @@ export default function DiagnosisPage() {
     }
 
     function handleSave() {
+        setFile(null);
         setDiagnosisResult(null);
         refetch();
     }
@@ -157,6 +157,7 @@ export default function DiagnosisPage() {
                                 acceptedFileTypes={['image/*']}
                                 onupdatefiles={handleFileUpload}
                                 credits={false}
+                                files={file ? [file] : []}
                                 labelIdle='Drag & Drop your scan or <span class="filepond--label-action">Browse</span>'
                             />
                         </div>
@@ -181,17 +182,28 @@ export default function DiagnosisPage() {
 
                             {diagnosisResult && (
                                 <div>
-                                    <div className="mt-6 p-4 bg-blue-50 rounded-md">
+                                    <div className="mt-6 mb-3 p-4 bg-blue-50 rounded-md">
                                         <h3 className="font-medium text-blue-800 mb-2">Diagnosis Result</h3>
                                         <p className="text-gray-800">{diagnosisResult}</p>
                                     </div>
-                                    <div className="mt-6 flex items-center space-x-6 justify-center">
-                                        <Button onClick={handleSaveGuest} value="guest" color="gray">Save as guest</Button>
-                                        <Button onClick={() => setOpen(true)}>Save to patient</Button>
-                                    </div>
+                                    <If
+                                        replacement={<Loading message={"Saving scan..."}/>}
+                                        condition={!isSavingScan}>
+                                        <div className="mt-6 flex items-center space-x-6 justify-center">
+                                            <Button disabled={isSavingScan} onClick={handleSaveGuest} value="guest"
+                                                    color="gray">Save as guest</Button>
+                                            <Button disabled={isSavingScan} onClick={() => setOpen(true)}>Save to
+                                                patient</Button>
+                                        </div>
+                                    </If>
+                                    {saveMessage && (
+                                        <div className="mt-4 p-4 bg-green-50 rounded-md">
+                                            <p className="text-green-800">{saveMessage}</p>
+                                        </div>
+                                    )}
 
                                     <Modal onClose={() => setOpen(false)} open={open}>
-                                        <PatientForm onSuccess={handleSavePatient} onClose={() => setOpen(false)} />
+                                        <PatientForm onSuccess={handleSavePatient} onClose={() => setOpen(false)}/>
                                     </Modal>
                                 </div>
                             )}
