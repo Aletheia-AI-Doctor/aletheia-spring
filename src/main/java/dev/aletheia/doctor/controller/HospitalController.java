@@ -1,9 +1,12 @@
 package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.hospitals.HospitalDto;
+import dev.aletheia.doctor.models.Hospital;
 import dev.aletheia.doctor.services.HospitalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/hospitals")
@@ -31,8 +34,9 @@ public class HospitalController {
 
     }
 
-    @GetMapping("/gethospitals")
+    @GetMapping("/hospitals")
     public ResponseEntity<Object> getHospitals(){
-        return ResponseEntity.ok(hospitalService.getAll());
+        List<Hospital> hospitals = hospitalService.getAll();
+        return ResponseEntity.ok(hospitals.stream().map(hospitalService::convertToDto).toList());
     }
 }

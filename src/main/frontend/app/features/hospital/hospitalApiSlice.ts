@@ -29,7 +29,7 @@ export const hospitalApiSlice = createApi({
             }),
         }),
         getHospitals: build.query<Hospital[], void>({
-            query: () => "api/hospitals/gethospitals",
+            query: () => "api/hospitals/hospitals",
             providesTags: ["Hospital"],
         }),
     }),

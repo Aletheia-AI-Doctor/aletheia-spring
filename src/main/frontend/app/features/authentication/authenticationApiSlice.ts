@@ -56,6 +56,7 @@ interface Doctor {
     bio: string;
     specialty: DoctorSpeciality;
     license: string;
+    HospitalId: number;
 }
 
 interface LoginApiRequest {
@@ -68,9 +69,9 @@ interface RegisterApiRequest {
     email: string;
     username: string;
     password: string;
-    specialty: DoctorSpeciality;
-    license: string;
-    HospitalId: number;
+    speciality: DoctorSpeciality;
+    licenseNumber: string;
+    hospitalId: number;
 
 }
 
@@ -98,24 +99,23 @@ export const authenticationApiSlice = createApi({
 
         }),
         register: build.mutation<Doctor, RegisterApiRequest>({
-            query: (req : RegisterApiRequest) => {
-                return {
-                        url: "/api/register",
-                        method: "POST",
-                        body: {
-                            name: req.name,
-                            email: req.email,
-                            username: req.username,
-                            password: req.password,
-                            specialty: req.specialty,
-                            license: req.license,
-                            HospitalId: req.HospitalId
-                        },
-                    };
-            },
+            query: (req: RegisterApiRequest) => ({
+                url: "/api/register",
+                method: "POST",
+                body: {
+                    name: req.name,
+                    email: req.email,
+                    username: req.username,
+                    password: req.password,
+                    speciality: req.speciality,
+                    licenseNumber: req.licenseNumber,
+                    hospitalId: req.hospitalId,
+                },
+            }),
+            invalidatesTags: ['Auth'],
         }),
 
     }),
-})
+});
 
 export const { useLoginMutation, useRegisterMutation } = authenticationApiSlice;

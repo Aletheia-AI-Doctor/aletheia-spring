@@ -1,6 +1,7 @@
 package dev.aletheia.doctor.dtos.doctors;
 
 import dev.aletheia.doctor.enums.DoctorSpeciality;
+import dev.aletheia.doctor.models.Hospital;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,14 +14,16 @@ public class DoctorDto {
     private String email;
     private DoctorSpeciality speciality;
     private String bio;
-    private String license_number;
-    private Long hospital_id;
+    private String licenseNumber;
+    private Long hospitalId;
 
-   public String getSpeciality() {
+   /*public String getSpeciality() {
         return speciality.toString();
     }
 
     public void setSpeciality(DoctorSpeciality speciality) {
         this.speciality = speciality;
-    }
+    }*/
+
 }
+

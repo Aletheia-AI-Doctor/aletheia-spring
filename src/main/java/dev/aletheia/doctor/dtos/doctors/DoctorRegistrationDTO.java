@@ -12,8 +12,8 @@ public class DoctorRegistrationDTO {
     private String email;
     private String password;
     private String speciality;
-    private String license_number;
-    private Long hospital_id;
+    private String licenseNumber;
+    private Long hospitalId;
 
    /* public DoctorSpeciality getSpeciality() {
         return DoctorSpeciality.valueOf(speciality);

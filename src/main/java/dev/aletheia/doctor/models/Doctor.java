@@ -35,7 +35,7 @@ public class Doctor extends BaseModel {
     @Column(name = "license_number", nullable = false, unique = true)
     // @Unique(table = "doctors", value = "license_number", message = "license_number must be unique")
     @NotBlank(message = "license_number is mandatory")
-    private Integer license_number;
+    private String licenseNumber;
 
     @Column(name = "email", nullable = false, unique = true)
     // @Unique(table = "doctors", value = "email", message = "Email must be unique")
@@ -89,7 +89,7 @@ public class Doctor extends BaseModel {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", license_number='" + license_number + '\'' +
+                ", license_number='" + licenseNumber + '\'' +
                 ", speciality=" + speciality +
                 ", bio='" + bio + '\'' +
                 ", confirmedAt=" + confirmedAt +

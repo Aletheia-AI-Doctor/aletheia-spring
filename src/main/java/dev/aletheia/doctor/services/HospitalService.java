@@ -21,6 +21,10 @@ public class HospitalService extends CRUDService<Hospital, HospitalDto>
     public Optional<Hospital> getByHr_emailOrName(String hr_emailOrName) {
         return hospitalRepository.findByHr_emailOrName(hr_emailOrName);
     }
+    public Optional<Hospital> getByIdentifier(String identifier) {
+        return hospitalRepository.findById(Long.valueOf(identifier));
+    }
+
     public Hospital createHospital(HospitalDto hospitalDTO) {
         Hospital hospital = new Hospital();
 

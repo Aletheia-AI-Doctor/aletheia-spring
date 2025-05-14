@@ -11,6 +11,7 @@ import {
 import React, {useEffect} from "react";
 import {useAppDispatch} from "~/base/hooks";
 import Logo from "~/components/app-logo-2";
+import {useNavigate, useNavigation} from "react-router";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -39,7 +40,7 @@ export default function registration() {
         isError: hospitalsError,
     } = useGetHospitalsQuery();
 
-    const dispatch = useAppDispatch();
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -49,17 +50,30 @@ export default function registration() {
     function submit(e: React.FormEvent) {
         e.preventDefault();
 
-        register(formData);
+        if (formData.password !== formData.passwordConfirmation) {
+            setErrorMessage("Passwords don't match");
+            return;
+        }
+
+        register({
+            name: formData.name,
+            email: formData.email,
+            username: formData.email.split('@')[0],
+            password: formData.password,
+            speciality: formData.speciality,
+            licenseNumber: formData.licence,
+            hospitalId: Number(formData.hospital)
+        });
     }
 
+
+    const navigation = useNavigate();
     useEffect(() => {
         if (isSuccess && data) {
-            dispatch(setToken(data.token!));
-            dispatch(setDoctor(data.doctor!));
 
             setErrorMessage(null);
 
-            window.location.href = "/";
+            navigation("/login", {replace: true})
         }
         if (isError) {
             setErrorMessage(
@@ -68,7 +82,7 @@ export default function registration() {
                     : "Registration failed"
             );
         }
-    }, [isSuccess, isError, data, error, dispatch]);
+    }, [isSuccess, isError, data, error]);
     const specialtyOptions = Object.values(DoctorSpeciality);
     return (
         <>

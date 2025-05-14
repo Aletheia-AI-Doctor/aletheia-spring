@@ -6,8 +6,10 @@ import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
 import dev.aletheia.doctor.enums.DoctorSpeciality;
 import dev.aletheia.doctor.models.ActivityLog;
 import dev.aletheia.doctor.models.Doctor;
+import dev.aletheia.doctor.models.Hospital;
 import dev.aletheia.doctor.repositories.ActivityLogRepository;
 import dev.aletheia.doctor.repositories.DoctorRepository;
+import dev.aletheia.doctor.repositories.HospitalRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     @Autowired
     private DoctorRepository doctorRepository;
 
+    @Autowired
+    private HospitalRepository hospitalRepository;
+
     public DoctorRepository getRepository() { return doctorRepository; }
 
     protected DoctorService() {super(Doctor.class, DoctorDto.class);}
@@ -42,8 +47,11 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         doctor.setEmail(doctorDTO.getEmail());
         doctor.setPassword(doctorDTO.getPassword());
         doctor.setSpeciality(DoctorSpeciality.valueOf(doctorDTO.getSpeciality()));
-        doctor.setLicense_number(Integer.valueOf(doctorDTO.getLicense_number()));
-        //doctor.setHospital(doctorDTO.getHospital_id());
+        doctor.setLicenseNumber(doctorDTO.getLicenseNumber());
+        Hospital hospital = hospitalRepository.findById(doctorDTO.getHospitalId())
+                .orElseThrow(() -> new RuntimeException("Hospital not found"));
+        doctor.setHospital(hospital);
+        System.out.println("doctor DTO in create doctor: " + doctorDTO);
 
         return save(doctor);
     }
