@@ -8,6 +8,11 @@ interface Patient {
     Birthday: string;
     status: string;
 }
+interface Scan {
+  id: string;
+  title: string;
+  aiDiagnosis: string;
+}
 
 export const patientsApiSlice = createApi({
     baseQuery: fetchBaseQuery({
@@ -29,7 +34,13 @@ export const patientsApiSlice = createApi({
             }),
             invalidatesTags: ['Patients'],
         }),
+        getPatientById: build.query<Patient, string>({
+            query: (patientId) => {`api/patients/${{patientId}}/show`
+            console.log(`api/patients/${patientId}/show`)
+            return `api/patients/${patientId}/show`},
+            providesTags: ['Patients'],
+        }),
     }),
 });
 
-export const { useGetPatientsQuery, useAddPatientMutation } = patientsApiSlice;
+export const { useGetPatientsQuery, useAddPatientMutation,useGetPatientByIdQuery } = patientsApiSlice;

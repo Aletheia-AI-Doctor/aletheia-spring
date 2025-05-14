@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Loading from "~/components/Loading";
 import { useGetPatientsQuery, useAddPatientMutation } from "~/features/patient/patientApiSlice";
 import type { Route } from "./+types/showPatient";
@@ -192,7 +192,7 @@ export default function PatientPage() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <Link 
-                                            to={`/patient/${patient.id}`} 
+                                            to={`/patients/${patient.id}/show`} 
                                             className="text-blue-600 hover:text-blue-900 mr-4"
                                         >
                                             View
