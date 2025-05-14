@@ -4,6 +4,7 @@ import Loading from "~/components/Loading";
 import { useGetPatientsQuery, useAddPatientMutation, useGetPatientByIdQuery } from "~/features/patient/patientApiSlice";
 import type { Route } from "./+types/patientview";
 import { Link, useParams } from 'react-router';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 export function meta() {
     return [
         { title: "Patient VIEW" },
@@ -12,10 +13,9 @@ export function meta() {
 }
 export default function ShowPatientPage() {
   const { id } = useParams();
-  const { data: patients, isLoading,isError,error } = useGetPatientByIdQuery(id);
-  const [patient] = useState();
+  const { data: patient, isLoading,isError,error } = useGetPatientByIdQuery(id);
 
-  // if (isLoading || !patient) return <Loading message="Loading patient data..." />;
+  if (isLoading || !patient) return <Loading message="Loading patient data..." />;
 if (isError) {
    console.error('Error fetching patients:', error);
         return (
@@ -33,24 +33,24 @@ if (isError) {
   }
   const calculateAge = (birthday: string) => {
     const birthDate = new Date(birthday);
+    console.log(birthDate)
     const ageDifMs = Date.now() - birthDate.getTime();
     return Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365));
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto flex gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
       {/* Left side: Patient info */}
-      <div className="w-1/3 border rounded p-4 shadow">
-        {/* <div className="flex justify-center mb-4">
+      <div className=" border rounded p-4 shadow">
+        <div className="flex justify-center mb-4">
           <FontAwesomeIcon icon={faUserCircle} size="6x" className="text-gray-400" />
-        </div> */}
+        </div>
         <div className="space-y-2">
-          {/* <p><strong>Name:</strong> {patient.name}</p>
+          <p><strong>Name:</strong> {patient.name}</p>
           <p><strong>Sex:</strong> {patient.sex}</p>
           <p><strong>Birthday:</strong> {patient.Birthday}</p>
           <p><strong>Age:</strong> {calculateAge(patient.Birthday)} years</p>
-          <p><strong>Status:</strong> {patient.status}</p> */}
-          {patient}
+          <p><strong>Status:</strong> {patient.status}</p>
         </div>
       </div>
 
@@ -58,7 +58,7 @@ if (isError) {
       {/* <div className="w-2/3">
         <h2 className="text-xl font-semibold mb-4">Scans</h2>
         <div className="grid grid-cols-3 gap-4">
-          {scans.map((scan) => (
+          {patient.map((scan) => (
             <div
               key={scan.id}
               className="bg-white shadow-md border rounded-lg p-4 cursor-pointer hover:shadow-lg transition"
