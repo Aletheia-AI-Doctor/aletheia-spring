@@ -1,6 +1,5 @@
 import type { Route } from "./+types/hospital-sub";
 import { useNavigate } from "react-router";
-import { setToken, setHospital } from "~/features/auth/authSlice";
 import Input from "~/components/input";
 import Button from "~/components/button";
 import { useRegisterMutation } from "~/features/hospital/hospitalApiSlice";
@@ -29,8 +28,6 @@ export default function HospitalSubscription() {
 
     useEffect(() => {
         if (isSuccess && data) {
-            dispatch(setToken(data.token!));
-            dispatch(setHospital(data.hospital!));
             setErrorMessage(null);
             navigate("/", { replace: true });
         }
@@ -55,6 +52,7 @@ export default function HospitalSubscription() {
                 )}
 
                 <Input
+                    id="name"
                     label="Hospital Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -63,6 +61,7 @@ export default function HospitalSubscription() {
                 />
 
                 <Input
+                    id="email"
                     label="HR Email"
                     type="email"
                     value={hrEmail}
