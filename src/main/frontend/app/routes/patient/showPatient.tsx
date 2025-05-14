@@ -78,7 +78,7 @@ export default function PatientPage() {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <Link
-                                        to={`/patient/${patient.id}`}
+                                        to={`/patients/${patient.id}`}
                                         className="text-blue-600 hover:text-blue-900 mr-4"
                                     >
                                         View

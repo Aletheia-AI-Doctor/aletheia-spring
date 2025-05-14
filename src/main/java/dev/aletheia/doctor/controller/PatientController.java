@@ -10,6 +10,9 @@ import dev.aletheia.doctor.dtos.patient.PatientDto;
 import dev.aletheia.doctor.dtos.patient.PatientRegistrationDTO;
 import dev.aletheia.doctor.services.PatientService;
 import dev.aletheia.doctor.models.Patient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -22,11 +25,6 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-
-    // @GetMapping("/{patientId}")
-    // public ResponseEntity<Object> show(@PathVariable Long patientId) {
-    //     return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
-    // }
     
     @PutMapping("/add")
     public ResponseEntity<Object> create(@RequestBody PatientRegistrationDTO patientDTO) {
@@ -38,5 +36,10 @@ public class PatientController {
     @GetMapping
     public ResponseEntity<Object> getAllPatient() {
         return ResponseEntity.ok(patientService.getAllDTO());
+    }
+
+    @GetMapping("/{patientId}/show")
+    public ResponseEntity<Object> getPatient(@PathVariable Long patientId) {
+        return ResponseEntity.ok(patientService.findOrFail(patientId));
     }
 }

@@ -10,6 +10,11 @@ interface Patient {
     status: string;
     admissionDate: Date;
 }
+interface Scan {
+  id: string;
+  title: string;
+  aiDiagnosis: string;
+}
 
 export type { Patient };
 
@@ -33,7 +38,13 @@ export const patientsApiSlice = createApi({
             }),
             invalidatesTags: ['Patients'],
         }),
+        getPatientById: build.query<Patient, string>({
+            query: (patientId) => {`api/patients/${{patientId}}/show`
+            console.log(`api/patients/${patientId}/show`)
+            return `api/patients/${patientId}/show`},
+            providesTags: ['Patients'],
+        }),
     }),
 });
 
-export const { useGetPatientsQuery, useAddPatientMutation } = patientsApiSlice;
+export const { useGetPatientsQuery, useAddPatientMutation,useGetPatientByIdQuery } = patientsApiSlice;
