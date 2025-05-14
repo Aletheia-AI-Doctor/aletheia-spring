@@ -111,6 +111,7 @@ export default function DiagnosisPage() {
                         <div className="mt-6">
                             <div className="flex items-center">
                                 <Button
+                                    width="w-auto"
                                     color="light-blue"
                                     onClick={handleDiagnose}
                                     disabled={!file || isDiagnosing}
@@ -131,7 +132,7 @@ export default function DiagnosisPage() {
                                         <p className="text-gray-800">{diagnosisResult}</p>
                                     </div>
                                     <div className="mt-6 flex items-center space-x-6 justify-center">
-                                        <Button color="gray">Save as guest</Button>
+                                        <Button value="guest" color="gray">Save as guest</Button>
                                         <Button>Save to patient</Button>
                                     </div>
                                 </div>
