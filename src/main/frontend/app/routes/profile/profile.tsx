@@ -4,10 +4,7 @@ import { faHeartPulse, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import React from "react";
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/profile";
-
-
 import Loading from "~/components/Loading";
-import EditProfile from "./edit";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -16,38 +13,15 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-
 export default function DrProfilePage(){
     const navigate = useNavigate();
     const {
         data: doctor,
-        isLoading,
-        isError,
-        error
+        isLoading
     } = useGetDoctorAttributesQuery();
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-        );
-    }
-
-    console.log(doctor, "Doctor Data");
-
-    if (isError) {
-        console.error('Error fetching doctor:', error);
-        if (error.status === 403) {
-            // Redirect to login if unauthorized
-            navigate('/login');
-            return null;
-        }
-        return (
-            <div className="max-w-2xl mx-auto p-6 text-red-500">
-                Error loading profile. Please try again later.
-            </div>
-        );
+    if (isLoading || !doctor) {
+        return <Loading />;
     }
 
     return (

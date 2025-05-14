@@ -6,11 +6,20 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLeftLong } from '@fortawesome/free-solid-svg-icons';
-import { useUploadScanMutation, useGetModelsQuery } from "~/features/scans/scansApiSlice";
+import {
+    useUploadScanMutation,
+    useGetModelsQuery,
+    useSaveScanMutation,
+    useGetScansQuery
+} from "~/features/scans/scansApiSlice";
 import type { Route } from "./+types/diagnose";
 import {Link, useParams} from "react-router";
 import Loading from "~/components/Loading";
 import Button from "~/components/button";
+import Modal from "~/components/modal";
+import PatientForm from "~/components/patient-form";
+import type {Patient} from "~/features/patient/patientApiSlice";
+import If from "~/components/if";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -26,17 +35,64 @@ export default function DiagnosisPage() {
     const {model: selectedModel} = useParams();
 
     const [file, setFile] = useState<File | null>(null);
-    const [isDiagnosing, setIsDiagnosing] = useState(false);
     const [diagnosisResult, setDiagnosisResult] = useState<string | null>(null);
+    const [imagePath, setImagePath] = useState<string | null>(null);
 
     // API hooks
     const { data: models = [], isLoading: isLoadingModels } = useGetModelsQuery();
-    const [uploadScan] = useUploadScanMutation();
+    const { data, isLoading: isLoadingScans, refetch } = useGetScansQuery();
+
+    const [uploadScan, {isLoading: isDiagnosing}] = useUploadScanMutation();
+    const [saveScan, {isLoading: isSavingScan}] = useSaveScanMutation();
+    const [saveMessage, setSaveMessage] = useState<string | null>(null);
+    const [open, setOpen] = useState<boolean>(false);
+
+    async function handleSaveGuest() {
+        const response = await saveScan({
+            modelDiagnosis: diagnosisResult!,
+            imagePath: imagePath!,
+            model: selectedModel!,
+        });
+
+        if(response.error) {
+            // @ts-ignore
+            setSaveMessage(response.error.message ?? "Failed to save scan");
+            return;
+        }
+
+        setSaveMessage("Scan saved successfully");
+        handleSave();
+    }
+
+    async function handleSavePatient(patient: Patient) {
+        console.log(patient.id)
+        const response = await saveScan({
+            modelDiagnosis: diagnosisResult!,
+            imagePath: imagePath!,
+            model: selectedModel!,
+            patientId: patient.id,
+        });
+
+        if(response.error) {
+            // @ts-ignore
+            setSaveMessage(response.error.message ?? "Failed to save scan");
+            return;
+        }
+
+        setSaveMessage("Scan saved successfully");
+        handleSave();
+    }
+
+    function handleSave() {
+        setDiagnosisResult(null);
+        refetch();
+    }
 
     const handleFileUpload = (fileItems: any[]) => {
         if (fileItems.length > 0) {
             setFile(fileItems[0].file);
             setDiagnosisResult(null);
+            setImagePath(null);
         } else {
             setFile(null);
         }
@@ -44,22 +100,20 @@ export default function DiagnosisPage() {
 
     const handleDiagnose = async () => {
         if (!file || !selectedModel) return;
-
-        setIsDiagnosing(true);
         try {
             const result = await uploadScan({
                 scan: file,
                 model: selectedModel.toLowerCase()
             }).unwrap();
             setDiagnosisResult(result.name);
+            setImagePath(result.imagePath);
         } catch (error) {
             setDiagnosisResult("Diagnosis failed. Please try again.");
-        } finally {
-            setIsDiagnosing(false);
         }
     };
 
     return (
+        <>
         <div className="p-4 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-4">Medical Scan Diagnosis</h1>
 
@@ -132,9 +186,13 @@ export default function DiagnosisPage() {
                                         <p className="text-gray-800">{diagnosisResult}</p>
                                     </div>
                                     <div className="mt-6 flex items-center space-x-6 justify-center">
-                                        <Button value="guest" color="gray">Save as guest</Button>
-                                        <Button>Save to patient</Button>
+                                        <Button onClick={handleSaveGuest} value="guest" color="gray">Save as guest</Button>
+                                        <Button onClick={() => setOpen(true)}>Save to patient</Button>
                                     </div>
+
+                                    <Modal onClose={() => setOpen(false)} open={open}>
+                                        <PatientForm onSuccess={handleSavePatient} onClose={() => setOpen(false)} />
+                                    </Modal>
                                 </div>
                             )}
                         </div>
@@ -142,5 +200,18 @@ export default function DiagnosisPage() {
                 </div>
             )}
         </div>
+
+            <If
+                replacement={<Loading message="Loading scans..." />}
+                condition={!isLoadingScans}>
+                <div className="">
+                    {data && data.scans.map(scan => (
+                        <div key={scan.id} className="p-4 bg-gray-50 rounded-md mb-4">
+                            {scan.modelDiagnosis.name}
+                        </div>
+                    ))}
+                </div>
+            </If>
+        </>
     );
 }

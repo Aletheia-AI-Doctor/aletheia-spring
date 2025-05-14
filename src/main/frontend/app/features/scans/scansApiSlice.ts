@@ -18,7 +18,7 @@ interface Model {
 interface SaveScanApiRequest {
     patientId?: number;
     modelDiagnosis: string;
-    doctorDiagnosis: string;
+    doctorDiagnosis?: string;
     imagePath: string;
     model: string;
 }
@@ -30,9 +30,9 @@ interface Diagnosis {
 
 interface Scan {
     id: number;
-    patient: Patient;
+    patient?: Patient;
     modelDiagnosis: Diagnosis;
-    doctorDiagnosis: Diagnosis;
+    doctorDiagnosis?: Diagnosis;
     imageUrl: string;
     model: Model;
 }

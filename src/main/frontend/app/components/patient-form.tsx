@@ -1,14 +1,15 @@
-import React, {useState} from "react";
-import {useAddPatientMutation} from "~/features/patient/patientApiSlice";
+import React, {type FormEvent, useState} from "react";
+import {type Patient, useAddPatientMutation} from "~/features/patient/patientApiSlice";
 import Input from "~/components/input";
 import Select from "~/components/select";
 import Button from "~/components/button";
 
 interface PatientFormProps {
     onClose?: () => void;
+    onSuccess?: (patient: Patient) => void;
 }
 
-export default function PatientForm({onClose} : PatientFormProps) {
+export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
 
     const [addPatient, { isLoading }] = useAddPatientMutation();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -19,15 +20,18 @@ export default function PatientForm({onClose} : PatientFormProps) {
         status: 'pending'
     });
 
-    const handleAddPatient = async (event) => {
+    const handleAddPatient = async (event: FormEvent) => {
         event.preventDefault();
 
         const response = await addPatient(newPatient);
 
         if (response.error) {
+            // @ts-ignore
             setErrorMessage(response.error.message);
             return;
         }
+
+        onSuccess && onSuccess(response.data);
 
         setNewPatient({
             name: '',

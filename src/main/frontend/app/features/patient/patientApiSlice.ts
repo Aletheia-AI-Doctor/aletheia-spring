@@ -29,7 +29,7 @@ export const patientsApiSlice = createApi({
             query: (newPatient) => ({
                 url: "api/patients/add",
                 method: "PUT",
-            body: newPatient,
+                body: newPatient,
             }),
             invalidatesTags: ['Patients'],
         }),
