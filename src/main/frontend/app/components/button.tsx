@@ -11,6 +11,7 @@ interface ButtonProps {
     className?: string;
     padding?: string;
     unsavedChanges?: boolean;
+    value?: string;
 }
 
 const defaultProps: ButtonProps = {
@@ -38,7 +39,7 @@ export default function Button(props: ButtonProps) {
         'light-blue': 'bg-blue-200 hover:bg-blue-300 focus-visible:outline-blue-200 text-blue-900',
     }[props.color!];
 
-    const disabledClass = props.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
+    const disabledClass = props.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-default';
 
     return (
         <button
@@ -46,6 +47,7 @@ export default function Button(props: ButtonProps) {
             type={props.type}
             disabled={props.disabled}
             onClick={props.onClick}
+            value={props.value}
             className={"flex justify-center rounded-md text-sm/6 font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 " + colorClass + " " + props.width + " " + disabledClass + " " + props.className + " " + props.padding}
         >
             {props.children} {props.unsavedChanges === true && <span className="text-red-500">*</span>}

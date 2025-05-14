@@ -6,11 +6,22 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLeftLong } from '@fortawesome/free-solid-svg-icons';
-import { useUploadScanMutation, useGetModelsQuery } from "~/features/scans/scansApiSlice";
+import {
+    useUploadScanMutation,
+    useGetModelsQuery,
+    useSaveScanMutation,
+    useGetScansQuery
+} from "~/features/scans/scansApiSlice";
 import type { Route } from "./+types/diagnose";
 import {Link, useParams} from "react-router";
 import Loading from "~/components/Loading";
 import Button from "~/components/button";
+import Modal from "~/components/modal";
+import PatientForm from "~/components/patient-form";
+import type {Patient} from "~/features/patient/patientApiSlice";
+import If from "~/components/if";
+import ScansTable from "~/components/ScansTable";
+import Card from "~/components/Card";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -26,17 +37,45 @@ export default function DiagnosisPage() {
     const {model: selectedModel} = useParams();
 
     const [file, setFile] = useState<File | null>(null);
-    const [isDiagnosing, setIsDiagnosing] = useState(false);
     const [diagnosisResult, setDiagnosisResult] = useState<string | null>(null);
+    const [imagePath, setImagePath] = useState<string | null>(null);
 
     // API hooks
     const { data: models = [], isLoading: isLoadingModels } = useGetModelsQuery();
-    const [uploadScan] = useUploadScanMutation();
+
+    const [uploadScan, {isLoading: isDiagnosing}] = useUploadScanMutation();
+    const [saveScan, {isLoading: isSavingScan}] = useSaveScanMutation();
+    const [saveMessage, setSaveMessage] = useState<string | null>(null);
+    const [open, setOpen] = useState<boolean>(false);
+
+    async function handleSavePatient(patient: Patient) {
+        const response = await saveScan({
+            modelDiagnosis: diagnosisResult!,
+            imagePath: imagePath!,
+            model: selectedModel!,
+            patientId: patient.id,
+        });
+
+        if(response.error) {
+            // @ts-ignore
+            setSaveMessage(response.error.message ?? "Failed to save scan");
+            return;
+        }
+
+        setSaveMessage("Scan saved successfully");
+        handleSave();
+    }
+
+    function handleSave() {
+        setFile(null);
+        setDiagnosisResult(null);
+    }
 
     const handleFileUpload = (fileItems: any[]) => {
         if (fileItems.length > 0) {
             setFile(fileItems[0].file);
             setDiagnosisResult(null);
+            setImagePath(null);
         } else {
             setFile(null);
         }
@@ -44,22 +83,20 @@ export default function DiagnosisPage() {
 
     const handleDiagnose = async () => {
         if (!file || !selectedModel) return;
-
-        setIsDiagnosing(true);
         try {
             const result = await uploadScan({
                 scan: file,
                 model: selectedModel.toLowerCase()
             }).unwrap();
             setDiagnosisResult(result.name);
+            setImagePath(result.imagePath);
         } catch (error) {
             setDiagnosisResult("Diagnosis failed. Please try again.");
-        } finally {
-            setIsDiagnosing(false);
         }
     };
 
     return (
+        <>
         <div className="p-4 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-4">Medical Scan Diagnosis</h1>
 
@@ -103,6 +140,7 @@ export default function DiagnosisPage() {
                                 acceptedFileTypes={['image/*']}
                                 onupdatefiles={handleFileUpload}
                                 credits={false}
+                                files={file ? [file] : []}
                                 labelIdle='Drag & Drop your scan or <span class="filepond--label-action">Browse</span>'
                             />
                         </div>
@@ -111,6 +149,8 @@ export default function DiagnosisPage() {
                         <div className="mt-6">
                             <div className="flex items-center">
                                 <Button
+                                    width="w-auto"
+                                    color="light-blue"
                                     onClick={handleDiagnose}
                                     disabled={!file || isDiagnosing}
                                 >
@@ -124,9 +164,30 @@ export default function DiagnosisPage() {
                             </div>
 
                             {diagnosisResult && (
-                                <div className="mt-6 p-4 bg-blue-50 rounded-md">
-                                    <h3 className="font-medium text-blue-800 mb-2">Diagnosis Result</h3>
-                                    <p className="text-gray-800">{diagnosisResult}</p>
+                                <div>
+                                    <div className="mt-6 mb-3 p-4 bg-blue-50 rounded-md">
+                                        <h3 className="font-medium text-blue-800 mb-2">Diagnosis Result</h3>
+                                        <p className="text-gray-800">{diagnosisResult}</p>
+                                    </div>
+                                    <If
+                                        replacement={<Loading message={"Saving scan..."}/>}
+                                        condition={!isSavingScan}>
+                                        <div className="mt-6 flex items-center space-x-6 justify-center">
+                                            <Button disabled={isSavingScan} onClick={handleSave}
+                                                    color="gray">Cancel</Button>
+                                            <Button disabled={isSavingScan} onClick={() => setOpen(true)}>Save to
+                                                patient</Button>
+                                        </div>
+                                    </If>
+                                    {saveMessage && (
+                                        <div className="mt-4 p-4 bg-green-50 rounded-md">
+                                            <p className="text-green-800">{saveMessage}</p>
+                                        </div>
+                                    )}
+
+                                    <Modal onClose={() => setOpen(false)} open={open}>
+                                        <PatientForm onSuccess={handleSavePatient} onClose={() => setOpen(false)}/>
+                                    </Modal>
                                 </div>
                             )}
                         </div>
@@ -134,5 +195,10 @@ export default function DiagnosisPage() {
                 </div>
             )}
         </div>
+
+            <Card>
+                <ScansTable />
+            </Card>
+        </>
     );
 }

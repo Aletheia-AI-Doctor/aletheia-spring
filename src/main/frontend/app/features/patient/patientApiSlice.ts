@@ -3,11 +3,15 @@ import { ROOT_URL } from "~/base/consts";
 import { defaultHeaders } from "~/base/helpers";
 
 interface Patient {
+    id: number;
     name: string;
     sex: string;
     Birthday: string;
     status: string;
+    admissionDate: Date;
 }
+
+export type { Patient };
 
 export const patientsApiSlice = createApi({
     baseQuery: fetchBaseQuery({
@@ -25,7 +29,7 @@ export const patientsApiSlice = createApi({
             query: (newPatient) => ({
                 url: "api/patients/add",
                 method: "PUT",
-            body: newPatient,
+                body: newPatient,
             }),
             invalidatesTags: ['Patients'],
         }),
