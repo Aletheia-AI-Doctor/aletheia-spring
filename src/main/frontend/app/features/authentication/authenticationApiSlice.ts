@@ -124,12 +124,13 @@ export const authenticationApiSlice = createApi({
             invalidatesTags: ['Auth'],
         }),
 
-        confirmEmail: build.mutation<ConfirmationResponse, { token: string }>({
-            query: ({ token }) => ({
-                url: `/api/confirm-email?token=${token}`,
+        confirmEmail: build.mutation<ConfirmationResponse, { doctorId: string; token: string }>({
+            query: ({ doctorId, token }) => ({
+                url: `/api/confirm-email/${doctorId}?token=${token}`,
                 method: "GET",
             }),
         }),
+
 
     }),
 });
