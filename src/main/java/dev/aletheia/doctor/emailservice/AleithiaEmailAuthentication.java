@@ -29,7 +29,7 @@ public class AleithiaEmailAuthentication {
             String htmlContent = "<html><body>" +
                     "<p>Dear HR Team,</p>" +
                     "<p>Please confirm the registration of Dr. " + doctorName +
-                    " (License: " + doctorLicenceNumber + ")</p>" + "field" + doctorSpeciality +
+                    " (License: " + doctorLicenceNumber + ")</p>" + "field: " + doctorSpeciality +
                     "<form action=\"" + confirmationLink + "\" method=\"POST\">" +
                     "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
                     "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
@@ -44,15 +44,31 @@ public class AleithiaEmailAuthentication {
         }
     }
 
-    private String createEmailContent(String doctorName, String licenceNumber, String confirmationLink) {
-        return String.format(
-                "Dear HR,\n\n" +
-                        "Please confirm the registration of Dr. %s with license number %s.\n\n" +
-                        "Click the link below to confirm:\n%s\n\n" +
-                        "Thank you,\n" +
-                        "Aleithia Team",
-                doctorName, licenceNumber, confirmationLink
-        );
+    public void sendConfirmationDoctor(String doctorEmail, String doctorName,
+                                        String hospitalName, String loginLink) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(doctorEmail);
+            helper.setSubject("Doctor Registration Confirmation: " + doctorName);
+
+            String htmlContent = "<html><body>" +
+                    "<p>Dear Dr.</p>" + doctorName + "," +
+                    "<p>you have been confirmed by" + hospitalName +" hospital"+
+                    "<p>Click the link below to login:</p>" +
+                    "<form action=\"" + loginLink + "\" method=\"POST\">" +
+                    "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
+                    "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
+                    "Confirm Registration</button>" +
+                    "</form>" +
+                    "</body></html>";
+
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new EmailSendingException("Failed to send confirmation email", e);
+        }
     }
 }
 

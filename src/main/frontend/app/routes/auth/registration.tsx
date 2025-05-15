@@ -1,6 +1,7 @@
 import type {Route} from "./+types/registration";
 import Input from "~/components/input";
 import Button from "~/components/button";
+import selectbox from "~/components/select";
 import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 import {useGetHospitalsQuery} from "~/features/hospital/hospitalApiSlice";
 import {useConfirmEmailMutation} from "~/features/authentication/authenticationApiSlice";
