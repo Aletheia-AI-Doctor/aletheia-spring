@@ -2,25 +2,30 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.auth.SignInDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
+import dev.aletheia.doctor.emailservice.AleithiaEmailAuthentication;
 import dev.aletheia.doctor.exceptions.InvalidCredentialsException;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DoctorService;
 import dev.aletheia.doctor.services.JWTService;
+import lombok.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
+
 
 @RestController
 public class AuthenticationController {
 
     private final DoctorService doctorService;
+    private final AleithiaEmailAuthentication emailService;
     private final JWTService jwtService;
 
-    public AuthenticationController(DoctorService doctorService, JWTService jwtService) {
+    public AuthenticationController(DoctorService doctorService, AleithiaEmailAuthentication emailService, JWTService jwtService) {
         this.doctorService = doctorService;
+        this.emailService = emailService;
         this.jwtService = jwtService;
     }
 
@@ -33,6 +38,13 @@ public class AuthenticationController {
             throw new InvalidCredentialsException();
         }
 
+        if (!doctor.isConfirmed()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
+                    "message", "Please confirm your email address before logging in",
+                    "success", false
+            ));
+        }
+
         return ResponseEntity.ok(Map.of(
                         "message", "Login successful",
                         "token", jwtService.generateToken(doctor),
@@ -43,10 +55,42 @@ public class AuthenticationController {
 
     @PostMapping("/api/register")
     public ResponseEntity<Object> create(@RequestBody DoctorRegistrationDTO doctorDTO) {
-        System.out.println("Doctor DTO: " + doctorDTO);
         Doctor doctor = doctorService.createDoctor(doctorDTO);
-        return ResponseEntity.ok(
-                doctorService.convertToDto(doctor)
+
+        String confirmationToken = UUID.randomUUID().toString();
+        String confirmationUrl = "http://localhost:8080/api/confirm-email" + doctor.getId();
+
+        doctorService.saveConfirmationToken(doctor.getId(), confirmationToken);
+
+        emailService.sendConfirmationRequest(
+                doctor.getHospital().getHr_email(),
+                doctor.getName(),
+                doctor.getSpeciality().toString(),
+                doctor.getLicenseNumber(),
+                confirmationUrl
         );
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Registration successful! Please check your email for confirmation instructions.",
+                "doctor", doctorService.convertToDto(doctor),
+                "success", true
+        ));
+    }
+
+    @GetMapping("/api/confirm-email")
+    public ResponseEntity<Object> confirmEmail(@RequestParam String token) {
+        boolean confirmed = doctorService.confirmDoctor(token);
+
+        if (confirmed) {
+            return ResponseEntity.ok(Map.of(
+                    "message", "Email confirmed successfully!",
+                    "success", true
+            ));
+        } else {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "message", "Invalid or expired confirmation token",
+                    "success", false
+            ));
+        }
     }
 }

@@ -3,13 +3,9 @@ import Input from "~/components/input";
 import Button from "~/components/button";
 import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 import {useGetHospitalsQuery} from "~/features/hospital/hospitalApiSlice";
-import {
-    useRegisterMutation,
-    setDoctor,
-    setToken,
-} from "~/features/authentication/authenticationApiSlice";
+import {useConfirmEmailMutation} from "~/features/authentication/authenticationApiSlice";
+import {useRegisterMutation} from "~/features/authentication/authenticationApiSlice";
 import React, {useEffect} from "react";
-import {useAppDispatch} from "~/base/hooks";
 import Logo from "~/components/app-logo-2";
 import {useNavigate, useNavigation} from "react-router";
 
@@ -31,7 +27,7 @@ export default function registration() {
         hospital: "",
     });
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-
+    const [confirmEmail] = useConfirmEmailMutation();
     // API Queries
     const [register, { isLoading, isSuccess, isError, error, data }] = useRegisterMutation();
     const {

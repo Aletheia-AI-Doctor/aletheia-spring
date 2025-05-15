@@ -41,11 +41,18 @@ export { authSlice };
 interface LoginApiResponse {
     token?: string;
     doctor?: Doctor;
+    message?: string;
+    success?: boolean;
 }
 
-interface RegisterApiResponse {
-    token: string;
+interface RegistrationResponse {
     doctor: Doctor;
+    message: string;
+    success: boolean;
+}
+interface ConfirmationResponse {
+    message: string;
+    success: boolean;
 }
 
 interface Doctor {
@@ -57,6 +64,8 @@ interface Doctor {
     specialty: DoctorSpeciality;
     license: string;
     HospitalId: number;
+    confirmed?: boolean;
+    confirmationToken?: string;
 }
 
 interface LoginApiRequest {
@@ -115,7 +124,14 @@ export const authenticationApiSlice = createApi({
             invalidatesTags: ['Auth'],
         }),
 
+        confirmEmail: build.mutation<ConfirmationResponse, { token: string }>({
+            query: ({ token }) => ({
+                url: `/api/confirm-email?token=${token}`,
+                method: "GET",
+            }),
+        }),
+
     }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = authenticationApiSlice;
+export const { useLoginMutation, useRegisterMutation, useConfirmEmailMutation} = authenticationApiSlice;

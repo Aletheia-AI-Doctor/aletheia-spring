@@ -63,6 +63,12 @@ public class Doctor extends BaseModel {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Patient> patients;
 
+    @Column(name = "confirmation_token")
+    private String confirmationToken;
+
+    @Column(name = "confirmed")
+    private boolean confirmed = false;
+
     public void setPassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
         this.password = encoder.encode(password);
@@ -78,7 +84,15 @@ public class Doctor extends BaseModel {
     }
 
     public boolean isConfirmed() {
-        return this.confirmedAt != null;
+        return confirmed;
+    }
+
+    public String getConfirmationToken() {
+        return confirmationToken;
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
     }
 
     @Override

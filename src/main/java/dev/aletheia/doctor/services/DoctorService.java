@@ -56,6 +56,29 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         return save(doctor);
     }
 
+    public void saveConfirmationToken(Long doctorId, String token) {
+        Doctor doctor = findOrFail(doctorId);
+        doctor.setConfirmationToken(token);
+        doctor.setConfirmed(false); // Ensure doctor is not confirmed yet
+        save(doctor);
+    }
+
+    public boolean confirmDoctor(String token) {
+        Doctor doctor = doctorRepository.findByConfirmationToken(token)
+                .orElseThrow(() -> new EntityNotFoundException("Invalid confirmation token"));
+
+        doctor.setConfirmed(true);
+        doctor.setConfirmationToken(null); // Clear the token after confirmation
+        save(doctor);
+
+        return true;
+    }
+
+    public Optional<Doctor> findByConfirmationToken(String token) {
+        return doctorRepository.findByConfirmationToken(token);
+    }
+
+
     public Doctor getCurrentDoctor() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Doctor doctor = (Doctor) auth.getPrincipal();
