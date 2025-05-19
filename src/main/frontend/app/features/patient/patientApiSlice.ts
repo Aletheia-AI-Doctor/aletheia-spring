@@ -6,14 +6,10 @@ interface Patient {
     id: number;
     name: string;
     sex: string;
-    Birthday: string;
+    birthdate: string;
     status: string;
     admissionDate: Date;
-}
-interface Scan {
-  id: string;
-  title: string;
-  aiDiagnosis: string;
+    scans:[]
 }
 
 export type { Patient };

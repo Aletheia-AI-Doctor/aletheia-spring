@@ -2,7 +2,7 @@ import os
 import gdown
 
 File_IDS = {
-    "NIH_Seresnet152_model.h5":"1qixtL7BPZkMZSJDqHa0WYTg0AZdITsmG",
+    # "NIH_Seresnet152_model.h5":"1qixtL7BPZkMZSJDqHa0WYTg0AZdITsmG",
     "efficientnetb0_alzheimer.h5": "1woONx90w8AqezObAoq1U8-BqrNR_BI6v",
     "hybrid_metadata_model.h5": "1I9DLTeuMh25HSBO9qmUURgKD0fqJ8zwp",
     

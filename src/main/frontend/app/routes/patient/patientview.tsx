@@ -14,7 +14,7 @@ export function meta() {
 export default function ShowPatientPage() {
   const { id } = useParams();
   const { data: patient, isLoading,isError,error } = useGetPatientByIdQuery(id);
-
+    console.log(patient)
   if (isLoading || !patient) return <Loading message="Loading patient data..." />;
 if (isError) {
    console.error('Error fetching patients:', error);
@@ -31,47 +31,83 @@ if (isError) {
             </div>
         );
   }
-  const calculateAge = (birthday: string) => {
-    const birthDate = new Date(birthday);
-    console.log(birthDate)
-    const ageDifMs = Date.now() - birthDate.getTime();
-    return Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365));
-  };
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-      {/* Left side: Patient info */}
-      <div className=" border rounded p-4 shadow">
-        <div className="flex justify-center mb-4">
-          <FontAwesomeIcon icon={faUserCircle} size="6x" className="text-gray-400" />
-        </div>
-        <div className="space-y-2">
-          <p><strong>Name:</strong> {patient.name}</p>
-          <p><strong>Sex:</strong> {patient.sex}</p>
-          <p><strong>Birthday:</strong> {patient.Birthday}</p>
-          <p><strong>Age:</strong> {calculateAge(patient.Birthday)} years</p>
-          <p><strong>Status:</strong> {patient.status}</p>
-        </div>
+const calculateAge = (birthday: string) => {
+  if (!birthday) return null;
+  const birthDate = new Date(birthday);
+  if (isNaN(birthDate.getTime())) return null;
+  const ageDifMs = Date.now() - birthDate.getTime();
+  return Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365));
+};
+
+return (
+  <div className="w-full p-6">
+    {/* Patient Info Card */}
+    <div className="w-full bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row items-center gap-6 mb-6">
+      {/* Avatar */}
+      <div className="w-28 h-28 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center shadow-inner">
+        <FontAwesomeIcon icon={faUserCircle} size="3x" className="text-gray-400" />
       </div>
 
-      {/* Right side: Scans grid */}
-      {/* <div className="w-2/3">
-        <h2 className="text-xl font-semibold mb-4">Scans</h2>
-        <div className="grid grid-cols-3 gap-4">
-          {patient.map((scan) => (
-            <div
-              key={scan.id}
-              className="bg-white shadow-md border rounded-lg p-4 cursor-pointer hover:shadow-lg transition"
-            >
-              <div className="h-24 bg-gray-100 rounded flex items-center justify-center mb-2 text-gray-500">
-                [Image]
-              </div>
-              <p className="font-medium text-sm mb-1">{scan.title}</p>
-              <p className="text-xs text-gray-600">AI: {scan.aiDiagnosis}</p>
-            </div>
-          ))}
+      {/* Info */}
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-800">
+        <div>
+          <p className="text-gray-500 font-medium">Name</p>
+          <p>{patient.name}</p>
         </div>
-      </div> */}
+        <div>
+          <p className="text-gray-500 font-medium">Sex</p>
+          <p>{patient.sex}</p>
+        </div>
+        <div>
+          <p className="text-gray-500 font-medium">Birthdate</p>
+          <p>{patient.birthdate || "N/A"}</p>
+        </div>
+        <div>
+          <p className="text-gray-500 font-medium">Age</p>
+          <p>{calculateAge(patient.birthdate) ?? "Unknown"} years</p>
+        </div>
+        <div>
+          <p className="text-gray-500 font-medium">Status</p>
+          <p className={`font-semibold uppercase ${patient.status === "PENDING" ? "text-yellow-600" : "text-green-600"}`}>
+            {patient.status}
+          </p>
+        </div>
+      </div>
     </div>
-  );
+{patient.scans?.length > 0 ? (
+  <div className="mt-8">
+    <h2 className="text-xl font-semibold text-gray-800 mb-4">Scans</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {patient.scans.map((scan: any, index: number) => (
+        <div
+          key={index}
+          className="bg-white shadow-sm border rounded-lg overflow-hidden hover:shadow-lg transition cursor-pointer"
+        >
+          <div className="h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
+            {scan.image ? (
+              <img src={scan.image} alt={`Scan ${index + 1}`} className="object-cover h-full w-full" />
+            ) : (
+              <span className="text-gray-400 text-sm">No image</span>
+            )}
+          </div>
+
+          <div className="p-4 text-sm text-gray-700">
+            <p className="font-medium">Model Diagnosis:</p>
+            <p className="text-gray-800 mb-2">{scan.modelDiagnosis?.name || "N/A"}</p>
+
+            <p className="font-medium">Doctor Diagnosis:</p>
+            <p className="text-gray-800">{scan.doctorDiagnosis?.name || "Not yet assigned"}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+) : (
+  <p className="text-gray-500 mt-6">No scans available for this patient.</p>
+)}
+
+    
+  </div>
+);
 }
