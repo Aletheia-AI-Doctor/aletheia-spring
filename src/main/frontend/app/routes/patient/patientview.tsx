@@ -1,98 +1,100 @@
-import React, { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, {useEffect, useState} from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Loading from "~/components/Loading";
-import { useGetPatientsQuery, useAddPatientMutation, useGetPatientByIdQuery } from "~/features/patient/patientApiSlice";
-import type { Route } from "./+types/patientview";
-import { Link, useParams } from 'react-router';
-import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
-import { useUpdatestatusMutation } from "~/features/patient/patientApiSlice";
+import { useGetPatientByIdQuery} from "~/features/patient/patientApiSlice";
+import type {Route} from "./+types/patientview";
+import {Link, useParams} from 'react-router';
+import {faUserCircle} from '@fortawesome/free-solid-svg-icons';
+import {useUpdatestatusMutation} from "~/features/patient/patientApiSlice";
 
 export function meta() {
     return [
-        { title: "Patient VIEW" },
-        { name: "description", content: "Patient VIEW" },
+        {title: "Patient VIEW"},
+        {name: "description", content: "Patient VIEW"},
     ];
 }
-const [updatePatientStatus] = useUpdatestatusMutation();
 
-export default function ShowPatientPage() {
-  const { id } = useParams();
-  const { data: patient, isLoading,isError,error } = useGetPatientByIdQuery(id);
+export default function PatientViewPage() {
+    const {id} = useParams();
+    const {data: patient, isLoading, isError, error} = useGetPatientByIdQuery(id!);
     console.log(patient)
-  if (isLoading || !patient) return <Loading message="Loading patient data..." />;
-if (isError) {
-   console.error('Error fetching patients:', error);
+    if (isLoading || !patient) return <Loading message="Loading patient data..."/>;
+
+    const [updatePatientStatus] = useUpdatestatusMutation();
+    if (isError) {
+        console.error('Error fetching patients:', error);
         return (
             <div className="flex flex-col items-center justify-center h-64 p-4">
                 <p className="text-red-500 font-bold mb-2">Error loading patients</p>
                 <p className="text-red-500 text-sm">{(error as any)?.data?.message || 'Unknown error occurred'}</p>
-                <button 
-                    onClick={() => window.location.reload()} 
+                <button
+                    onClick={() => window.location.reload()}
                     className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                     Retry
                 </button>
             </div>
         );
-  }
-const handleToggleStatus = async () => {
-  const newStatus = patient.status === "DIAGNOSED" ? "PENDING" : "DIAGNOSED";
-  try {
-    await updatePatientStatus({ id: patient.id, status: newStatus }).unwrap();
-  } catch (err) {
-    console.error("Failed to update status:", err);
-  }
-};
-const calculateAge = (birthday: string) => {
-  if (!birthday) return null;
-  const birthDate = new Date(birthday);
-  if (isNaN(birthDate.getTime())) return null;
-  const ageDifMs = Date.now() - birthDate.getTime();
-  return Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365));
-};
+    }
+    const handleToggleStatus = async () => {
+        const newStatus = patient.status === "DIAGNOSED" ? "PENDING" : "DIAGNOSED";
+        try {
+            await updatePatientStatus({id: patient.id, status: newStatus}).unwrap();
+        } catch (err) {
+            console.error("Failed to update status:", err);
+        }
+    };
+    const calculateAge = (birthday: string) => {
+        if (!birthday) return null;
+        const birthDate = new Date(birthday);
+        if (isNaN(birthDate.getTime())) return null;
+        const ageDifMs = Date.now() - birthDate.getTime();
+        return Math.floor(ageDifMs / (1000 * 60 * 60 * 24 * 365));
+    };
 
-return (
-  <div className="w-full p-6">
-    {/* Patient Info Card */}
-    <div className="w-full bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row items-center gap-6 mb-6">
-      {/* Avatar */}
-      <div className="w-28 h-28 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center shadow-inner">
-        <FontAwesomeIcon icon={faUserCircle} size="3x" className="text-gray-400" />
-      </div>
+    return (
+        <div className="w-full p-6">
+            {/* Patient Info Card */}
+            <div className="w-full bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row items-center gap-6 mb-6">
+                {/* Avatar */}
+                <div
+                    className="w-28 h-28 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center shadow-inner">
+                    <FontAwesomeIcon icon={faUserCircle} size="3x" className="text-gray-400"/>
+                </div>
 
-      {/* Info */}
-      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-800">
-        <div>
-          <p className="text-gray-500 font-medium">Name</p>
-          <p>{patient.name}</p>
-        </div>
-        <div>
-          <p className="text-gray-500 font-medium">Sex</p>
-          <p>{patient.sex}</p>
-        </div>
-        <div>
-          <p className="text-gray-500 font-medium">Birthdate</p>
-          <p>{patient.birthdate || "N/A"}</p>
-        </div>
-        <div>
-          <p className="text-gray-500 font-medium">Age</p>
-          <p>{calculateAge(patient.birthdate) ?? "Unknown"} years</p>
-        </div>
-        <div>
-          <p className="text-gray-500 font-medium">Status</p>
-          <button
-            onClick={handleToggleStatus}
-            type="button"
-            className={`font-semibold uppercase focus:outline-none ${
-              patient.status === "DIAGNOSED" ? "text-green-600" : "text-yellow-600"
-            }`}
-          >
-            {patient.status}
-          </button>
-        </div>
-      </div>
-    </div>
-{/* {patient.scans?.length > 0 ? (
+                {/* Info */}
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-800">
+                    <div>
+                        <p className="text-gray-500 font-medium">Name</p>
+                        <p>{patient.name}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 font-medium">Sex</p>
+                        <p>{patient.sex}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 font-medium">Birthdate</p>
+                        <p>{patient.birthdate || "N/A"}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 font-medium">Age</p>
+                        <p>{calculateAge(patient.birthdate) ?? "Unknown"} years</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 font-medium">Status</p>
+                        <button
+                            onClick={handleToggleStatus}
+                            type="button"
+                            className={`font-semibold uppercase focus:outline-none ${
+                                patient.status === "DIAGNOSED" ? "text-green-600" : "text-yellow-600"
+                            }`}
+                        >
+                            {patient.status}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {/* {patient.scans?.length > 0 ? (
   <div className="mt-8">
     <h2 className="text-xl font-semibold text-gray-800 mb-4">Scans</h2>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -124,7 +126,7 @@ return (
   <p className="text-gray-500 mt-6">No scans available for this patient.</p>
 )} */}
 
-    
-  </div>
-);
+
+        </div>
+    );
 }
