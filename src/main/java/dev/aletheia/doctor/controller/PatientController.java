@@ -47,6 +47,7 @@ public class PatientController {
     public ResponseEntity<Object> updatepatientstatus(@PathVariable Long patientId, @RequestBody PatientDto patientDTO) {
         Patient patient = patientService.findOrFail(patientId);
         patient.setStatus(PatientStatus.fromString(patientDTO.getStatus()));
+        patientService.save(patient);
         return ResponseEntity.ok(patientService.convertToDto(patient));
     }
 }

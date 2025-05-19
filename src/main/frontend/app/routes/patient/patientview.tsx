@@ -6,6 +6,7 @@ import type {Route} from "./+types/patientview";
 import {Link, useParams} from 'react-router';
 import {faUserCircle} from '@fortawesome/free-solid-svg-icons';
 import {useUpdatestatusMutation} from "~/features/patient/patientApiSlice";
+import Button from '~/components/button';
 
 export function meta() {
     return [
@@ -16,11 +17,12 @@ export function meta() {
 
 export default function PatientViewPage() {
     const {id} = useParams();
-    const {data: patient, isLoading, isError, error} = useGetPatientByIdQuery(id!);
-    console.log(patient)
-    if (isLoading || !patient) return <Loading message="Loading patient data..."/>;
-
+    const {data: patient, isLoading, isError, error,refetch} = useGetPatientByIdQuery(id!);
+    console.log(patient?.status)
     const [updatePatientStatus] = useUpdatestatusMutation();
+    
+    if (isLoading || !patient) return <Loading message="Loading patient data..."/>;
+    
     if (isError) {
         console.error('Error fetching patients:', error);
         return (
@@ -36,14 +38,16 @@ export default function PatientViewPage() {
             </div>
         );
     }
-    const handleToggleStatus = async () => {
-        const newStatus = patient.status === "DIAGNOSED" ? "PENDING" : "DIAGNOSED";
-        try {
-            await updatePatientStatus({id: patient.id, status: newStatus}).unwrap();
-        } catch (err) {
-            console.error("Failed to update status:", err);
-        }
-    };
+const handleToggleStatus = async (newStatus: "PENDING" | "DIAGNOSED") => {
+  if (patient.status === newStatus) return; // do nothing if already selected
+
+  try {
+    await updatePatientStatus({ id: patient.id, status: newStatus });
+    await refetch(); // update UI
+  } catch (error) {
+    console.error("Failed to update status", error);
+  }
+};
     const calculateAge = (birthday: string) => {
         if (!birthday) return null;
         const birthDate = new Date(birthday);
@@ -81,20 +85,45 @@ export default function PatientViewPage() {
                         <p>{calculateAge(patient.birthdate) ?? "Unknown"} years</p>
                     </div>
                     <div>
-                        <p className="text-gray-500 font-medium">Status</p>
-                        <button
-                            onClick={handleToggleStatus}
-                            type="button"
-                            className={`font-semibold uppercase focus:outline-none ${
-                                patient.status === "DIAGNOSED" ? "text-green-600" : "text-yellow-600"
-                            }`}
-                        >
-                            {patient.status}
-                        </button>
+                      <p className="text-gray-500 font-medium">dignose</p>
+                      <Button color='primary' padding="px-15 py-3" width='40px'  onClick={() => window.location.href = `/diagnose`}>
+                        add scan
+                      </Button>
+   
+                    </div>
+
+
+
+                    <div>
+<p className="text-gray-500 font-medium mb-2">Status</p>
+<div className="flex items-center">
+  <div className="flex bg-white border border-gray-300 rounded-full overflow-hidden">
+    <button
+      onClick={() => handleToggleStatus("PENDING")}
+      className={`px-4 py-1 text-sm font-semibold transition ${
+        patient.status === "PENDING"
+          ? "bg-yellow-400 text-black"
+          : "text-gray-700 hover:bg-gray-100"
+      }`}
+    >
+      Pending
+    </button>
+    <button
+      onClick={() => handleToggleStatus("DIAGNOSED")}
+      className={`px-4 py-1 text-sm font-semibold transition ${
+        patient.status === "DIAGNOSED"
+          ? "bg-green-500 text-white"
+          : "text-gray-700 hover:bg-gray-100"
+      }`}
+    >
+      Diagnosed
+    </button>
+  </div>
+</div>
                     </div>
                 </div>
             </div>
-            {/* {patient.scans?.length > 0 ? (
+            {patient.scans?.length > 0 ? (
   <div className="mt-8">
     <h2 className="text-xl font-semibold text-gray-800 mb-4">Scans</h2>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -124,7 +153,7 @@ export default function PatientViewPage() {
   </div>
 ) : (
   <p className="text-gray-500 mt-6">No scans available for this patient.</p>
-)} */}
+)}
 
 
         </div>
