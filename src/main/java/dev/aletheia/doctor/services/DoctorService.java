@@ -63,8 +63,8 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         save(doctor);
     }
 
-    public boolean confirmDoctor(String token) {
-        Doctor doctor = doctorRepository.findByConfirmationToken(token)
+    public boolean confirmDoctor(Long doctorId) {
+        Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid confirmation token"));
 
         doctor.setConfirmed(true);

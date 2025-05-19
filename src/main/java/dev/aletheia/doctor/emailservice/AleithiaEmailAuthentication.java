@@ -60,7 +60,7 @@ public class AleithiaEmailAuthentication {
                     "<form action=\"" + loginLink + "\" method=\"POST\">" +
                     "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
                     "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
-                    "Confirm Registration</button>" +
+                    "Login Now!</button>" +
                     "</form>" +
                     "</body></html>";
 

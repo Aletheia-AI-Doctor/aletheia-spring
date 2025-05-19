@@ -8,13 +8,13 @@ export default [
         route("/patients/:id/show", "routes/patient/patientview.tsx"),
         route("/profile", "routes/profile/profile.tsx"),
         route("/profile/edit", "routes/profile/edit.tsx"),
-        route("/confirm-email/:id","routes/auth/confirm-email.tsx")
     ]),
 
     layout("./routes/auth/layout.tsx", [
         route("login", "./routes/auth/login.tsx"),
         route("registration", "./routes/auth/registration.tsx"),
-        route("hospital_subscription", "./routes/auth/hospital-sub.tsx")
+        route("hospital_subscription", "./routes/auth/hospital-sub.tsx"),
+        route("/confirm-email/:id","routes/auth/confirm-email.tsx")
     ]),
     
 
