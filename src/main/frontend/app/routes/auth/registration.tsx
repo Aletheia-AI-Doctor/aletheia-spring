@@ -1,7 +1,6 @@
 import type {Route} from "./+types/registration";
 import Input from "~/components/input";
 import Button from "~/components/button";
-import selectbox from "~/components/select";
 import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 import {useGetHospitalsQuery} from "~/features/hospital/hospitalApiSlice";
 import {useConfirmEmailMutation} from "~/features/authentication/authenticationApiSlice";
@@ -9,6 +8,7 @@ import {useRegisterMutation} from "~/features/authentication/authenticationApiSl
 import React, {useEffect} from "react";
 import Logo from "~/components/app-logo-2";
 import {useNavigate, useNavigation} from "react-router";
+import Select from "~/components/select";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -95,6 +95,7 @@ export default function registration() {
                     <div className="bg-white px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
                         <form onSubmit={submit} className="space-y-6">
                             <Input
+                                id="name"
                                 name="name"
                                 required
                                 label="Full Name"
@@ -102,6 +103,7 @@ export default function registration() {
                                 onChange={handleChange}
                             />
                             <Input
+                                id="email"
                                 name="email"
                                 type="email"
                                 required
@@ -110,6 +112,7 @@ export default function registration() {
                                 onChange={handleChange}
                             />
                             <Input
+                                id="password"
                                 name="password"
                                 type="password"
                                 required
@@ -118,6 +121,7 @@ export default function registration() {
                                 onChange={handleChange}
                             />
                             <Input
+                                id="passwordConfirmation"
                                 name="passwordConfirmation"
                                 type="password"
                                 required
@@ -126,25 +130,22 @@ export default function registration() {
                                 onChange={handleChange}
                             />
                             <div className="space-y-1">
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Specialty
-                                </label>
-                                <select
-                                    name="speciality"
+                                <Select
+                                    id="speciality"
+                                    required
+                                    label="Specialty"
+                                    placeholder="Select speciality"
+                                    disabled={hospitalsLoading}
                                     value={formData.speciality}
                                     onChange={handleChange}
-                                    required
-                                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                >
-                                    <option value="">Select specialty</option>
-                                    {specialtyOptions.map((specialty) => (
-                                        <option key={specialty} value={specialty}>
-                                            {specialty}
-                                        </option>
-                                    ))}
-                                </select>
+                                    options={specialtyOptions.map((specialty) => ({
+                                        value: specialty,
+                                        label: specialty,
+                                    }))}
+                                />
                             </div>
                             <Input
+                                id="licence"
                                 name="licence"
                                 required
                                 label="Medical License Number"
@@ -153,24 +154,19 @@ export default function registration() {
                             />
 
                             <div className="space-y-1">
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Hospital
-                                </label>
-                                <select
-                                    name="hospital"
+                                <Select
+                                    id="hospital"
+                                    label="Hospital"
+                                    required
+                                    placeholder="Select hospital"
+                                    disabled={hospitalsLoading}
                                     value={formData.hospital}
                                     onChange={handleChange}
-                                    required
-                                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    disabled={hospitalsLoading}
-                                >
-                                    <option value="">Select hospital</option>
-                                    {hospitals.map((hospital) => (
-                                        <option key={hospital.id} value={hospital.id}>
-                                            {hospital.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                    options={hospitals.map((hospital) => ({
+                                        value: hospital.id.toString(),
+                                        label: hospital.name,
+                                    }))}
+                                />
                                 {hospitalsError && (
                                     <p className="mt-2 text-sm text-red-600">Failed to load hospitals</p>
                                 )}
