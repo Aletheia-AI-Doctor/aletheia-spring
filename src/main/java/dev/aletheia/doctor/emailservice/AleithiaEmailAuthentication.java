@@ -38,6 +38,7 @@ public class AleithiaEmailAuthentication {
                     "</body></html>";
 
             helper.setText(htmlContent, true);
+            System.out.println(confirmationLink);
             mailSender.send(message);
         } catch (Exception e) {
             throw new EmailSendingException("Failed to send confirmation email", e);
