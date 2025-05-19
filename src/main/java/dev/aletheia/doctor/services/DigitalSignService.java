@@ -5,40 +5,45 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.spec.*;
 import java.util.Base64;
 
 @Service
 public class DigitalSignService {
     @Value("${signature.public}")
-    private String publicKey;
+    private String publicKeyPem;
 
     @Value("${signature.private}")
-    private String privateKey;
+    private String privateKeyPem;
 
-    private KeyPair getKeyPair() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private KeyPair getKeyPair() throws GeneralSecurityException {
+        byte[] pubBytes = Base64.getDecoder().decode(publicKeyPem);
+        byte[] privBytes = Base64.getDecoder().decode(privateKeyPem);
 
-        return new KeyPair(
-                KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(publicKey))),
-                KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey))));
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        PublicKey pub = kf.generatePublic(new X509EncodedKeySpec(pubBytes));
+        PrivateKey priv = kf.generatePrivate(new PKCS8EncodedKeySpec(privBytes));
+
+        return new KeyPair(pub, priv);
     }
 
-    public String signData(String data) throws Exception {
-        KeyPair keyPair = getKeyPair();
-        Signature sig = Signature.getInstance("SHA1WithRSA");
-        sig.initSign(keyPair.getPrivate());
-        sig.update(data.getBytes(StandardCharsets.UTF_8));
-        byte[] signatureBytes = sig.sign();
-        return new String(signatureBytes, StandardCharsets.UTF_8);
+    public String signData(String data) throws GeneralSecurityException {
+        KeyPair kp = getKeyPair();
+        Signature signer = Signature.getInstance("SHA1withRSA");
+        signer.initSign(kp.getPrivate());
+        // sign the raw bytes, not Base64‑encoded
+        signer.update(data.getBytes(StandardCharsets.UTF_8));
+        byte[] sigBytes = signer.sign();
+        return Base64.getUrlEncoder().encodeToString(sigBytes);
     }
 
-    public boolean verifySignature(String data, String signature) throws Exception {
-        KeyPair keyPair = getKeyPair();
-        Signature sig = Signature.getInstance("SHA1WithRSA");
-        sig.initVerify(keyPair.getPublic());
-        sig.update(data.getBytes(StandardCharsets.UTF_8));
-        return sig.verify(signature.getBytes(StandardCharsets.UTF_8));
+    public boolean verifySignature(String data, String signature) throws GeneralSecurityException {
+        KeyPair kp = getKeyPair();
+        Signature verifier = Signature.getInstance("SHA1withRSA");
+        verifier.initVerify(kp.getPublic());
+        // verify against the same raw bytes
+        verifier.update(data.getBytes(StandardCharsets.UTF_8));
+        byte[] sigBytes = Base64.getUrlDecoder().decode(signature);
+        return verifier.verify(sigBytes);
     }
 }

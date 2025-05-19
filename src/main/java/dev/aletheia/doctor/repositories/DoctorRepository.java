@@ -19,7 +19,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "FROM patients p WHERE p.doctor.id = ?1")
     Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId);
 
-    Optional<Doctor> findByConfirmationToken(String token);
     boolean existsByEmailAndIdNot(String email, Long id);
     boolean existsByUsernameAndIdNot(String username, Long id);
 

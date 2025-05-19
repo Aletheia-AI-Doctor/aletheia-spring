@@ -46,6 +46,7 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         doctor.setUsername(doctorDTO.getUsername());
         doctor.setEmail(doctorDTO.getEmail());
         doctor.setPassword(doctorDTO.getPassword());
+        doctor.setConfirmed(false);
         doctor.setSpeciality(DoctorSpeciality.valueOf(doctorDTO.getSpeciality()));
         doctor.setLicenseNumber(doctorDTO.getLicenseNumber());
         Hospital hospital = hospitalRepository.findById(doctorDTO.getHospitalId())
@@ -56,28 +57,15 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         return save(doctor);
     }
 
-    public void saveConfirmationToken(Long doctorId, String token) {
-        Doctor doctor = findOrFail(doctorId);
-        doctor.setConfirmationToken(token);
-        doctor.setConfirmed(false); // Ensure doctor is not confirmed yet
-        save(doctor);
-    }
-
     public boolean confirmDoctor(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid confirmation token"));
 
         doctor.setConfirmed(true);
-        doctor.setConfirmationToken(null); // Clear the token after confirmation
         save(doctor);
 
         return true;
     }
-
-    public Optional<Doctor> findByConfirmationToken(String token) {
-        return doctorRepository.findByConfirmationToken(token);
-    }
-
 
     public Doctor getCurrentDoctor() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -89,8 +77,6 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     public Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId) {
         return doctorRepository.countDoctorPatients(doctorId);
     }
-
-    
 
     @Autowired
     private ActivityLogRepository activityLogRepository;

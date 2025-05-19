@@ -58,7 +58,7 @@ public class AleithiaEmailAuthentication {
                     "<p>Dear Dr.</p>" + doctorName + "," +
                     "<p>you have been confirmed by" + hospitalName +" hospital"+
                     "<p>Click the link below to login:</p>" +
-                    "<form action=\"" + loginLink + "\" method=\"POST\">" +
+                    "<form action=\"" + loginLink + "\" method=\"GET\">" +
                     "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
                     "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
                     "Login Now!</button>" +
