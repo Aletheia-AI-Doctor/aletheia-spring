@@ -132,6 +132,7 @@ export default function registration() {
                             <div className="space-y-1">
                                 <Select
                                     id="speciality"
+                                    name="speciality"
                                     required
                                     label="Specialty"
                                     placeholder="Select speciality"
@@ -157,6 +158,7 @@ export default function registration() {
                                 <Select
                                     id="hospital"
                                     label="Hospital"
+                                    name="hospital"
                                     required
                                     placeholder="Select hospital"
                                     disabled={hospitalsLoading}
