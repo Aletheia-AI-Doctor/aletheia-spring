@@ -40,6 +40,6 @@ public class PatientController {
 
     @GetMapping("/{patientId}/show")
     public ResponseEntity<Object> getPatient(@PathVariable Long patientId) {
-        return ResponseEntity.ok(patientService.findOrFail(patientId));
+        return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
     }
 }
