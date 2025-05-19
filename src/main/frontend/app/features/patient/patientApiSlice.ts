@@ -40,7 +40,17 @@ export const patientsApiSlice = createApi({
             return `api/patients/${patientId}/show`},
             providesTags: ['Patients'],
         }),
+       
+        updatestatus: build.mutation<Patient, Partial<Patient>>({
+            query: (patient) => ({
+                url: `api/patients/${patient.id}/update`,
+                method: "PUT",
+                body: patient,
+            }),
+            invalidatesTags: ['Patients'],
+        }),
+
     }),
 });
 
-export const { useGetPatientsQuery, useAddPatientMutation,useGetPatientByIdQuery } = patientsApiSlice;
+export const { useGetPatientsQuery, useAddPatientMutation,useGetPatientByIdQuery,useUpdatestatusMutation } = patientsApiSlice;

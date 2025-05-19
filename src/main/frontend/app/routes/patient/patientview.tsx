@@ -5,12 +5,16 @@ import { useGetPatientsQuery, useAddPatientMutation, useGetPatientByIdQuery } fr
 import type { Route } from "./+types/patientview";
 import { Link, useParams } from 'react-router';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { useUpdatestatusMutation } from "~/features/patient/patientApiSlice";
+
 export function meta() {
     return [
         { title: "Patient VIEW" },
         { name: "description", content: "Patient VIEW" },
     ];
 }
+const [updatePatientStatus] = useUpdatestatusMutation();
+
 export default function ShowPatientPage() {
   const { id } = useParams();
   const { data: patient, isLoading,isError,error } = useGetPatientByIdQuery(id);
@@ -31,7 +35,14 @@ if (isError) {
             </div>
         );
   }
-
+const handleToggleStatus = async () => {
+  const newStatus = patient.status === "DIAGNOSED" ? "PENDING" : "DIAGNOSED";
+  try {
+    await updatePatientStatus({ id: patient.id, status: newStatus }).unwrap();
+  } catch (err) {
+    console.error("Failed to update status:", err);
+  }
+};
 const calculateAge = (birthday: string) => {
   if (!birthday) return null;
   const birthDate = new Date(birthday);
@@ -69,13 +80,19 @@ return (
         </div>
         <div>
           <p className="text-gray-500 font-medium">Status</p>
-          <p className={`font-semibold uppercase ${patient.status === "PENDING" ? "text-yellow-600" : "text-green-600"}`}>
+          <button
+            onClick={handleToggleStatus}
+            type="button"
+            className={`font-semibold uppercase focus:outline-none ${
+              patient.status === "DIAGNOSED" ? "text-green-600" : "text-yellow-600"
+            }`}
+          >
             {patient.status}
-          </p>
+          </button>
         </div>
       </div>
     </div>
-{patient.scans?.length > 0 ? (
+{/* {patient.scans?.length > 0 ? (
   <div className="mt-8">
     <h2 className="text-xl font-semibold text-gray-800 mb-4">Scans</h2>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -105,7 +122,7 @@ return (
   </div>
 ) : (
   <p className="text-gray-500 mt-6">No scans available for this patient.</p>
-)}
+)} */}
 
     
   </div>

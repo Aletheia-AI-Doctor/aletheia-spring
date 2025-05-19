@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import dev.aletheia.doctor.dtos.patient.PatientDto;
 import dev.aletheia.doctor.dtos.patient.PatientRegistrationDTO;
+import dev.aletheia.doctor.enums.PatientStatus;
 import dev.aletheia.doctor.services.PatientService;
 import dev.aletheia.doctor.models.Patient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -41,5 +41,12 @@ public class PatientController {
     @GetMapping("/{patientId}/show")
     public ResponseEntity<Object> getPatient(@PathVariable Long patientId) {
         return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
+    }
+
+    @PutMapping("/{patientId}/update")
+    public ResponseEntity<Object> updatepatientstatus(@PathVariable Long patientId, @RequestBody PatientDto patientDTO) {
+        Patient patient = patientService.findOrFail(patientId);
+        patient.setStatus(PatientStatus.fromString(patientDTO.getStatus()));
+        return ResponseEntity.ok(patientService.convertToDto(patient));
     }
 }
