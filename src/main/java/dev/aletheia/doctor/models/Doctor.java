@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -63,6 +64,10 @@ public class Doctor extends BaseModel {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Patient> patients;
 
+    @Column(name = "confirmed")
+    @ColumnDefault("false")
+    private Boolean confirmed;
+
     public void setPassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
         this.password = encoder.encode(password);
@@ -77,8 +82,8 @@ public class Doctor extends BaseModel {
         return List.of(new SimpleGrantedAuthority("ROLE_DOCTOR"));
     }
 
-    public boolean isConfirmed() {
-        return this.confirmedAt != null;
+    public Boolean isConfirmed() {
+        return confirmed;
     }
 
     @Override
