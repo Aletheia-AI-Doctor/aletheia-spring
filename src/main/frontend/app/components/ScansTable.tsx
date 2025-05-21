@@ -13,9 +13,14 @@ export default function ScansTable({}: ScansTableProps) {
 
     const [params, setParams] = useSearchParams();
 
-    const { data: pagination, isLoading: isLoadingScans, refetch } = useGetScansQuery({
+    const req:any = {
         page: parseInt(params.get('page') ?? '1'),
-    });
+    }
+    if(params.has('patientId')) {
+        req.patientId = parseInt(params.get('patientId')!);
+    }
+
+    const { data: pagination, isLoading: isLoadingScans, refetch } = useGetScansQuery(req);
 
     return (
         <If

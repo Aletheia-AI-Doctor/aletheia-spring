@@ -4,6 +4,7 @@ import dev.aletheia.doctor.dtos.PaginationDTO;
 import dev.aletheia.doctor.dtos.scans.SaveScanDto;
 import dev.aletheia.doctor.dtos.scans.ScanDto;
 import dev.aletheia.doctor.exceptions.NotFoundException;
+import dev.aletheia.doctor.models.Patient;
 import dev.aletheia.doctor.services.*;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageRequest;
@@ -22,11 +23,13 @@ public class ScanController {
     private final ScanService scanService;
     private final DoctorService doctorService;
     private final FileService fileService;
+    private final PatientService patientService;
 
-    public ScanController(ScanService scanService, DoctorService doctorService, FileService fileService) {
+    public ScanController(ScanService scanService, DoctorService doctorService, FileService fileService, PatientService patientService) {
         this.scanService = scanService;
         this.doctorService = doctorService;
         this.fileService = fileService;
+        this.patientService = patientService;
     }
 
     @PostMapping
@@ -38,12 +41,18 @@ public class ScanController {
 
 
     @GetMapping
-    public ResponseEntity<Object> index(@RequestParam @Nullable Integer page) {
+    public ResponseEntity<Object> index(@RequestParam @Nullable Integer page, @RequestParam @Nullable Long patientId) {
+        Patient patient = null;
+        if (patientId != null) {
+            patient = patientService.findOrFail(patientId);
+        }
+
         return ResponseEntity.ok(new PaginationDTO<>(
                 scanService.getAllForDoctor(
                         doctorService.getCurrentDoctor(),
+                        patient,
                         PageRequest.of(page == null ? 0 : page, 10)
-                        )
+                )
         ));
     }
 
@@ -51,7 +60,7 @@ public class ScanController {
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable String path) {
         ByteArrayResource image = fileService.getImage(path);
 
-        if(image == null) {
+        if (image == null) {
             throw new NotFoundException("Image not found");
         }
 

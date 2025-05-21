@@ -17,12 +17,13 @@ export function meta() {
 
 export default function PatientViewPage() {
     const {id} = useParams();
+
     const {data: patient, isLoading, isError, error,refetch} = useGetPatientByIdQuery(id!);
     console.log(patient?.status)
     const [updatePatientStatus] = useUpdatestatusMutation();
-    
+
     if (isLoading || !patient) return <Loading message="Loading patient data..."/>;
-    
+
     if (isError) {
         console.error('Error fetching patients:', error);
         return (
@@ -89,7 +90,7 @@ const handleToggleStatus = async (newStatus: "PENDING" | "DIAGNOSED") => {
                       <Button color='primary' padding="px-15 py-3" width='40px'  onClick={() => window.location.href = `/diagnose`}>
                         add scan
                       </Button>
-   
+
                     </div>
 
 

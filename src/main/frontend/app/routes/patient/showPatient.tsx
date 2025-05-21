@@ -51,6 +51,7 @@ export default function PatientPage() {
                             Date
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Add Scan</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                     </thead>
@@ -75,6 +76,14 @@ export default function PatientPage() {
                                             }`}>
                                             {patient.status}
                                         </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <Link
+                                        to={`/diagnose?patientId=${patient.id}`}
+                                        className="text-blue-600 hover:text-blue-900"
+                                    >
+                                        Add Scan
+                                    </Link>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <Link

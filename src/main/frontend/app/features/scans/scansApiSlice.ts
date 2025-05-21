@@ -40,6 +40,10 @@ interface Scan {
 
 export type { Diagnosis, Model, Scan };
 
+type GetScansRequest = PageRequest & {
+    patientId?: number;
+};
+
 // Define a service using a base URL and expected endpoints
 export const scansApiSlice = createApi({
     baseQuery: fetchBaseQuery({
@@ -81,8 +85,8 @@ export const scansApiSlice = createApi({
             }),
         }),
 
-        getScans: build.query<Pagination<Scan>, PageRequest>({
-            query: (req) => `api/scans` + queryParamsFromRequest(req),
+        getScans: build.query<Pagination<Scan>, GetScansRequest>({
+            query: (req) => `api/scans` + queryParamsFromRequest(req, [`patientId=${req.patientId}`]),
             providesTags: ['Scans'],
             transformResponse: (response: Pagination<Scan>, meta, arg) => {
                 return {
