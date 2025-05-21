@@ -45,8 +45,10 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
         return scanRepository.save(scan);
     }
 
-    public Page<ScanDto> getAllForDoctor(Doctor doctor, Pageable pageable) {
-        Page<Scan> scans = scanRepository.findAllByDoctor(doctor, pageable);
+    public Page<ScanDto> getAllForDoctor(Doctor doctor, Patient patient, Pageable pageable) {
+        Page<Scan> scans = patient == null
+                ? scanRepository.findAllByDoctor(doctor, pageable)
+                : scanRepository.findAllByDoctorAndPatient(doctor, patient, pageable);
         return scans.map(this::convertToDto);
     }
 }

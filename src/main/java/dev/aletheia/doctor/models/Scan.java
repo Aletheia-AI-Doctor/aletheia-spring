@@ -1,5 +1,8 @@
 package dev.aletheia.doctor.models;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +14,7 @@ public class Scan extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
+    @JsonBackReference
     private Patient patient;
 
     @ManyToOne

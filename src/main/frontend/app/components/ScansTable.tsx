@@ -1,21 +1,31 @@
 import {type Scan, useGetScansQuery} from "~/features/scans/scansApiSlice";
 import If from "~/components/if";
 import Loading from "~/components/Loading";
-import React from "react";
+import React, {useEffect} from "react";
 import {Table, Td, Th} from "~/components/Table/table";
 import {useSearchParams} from "react-router";
 
 interface ScansTableProps {
-
+    refetchNow?: boolean;
+    patientId?: string|number;
 }
 
-export default function ScansTable({}: ScansTableProps) {
+export default function ScansTable({refetchNow, patientId}: ScansTableProps) {
 
     const [params, setParams] = useSearchParams();
 
-    const { data: pagination, isLoading: isLoadingScans, refetch } = useGetScansQuery({
+    const req:any = {
         page: parseInt(params.get('page') ?? '1'),
-    });
+    }
+    if(patientId) {
+        req.patientId = patientId;
+    }
+
+    const { data: pagination, isLoading: isLoadingScans, refetch } = useGetScansQuery(req);
+
+    useEffect(() => {
+        refetch();
+    }, [refetchNow]);
 
     return (
         <If

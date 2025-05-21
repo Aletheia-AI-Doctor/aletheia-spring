@@ -34,7 +34,7 @@ public class AleithiaEmailAuthentication {
                     "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
                     "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
                     "Confirm Registration</button>" +
-                    "</form>" +
+                    "</form>" + "<p>     </p>"+
                     "<form action=\"" + rejectionLink + "\" method=\"POST\">" +
                     "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
                     "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
