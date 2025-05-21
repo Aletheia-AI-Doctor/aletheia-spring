@@ -2,12 +2,16 @@ package dev.aletheia.doctor.controller;
 
 import java.util.List;
 
+import dev.aletheia.doctor.dtos.PaginationDTO;
 import org.springframework.data.convert.ReadingConverter;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import dev.aletheia.doctor.dtos.patient.PatientDto;
 import dev.aletheia.doctor.dtos.patient.PatientRegistrationDTO;
+import dev.aletheia.doctor.enums.PatientStatus;
 import dev.aletheia.doctor.services.PatientService;
 import dev.aletheia.doctor.models.Patient;
 
@@ -17,36 +21,40 @@ import dev.aletheia.doctor.models.Patient;
 
 public class PatientController {
     private final PatientService patientService;
-    
+
     public PatientController(PatientService patientService) {
         this.patientService = patientService;
     }
 
 
-    // @GetMapping("/{patientId}")
-    // public ResponseEntity<Object> show(@PathVariable Long patientId) {
-    //     return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
-    // }
-    
     @PutMapping("/add")
     public ResponseEntity<Object> create(@RequestBody PatientRegistrationDTO patientDTO) {
-        System.out.println("Patient DTO: " + patientDTO);
         return ResponseEntity.ok(
-
-                patientService.createPatient(patientDTO)
+                patientService.convertToDto(patientService.createPatient(patientDTO))
         );
     }
-    
+
     @GetMapping
-
-    public ResponseEntity<Object> getAllPatient(){
-        return ResponseEntity.ok(patientService.getAll());
+    public ResponseEntity<Object> getAllPatient(@RequestParam @Nullable Integer page) {
+        return ResponseEntity.ok(
+                new PaginationDTO<>(
+                        patientService.getAllPaginated(PageRequest.of(
+                                page == null ? 0 : page, 10
+                        ))
+                )
+        );
     }
-    
 
-    
-    
+    @GetMapping("/{patientId}/show")
+    public ResponseEntity<Object> getPatient(@PathVariable Long patientId) {
+        return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
+    }
 
-
-    
+    @PutMapping("/{patientId}/update")
+    public ResponseEntity<Object> updatepatientstatus(@PathVariable Long patientId, @RequestBody PatientDto patientDTO) {
+        Patient patient = patientService.findOrFail(patientId);
+        patient.setStatus(PatientStatus.fromString(patientDTO.getStatus()));
+        patientService.save(patient);
+        return ResponseEntity.ok(patientService.convertToDto(patient));
+    }
 }

@@ -9,6 +9,8 @@ import dev.aletheia.doctor.models.Patient;
 import dev.aletheia.doctor.repositories.PatientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -26,14 +28,18 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
     }
 
     @Autowired
-    private PatientRepository PatientRepository;
-
+    private PatientRepository patientRepository;
+    
     public PatientRepository getRepository() {
-        return PatientRepository;
+        return patientRepository;
     }
 
-    public Optional<Patient> getByIdentifier(String identifier) {
-        return PatientRepository.findById(Long.valueOf(identifier));
+    public Page<PatientDto> getAllPaginated(Pageable pageable) {
+        Doctor doctor = doctorService.getCurrentDoctor();
+
+        return patientRepository
+                .findAllByDoctor(doctor, pageable)
+                .map(this::convertToDto);
     }
 
     public Patient createPatient(PatientRegistrationDTO PatientDTO) {
@@ -43,20 +49,18 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
         patient.setBirthdate(PatientDTO.getBirthdate());
         patient.setSex(Gender.fromString(PatientDTO.getSex()));
         patient.setName(PatientDTO.getName());
-        patient.setAddmissionDate(LocalDate.now());
-        patient.setStatus(PatientStatus.fromString(PatientDTO.getStatus()));
-        System.out.println("Patient DTO in create patient: " + PatientDTO);
         patient.setDoctor(doctor);
+        patient.setAdmissionDate(LocalDate.now());
+        patient.setStatus(PatientStatus.PENDING);
 
-        Patient savedPatient = save(patient);
+        patient = save(patient);
 
         doctorService.logActivity(
                 doctor,
                 "Add Patient",
                 "Added patient: " + patient.getName() + " with ID: " + savedPatient.getId() + " to the system.");
 
-        return save(patient);
-
+        return patient;
     }
 
     public Patient updatePatientStatus(Long patientId, String newStatus) {

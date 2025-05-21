@@ -1,13 +1,11 @@
 package dev.aletheia.doctor.models;
 
-import dev.aletheia.doctor.enums.Gender;
-import dev.aletheia.doctor.enums.PatientStatus;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 @Setter
 @Getter
@@ -16,7 +14,12 @@ public class Scan extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
+    @JsonBackReference
     private Patient patient;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
 
     @ManyToOne
     @JoinColumn(name = "model_diagnosis_id")

@@ -2,6 +2,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {ROOT_URL} from "~/base/consts";
 import {createSlice, type PayloadAction} from "@reduxjs/toolkit";
 import {getFromLocalStorage, removeFromLocalStorage, setToLocalStorage} from "~/base/helpers";
+import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 
 
 const doctorInit = getFromLocalStorage('doctor');
@@ -40,6 +41,18 @@ export { authSlice };
 interface LoginApiResponse {
     token?: string;
     doctor?: Doctor;
+    message?: string;
+    success?: boolean;
+}
+
+interface RegistrationResponse {
+    doctor: Doctor;
+    message: string;
+    success: boolean;
+}
+interface ConfirmationResponse {
+    message: string;
+    success: boolean;
 }
 
 interface Doctor {
@@ -48,11 +61,27 @@ interface Doctor {
     username: string;
     email: string;
     bio: string;
+    specialty: DoctorSpeciality;
+    license: string;
+    HospitalId: number;
+    confirmed?: boolean;
+    confirmationToken?: string;
 }
 
 interface LoginApiRequest {
     email: string;
     password: string;
+}
+
+interface RegisterApiRequest {
+    name: string;
+    email: string;
+    username: string;
+    password: string;
+    speciality: DoctorSpeciality;
+    licenseNumber: string;
+    hospitalId: number;
+
 }
 
 // Define a service using a base URL and expected endpoints
@@ -78,8 +107,32 @@ export const authenticationApiSlice = createApi({
             },
 
         }),
+        register: build.mutation<Doctor, RegisterApiRequest>({
+            query: (req: RegisterApiRequest) => ({
+                url: "/api/register",
+                method: "POST",
+                body: {
+                    name: req.name,
+                    email: req.email,
+                    username: req.username,
+                    password: req.password,
+                    speciality: req.speciality,
+                    licenseNumber: req.licenseNumber,
+                    hospitalId: req.hospitalId,
+                },
+            }),
+            invalidatesTags: ['Auth'],
+        }),
+
+        confirmEmail: build.mutation<ConfirmationResponse, { doctorId: string; token: string }>({
+            query: ({ doctorId, token }) => ({
+                url: `/api/confirm-email/${doctorId}`,
+                method: "GET",
+            }),
+        }),
+
 
     }),
-})
+});
 
-export const { useLoginMutation} = authenticationApiSlice
+export const { useLoginMutation, useRegisterMutation, useConfirmEmailMutation} = authenticationApiSlice;

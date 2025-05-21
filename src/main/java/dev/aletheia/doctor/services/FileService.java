@@ -3,10 +3,13 @@ package dev.aletheia.doctor.services;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.UUID;
 
 
@@ -24,6 +27,8 @@ public class FileService {
             File uploadDir = new File(UPLOAD_DIR);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
+
+
             }
 
             // Generate a unique file name
@@ -44,5 +49,23 @@ public class FileService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public ByteArrayResource getImage(String path) {
+        String filePath = UPLOAD_DIR + path;
+
+        File file = new File(filePath);
+
+        if (! file.exists()) {
+            return null;
+        }
+
+        ByteArrayResource resource = null;
+        try {
+            resource = new ByteArrayResource(Files.readAllBytes(file.getAbsoluteFile().toPath()));
+        } catch (IOException e) {
+            return null;
+        }
+        return resource;
     }
 }

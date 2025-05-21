@@ -10,6 +10,8 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Setter
 @Getter
 @Entity(name = "patients")
@@ -26,6 +28,7 @@ public class Patient extends BaseModel {
     private Doctor doctor;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Scan> scans;
 
     @Column(name = "birthdate")
@@ -39,6 +42,6 @@ public class Patient extends BaseModel {
     @Enumerated(EnumType.STRING)
     private PatientStatus status;
 
-    @Column(name = "addmission_date")
-    private LocalDate addmissionDate;
+    @Column(name = "admission_date")
+    private LocalDate admissionDate;
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/home";
 import{useGetDoctorPatientsQuery} from "~/features/doctor/doctorDashboardApiSlice";
-import { useGetDoctorAttributesQuery } from "~/features/doctor/doctorApiSlice";
+import { useGetDoctorAttributesQuery, useGetDoctorActivityLogQuery } from "~/features/doctor/doctorApiSlice";
 import Loading from "~/components/Loading";
 import { useGetDoctorActivityLogQuery } from "~/features/doctor/doctorApiSlice";
 
@@ -14,15 +14,12 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-
-
 export default function Home(){
     const navigate = useNavigate();
 
     const {
         data: doctor,
         isLoading: isLoadingDoctor,
-        isError: isErrorDoctor,
     } = useGetDoctorAttributesQuery();
 
     const {
@@ -35,21 +32,15 @@ export default function Home(){
     const{
         data: patientsData,
         isLoading: isLoadingPatients,
-        isError: isErrorPatients,
-        error
     } = useGetDoctorPatientsQuery();
 
-    if (isLoadingDoctor || isLoadingPatients) {
+    const{
+        data: activityLog,
+        isLoading: isActivityLoading,
+    } = useGetDoctorActivityLogQuery();
+
+    if (isLoadingDoctor || isLoadingPatients || isActivityLoading || !activityLog || !doctor || !patientsData) {
         return <Loading />;
-    }
-
-
-    
-    if (isErrorPatients || isErrorDoctor) {
-        return (
-            <div className="max-w-2xl mx-auto p-6 text-red-500">
-                Error loading profile. Please try again later.
-            </div>);
     }
 
     

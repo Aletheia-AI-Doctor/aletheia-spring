@@ -1,42 +1,1 @@
-package dev.aletheia.doctor.controller;
-
-import dev.aletheia.doctor.dtos.auth.SignInDto;
-import dev.aletheia.doctor.exceptions.InvalidCredentialsException;
-import dev.aletheia.doctor.models.Doctor;
-import dev.aletheia.doctor.services.DoctorService;
-import dev.aletheia.doctor.services.JWTService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
-
-@RestController
-public class AuthenticationController {
-
-    private final DoctorService doctorService;
-    private final JWTService jwtService;
-
-    public AuthenticationController(DoctorService doctorService, JWTService jwtService) {
-        this.doctorService = doctorService;
-        this.jwtService = jwtService;
-    }
-
-    @PostMapping("/api/login")
-    public ResponseEntity<Object> signIn(@RequestBody SignInDto signInDto) {
-        Doctor doctor = doctorService.getByIdentifier(signInDto.getEmail())
-                .orElseThrow(InvalidCredentialsException::new);
-
-        if (!doctor.checkPassword(signInDto.getPassword())) {
-            throw new InvalidCredentialsException();
-        }
-
-        return ResponseEntity.ok(Map.of(
-                        "message", "Login successful",
-                        "token", jwtService.generateToken(doctor),
-                        "doctor", doctorService.convertToDto(doctor)
-                )
-        );
-    }
-}
+package dev.aletheia.doctor.controller;import dev.aletheia.doctor.dtos.auth.SignInDto;import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;import dev.aletheia.doctor.emailservice.AleithiaEmailAuthentication;import dev.aletheia.doctor.exceptions.InvalidCredentialsException;import dev.aletheia.doctor.models.Doctor;import dev.aletheia.doctor.services.DigitalSignService;import dev.aletheia.doctor.services.DoctorService;import dev.aletheia.doctor.services.JWTService;import jakarta.servlet.http.HttpServletResponse;import org.springframework.http.HttpStatus;import org.springframework.http.ResponseEntity;import org.springframework.web.bind.annotation.*;import java.io.IOException;import java.util.Map;import java.util.Optional;import java.util.UUID;@RestControllerpublic class AuthenticationController {    private final DoctorService doctorService;    private final AleithiaEmailAuthentication emailService;    private final JWTService jwtService;    private final DigitalSignService digitalSignService;    public AuthenticationController(DoctorService doctorService, AleithiaEmailAuthentication emailService, JWTService jwtService, DigitalSignService digitalSignService) {        this.doctorService = doctorService;        this.emailService = emailService;        this.jwtService = jwtService;        this.digitalSignService = digitalSignService;    }    @PostMapping("/api/login")    public ResponseEntity<Object> signIn(@RequestBody SignInDto signInDto) {        Doctor doctor = doctorService.getByIdentifier(signInDto.getEmail())                .orElseThrow(InvalidCredentialsException::new);        if (!doctor.checkPassword(signInDto.getPassword())) {            throw new InvalidCredentialsException();        }        if (!doctor.isConfirmed()) {            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(                    "message", "Please confirm your email address before logging in",                    "success", false            ));        }        return ResponseEntity.ok(Map.of(                        "message", "Login successful",                        "token", jwtService.generateToken(doctor),                        "doctor", doctorService.convertToDto(doctor)                )        );    }    @PostMapping("/api/register")    public ResponseEntity<Object> create(@RequestBody DoctorRegistrationDTO doctorDTO) {        Doctor doctor = doctorService.createDoctor(doctorDTO);        String token;        String confirmationUrl = "http://localhost:8080/api/confirm-email/" + doctor.getId();        try {             token = digitalSignService.signData(confirmationUrl);        } catch (Exception e) {            throw new RuntimeException("Error signing data: " + e.getMessage(), e);        }        confirmationUrl += "?token=" + token;        emailService.sendConfirmationRequest(                doctor.getHospital().getHr_email(),                doctor.getName(),                doctor.getSpeciality().toString(),                doctor.getLicenseNumber(),                confirmationUrl        );        return ResponseEntity.ok(Map.of(                "message", "Registration successful! Please check your email for confirmation instructions.",                "doctor", doctorService.convertToDto(doctor),                "success", true        ));    }    @PostMapping ("/api/confirm-email/{id}")    public ResponseEntity<Void> confirmEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {        String frontendConfirmUrl = "http://localhost:3000/confirm-email/"+id;        boolean verify = false;       try{           verify = digitalSignService.verifySignature("http://localhost:8080/api/confirm-email/" + id, token);       }catch(Exception e) {           e.printStackTrace();       }        // Attempt to find the doctor by the token        Doctor doctor = doctorService.find(id);        if (doctor == null || !verify) {            // Redirect to frontend with error status            response.sendRedirect(frontendConfirmUrl + "?status=error");            return null;        }        if (doctor.isConfirmed()) {            // Doctor is already confirmed            response.sendRedirect(frontendConfirmUrl + "?status=already-confirmed");            return null;        }        // Confirm the doctor        doctorService.confirmDoctor(id);        // Send confirmation email        String loginURL = "http://localhost:3000/login";        if (doctor.getHospital() != null) {            emailService.sendConfirmationDoctor(                    doctor.getEmail(),                    doctor.getName(),                    doctor.getHospital().getName(),                    loginURL            );        }        // Redirect to frontend with success status        response.sendRedirect(frontendConfirmUrl + "?status=success");        return null;    }}
