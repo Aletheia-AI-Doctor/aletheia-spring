@@ -83,8 +83,6 @@ public class Doctor extends BaseModel {
         return List.of(new SimpleGrantedAuthority("ROLE_DOCTOR"));
     }
 
-
-
     @Override
     public String toString() {
         return "Doctor{" +

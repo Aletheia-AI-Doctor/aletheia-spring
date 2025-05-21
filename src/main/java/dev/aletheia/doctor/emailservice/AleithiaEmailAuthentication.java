@@ -19,6 +19,7 @@ public class AleithiaEmailAuthentication {
 
     public void sendConfirmationRequest(String hrEmail, String doctorName, String doctorSpeciality,
                                         String doctorLicenceNumber, String confirmationLink, String rejectionLink) {
+
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);

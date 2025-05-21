@@ -92,7 +92,6 @@ public class DoctorController {
 		));
 
 	}
-
     @PutMapping("/update")
     public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
         Doctor doctor = doctorService.getCurrentDoctor();
