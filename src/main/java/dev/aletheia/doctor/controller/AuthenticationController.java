@@ -45,7 +45,7 @@ public class AuthenticationController {
             throw new InvalidCredentialsException();
         }
 
-        if (doctor.getStatus() == DoctorStates.CONFIRMED) {
+        if (doctor.getStatus() != DoctorStates.CONFIRMED) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                     "message", "Please confirm your email address before logging in",
                     "success", false
