@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -22,14 +23,15 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
 
     @Autowired
     private DoctorService doctorService;
+    @Autowired
+    private ActivityService activityService;
+    @Autowired
+    private PatientRepository patientRepository;
 
     protected PatientService() {
         super(Patient.class, PatientDto.class);
     }
 
-    @Autowired
-    private PatientRepository patientRepository;
-    
     public PatientRepository getRepository() {
         return patientRepository;
     }
@@ -43,47 +45,38 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
     }
 
     public Patient createPatient(PatientRegistrationDTO PatientDTO) {
-        Doctor doctor = doctorService.getCurrentDoctor();
-
         Patient patient = new Patient();
         patient.setBirthdate(PatientDTO.getBirthdate());
         patient.setSex(Gender.fromString(PatientDTO.getSex()));
         patient.setName(PatientDTO.getName());
-        patient.setDoctor(doctor);
+        patient.setDoctor(doctorService.getCurrentDoctor());
         patient.setAdmissionDate(LocalDate.now());
         patient.setStatus(PatientStatus.PENDING);
 
         patient = save(patient);
 
-        doctorService.logActivity(
-                doctor,
-                "Add Patient",
-                "Added patient: " + patient.getName() + " with ID: " + savedPatient.getId() + " to the system.");
+        activityService.log(
+                "Add Scan",
+                "Added patient: " + patient.getName() + " with ID: " + patient.getId() + " to the system."
+        );
 
         return patient;
     }
 
-    public Patient updatePatientStatus(Long patientId, String newStatus) {
-        Doctor doctor = doctorService.getCurrentDoctor();
-        Patient patient = getRepository().findById(patientId).get();
-
+    public void updatePatientStatus(Patient patient, PatientStatus newStatus) {
         PatientStatus currentStatus = patient.getStatus();
-        PatientStatus updatedStatus = PatientStatus.fromString(newStatus);
-
-        if (currentStatus != updatedStatus) {
-            patient.setStatus(updatedStatus);
-
-            if (currentStatus == PatientStatus.PENDING && updatedStatus == PatientStatus.DIAGNOSED) {
-                doctorService.logActivity(
-                        doctor,
-                        "Diagnose Patient",
-                        "Changed status to diagnosed for: " + patient.getName() + " with ID: " + patient.getId());
-            }
-
-            return save(patient);
+        if(currentStatus == newStatus) {
+            return;
         }
 
-        return patient;
+        patient.setStatus(newStatus);
+
+        activityService.log(
+                "Diagnose Patient",
+                "Changed status to " + newStatus.name().toLowerCase() + " for: " + patient.getName() + " with ID: " + patient.getId()
+        );
+
+        save(patient);
     }
 
 }

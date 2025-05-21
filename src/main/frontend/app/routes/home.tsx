@@ -4,8 +4,6 @@ import type { Route } from "./+types/home";
 import{useGetDoctorPatientsQuery} from "~/features/doctor/doctorDashboardApiSlice";
 import { useGetDoctorAttributesQuery, useGetDoctorActivityLogQuery } from "~/features/doctor/doctorApiSlice";
 import Loading from "~/components/Loading";
-import { useGetDoctorActivityLogQuery } from "~/features/doctor/doctorApiSlice";
-
 
 export function meta({}: Route.MetaArgs) {
     return [

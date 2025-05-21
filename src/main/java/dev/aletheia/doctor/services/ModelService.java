@@ -21,21 +21,26 @@ public class ModelService extends CRUDService<Model, ModelDto> {
     private final HttpService httpService;
     private final DiagnosisService diagnosisService;
     private final FileService fileService;
-    
-    
+    @Autowired
+    private ActivityService activityService;
 
-    public ModelRepository getRepository() { return modelRepository; }
 
-    protected ModelService(ModelRepository modelRepository, HttpService httpService, DiagnosisService diagnosisService, FileService fileService) {super(Model.class, ModelDto.class);
+    public ModelRepository getRepository() {
+        return modelRepository;
+    }
+
+    protected ModelService(ModelRepository modelRepository, HttpService httpService, DiagnosisService diagnosisService, FileService fileService) {
+        super(Model.class, ModelDto.class);
         this.modelRepository = modelRepository;
         this.httpService = httpService;
         this.diagnosisService = diagnosisService;
         this.fileService = fileService;
-        
+
     }
+
     @Autowired
     private DoctorService doctorService;
-    
+
     public Model getBySlug(String slug) {
         return modelRepository.findByPath(slug)
                 .orElseThrow(() -> new NotFoundException("Model not found"));
@@ -43,16 +48,14 @@ public class ModelService extends CRUDService<Model, ModelDto> {
 
     public DiagnosisDto predict(Model model, MultipartFile image) {
         String imagePath = fileService.saveFile(image);
-        Doctor doctor = doctorService.getCurrentDoctor();
-        doctorService.logActivity(
-        doctor,
-        "Add Scan",
-        "Uploaded scan for model: " + model.getPath()
-    );
+        activityService.log(
+                "Add Scan",
+                "Uploaded scan for model: " + model.getPath()
+        );
 
         Response response = httpService.get("/" + model.getPath() + "?image_path=" + imagePath);
 
-        if(response.isSuccessful()) {
+        if (response.isSuccessful()) {
             DiagnosisDto diagnosis = diagnosisService.convertToDto(diagnosisService.getByName(response.getBody()));
 
             diagnosis.setImagePath(imagePath);

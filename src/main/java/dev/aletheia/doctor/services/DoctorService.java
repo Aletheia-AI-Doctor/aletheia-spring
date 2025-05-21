@@ -52,19 +52,16 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         Hospital hospital = hospitalRepository.findById(doctorDTO.getHospitalId())
                 .orElseThrow(() -> new RuntimeException("Hospital not found"));
         doctor.setHospital(hospital);
-        System.out.println("doctor DTO in create doctor: " + doctorDTO);
 
         return save(doctor);
     }
 
-    public boolean confirmDoctor(Long doctorId) {
+    public void confirmDoctor(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid confirmation token"));
 
         doctor.setConfirmed(true);
         save(doctor);
-
-        return true;
     }
 
     public Doctor getCurrentDoctor() {
@@ -77,21 +74,4 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     public Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId) {
         return doctorRepository.countDoctorPatients(doctorId);
     }
-
-    @Autowired
-    private ActivityLogRepository activityLogRepository;
-
-    public List<ActivityLog> getActivityLogs(Long doctorId) {
-        return activityLogRepository.findByDoctorIdOrderByCreatedAtDesc(doctorId);
-    }
-
-    public void logActivity(Doctor doctor, String action, String description) {
-        ActivityLog log = new ActivityLog();
-        log.setDoctor(doctor);
-        log.setAction(action);
-        log.setDescription(description);
-        activityLogRepository.save(log);
-}
-
- 
 }

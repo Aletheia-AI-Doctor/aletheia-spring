@@ -1,9 +1,6 @@
 package dev.aletheia.doctor.controller;
 
-import java.util.List;
-
 import dev.aletheia.doctor.dtos.PaginationDTO;
-import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -53,8 +50,9 @@ public class PatientController {
     @PutMapping("/{patientId}/update")
     public ResponseEntity<Object> updatepatientstatus(@PathVariable Long patientId, @RequestBody PatientDto patientDTO) {
         Patient patient = patientService.findOrFail(patientId);
-        patient.setStatus(PatientStatus.fromString(patientDTO.getStatus()));
-        patientService.save(patient);
+
+        patientService.updatePatientStatus(patientService.findOrFail(patientId), PatientStatus.fromString(patientDTO.getStatus()));
+
         return ResponseEntity.ok(patientService.convertToDto(patient));
     }
 }
