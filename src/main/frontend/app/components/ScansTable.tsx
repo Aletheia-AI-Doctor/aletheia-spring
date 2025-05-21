@@ -7,17 +7,18 @@ import {useSearchParams} from "react-router";
 
 interface ScansTableProps {
     refetchNow?: boolean;
+    patientId?: string|number;
 }
 
-export default function ScansTable({refetchNow}: ScansTableProps) {
+export default function ScansTable({refetchNow, patientId}: ScansTableProps) {
 
     const [params, setParams] = useSearchParams();
 
     const req:any = {
         page: parseInt(params.get('page') ?? '1'),
     }
-    if(params.has('patientId')) {
-        req.patientId = parseInt(params.get('patientId')!);
+    if(patientId) {
+        req.patientId = patientId;
     }
 
     const { data: pagination, isLoading: isLoadingScans, refetch } = useGetScansQuery(req);

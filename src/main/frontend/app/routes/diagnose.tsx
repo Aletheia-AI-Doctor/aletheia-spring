@@ -220,7 +220,7 @@ export default function DiagnosisPage() {
         </div>
 
             <Card>
-                <ScansTable refetchNow={refetchNow} />
+                <ScansTable refetchNow={refetchNow} patientId={patientId ?? undefined} />
             </Card>
         </>
     );

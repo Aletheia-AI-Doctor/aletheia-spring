@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { ROOT_URL } from "~/base/consts";
 import { defaultHeaders } from "~/base/helpers";
+import {type PageRequest, type Pagination, queryParamsFromRequest} from "~/types/pagination";
 
 interface Patient {
     id: number;
@@ -22,8 +23,8 @@ export const patientsApiSlice = createApi({
     reducerPath: "patientsApi",
     tagTypes: ["Patients"],
     endpoints: (build) => ({
-        getPatients: build.query<Patient[], void>({
-            query: () => "api/patients",
+        getPatients: build.query<Pagination<Patient>, PageRequest>({
+            query: (req) => `api/patients` + queryParamsFromRequest(req),
             providesTags: ['Patients'],
         }),
         addPatient: build.mutation<Patient, Partial<Patient>>({
