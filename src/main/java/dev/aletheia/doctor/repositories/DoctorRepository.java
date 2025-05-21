@@ -18,6 +18,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "SUM(CASE WHEN p.status = 'DIAGNOSED' THEN 1 ELSE 0 END)) " +
             "FROM patients p WHERE p.doctor.id = ?1")
     Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId);
+
     boolean existsByEmailAndIdNot(String email, Long id);
     boolean existsByUsernameAndIdNot(String username, Long id);
 

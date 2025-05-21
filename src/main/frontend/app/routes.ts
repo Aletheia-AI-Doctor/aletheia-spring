@@ -15,6 +15,10 @@ export default [
         route("registration", "./routes/auth/registration.tsx"),
         route("hospital_subscription", "./routes/auth/hospital-sub.tsx")
     ]),
+
+    layout("./routes/confirmationLayout.tsx",[
+        route("/confirm-email/:id","routes/auth/confirm-email.tsx")
+    ])
     
 
 ] satisfies RouteConfig;

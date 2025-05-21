@@ -13,6 +13,7 @@ interface SelectProps {
     dir?: string;
     defaultValue?: string;
     options: Array<{ value: string; label: string }>;
+    disabled?: boolean;
 }
 
 const defaultProps: SelectProps = {
@@ -33,6 +34,7 @@ export default function Select(props: SelectProps) {
             </If>
             <div className="mt-2">
                 <select
+                    disabled={props.disabled}
                     defaultValue={props.defaultValue}
                     id={props.id}
                     name={props.name}
