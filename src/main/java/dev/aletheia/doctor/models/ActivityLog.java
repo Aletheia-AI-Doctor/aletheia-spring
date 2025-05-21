@@ -10,18 +10,12 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "activity_logs")
-public class ActivityLog {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ActivityLog extends BaseModel {
 
     private String action;
 
     @Column(columnDefinition = "TEXT")
     private String description;
-
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)

@@ -4,6 +4,7 @@ import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
 import dev.aletheia.doctor.models.Doctor;
+import dev.aletheia.doctor.services.ActivityService;
 import dev.aletheia.doctor.services.DoctorService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,65 +20,54 @@ import java.util.Optional;
 @RequestMapping("/api/doctors")
 public class DoctorController {
 
-	private final DoctorService doctorService;
+    private final DoctorService doctorService;
 
-	public DoctorController(DoctorService doctorService) {
-		this.doctorService = doctorService;
-	}
+    public DoctorController(DoctorService doctorService) {
+        this.doctorService = doctorService;
+    }
 
-	@GetMapping
-	public ResponseEntity<Object> index() {
-		return ResponseEntity.ok(doctorService.find(1L));
-	}
+    @GetMapping
+    public ResponseEntity<Object> index() {
+        return ResponseEntity.ok(doctorService.find(1L));
+    }
 
-	@GetMapping("/currentUser")
-	public DoctorDto getCurrentDoctor() {
-		Doctor doctor = doctorService.getCurrentDoctor();
-		System.out.println(doctor);
-		return doctorService.convertToDto(doctor);
-	}
+    @GetMapping("/currentUser")
+    public DoctorDto getCurrentDoctor() {
+        Doctor doctor = doctorService.getCurrentDoctor();
+        System.out.println(doctor);
+        return doctorService.convertToDto(doctor);
+    }
 
-	@GetMapping("/{doctorId}/show")
-	public ResponseEntity<Object> show(@PathVariable Long doctorId) {
-		DoctorDto doctor = doctorService.convertToDto(doctorService.findOrFail(doctorId));
-		return ResponseEntity.ok(doctor);
-	}
-	@GetMapping("/patientsCount")
-	public ResponseEntity<Object> countPatients() {
-		Doctor doctor = doctorService.getCurrentDoctor();
-		Optional<DoctorPatientsDto> allCounts = doctorService.countDoctorPatients(doctor.getId());
-		return ResponseEntity.ok(allCounts);
-	}
+    @GetMapping("/{doctorId}/show")
+    public ResponseEntity<Object> show(@PathVariable Long doctorId) {
+        DoctorDto doctor = doctorService.convertToDto(doctorService.findOrFail(doctorId));
+        return ResponseEntity.ok(doctor);
+    }
 
+    @GetMapping("/patientsCount")
+    public ResponseEntity<Object> countPatients() {
+        Doctor doctor = doctorService.getCurrentDoctor();
+        Optional<DoctorPatientsDto> allCounts = doctorService.countDoctorPatients(doctor.getId());
+        return ResponseEntity.ok(allCounts);
+    }
 
+    @PutMapping("/update")
+    public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
+        Doctor doctor = doctorService.getCurrentDoctor();
 
+        if (dto.getName() != null) {
+            doctor.setName(dto.getName());
+        }
 
-	
-	@PutMapping("/update")
-	public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
-		Doctor doctor = doctorService.getCurrentDoctor();
+        if (dto.getEmail() != null) {
+            doctor.setEmail(dto.getEmail());
+        }
 
-		if (dto.getName() != null) {
-			doctor.setName(dto.getName());
-		}
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            doctor.setPassword(dto.getPassword());
+        }
 
-		if (dto.getEmail() != null) {
-			doctor.setEmail(dto.getEmail());
-		}
-
-		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-			doctor.setPassword(dto.getPassword());
-		}
-
-		Doctor updated = doctorService.save(doctor);
-		return ResponseEntity.ok(doctorService.convertToDto(updated));
-	}
-
-	@GetMapping("/activity-log")
-	public ResponseEntity<?> getActivityLog() {
-    	Doctor doctor = doctorService.getCurrentDoctor();
-    	return ResponseEntity.ok(doctorService.getActivityLogs(doctor.getId()));
-}
-
-
+        Doctor updated = doctorService.save(doctor);
+        return ResponseEntity.ok(doctorService.convertToDto(updated));
+    }
 }
