@@ -14,8 +14,8 @@ RUN chmod +x wait_for_it.sh
 # Create weights folder and download weights
 RUN python download_models.py && ./wait_for_it.sh \
     weights/efficientnetb0_alzheimer.h5 \
-    weights/hybrid_metadata_model.h5 \
-    weights/NIH_Seresnet152_model.h5
+    weights/hybrid_metadata_model.h5 
+    # weights/NIH_Seresnet152_model.h5
 
 EXPOSE 4000/tcp
 

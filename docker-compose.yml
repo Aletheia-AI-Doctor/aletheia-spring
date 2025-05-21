@@ -68,9 +68,10 @@ services:
     - ./src/main/models/mri.py:/app/mri.py
     - ./src/main/models/model.py:/app/model.py
     - ./src/main/models/download_models.py:/app/download_models.py
-    - weights:/app/weights
+    - ./src/main/models/weights:/app/weights
+    - ./src/main/models/.venv:/app/.venv
     - ./uploads:/app/uploads
-    
+
 
   db:
     image: mysql:8

@@ -16,8 +16,9 @@ export function createEmptyPagination<T>(data: T[]): Pagination<T> {
     };
 }
 
-export function queryParamsFromRequest(req: PageRequest): string {
-    const queryParams = [];
+export function queryParamsFromRequest(req: PageRequest, queryParams?: any[]): string {
+    queryParams ??= [];
+
     if (req.page) {
         queryParams.push(`page=${req.page - 1}`);
     }

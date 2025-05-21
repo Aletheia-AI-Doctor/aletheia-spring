@@ -4,8 +4,8 @@ export default [
     layout("./layout.tsx", [
         index("routes/home.tsx"),
         route("/diagnose/:model?", "routes/diagnose.tsx"),
-        route("/patients", "routes/patient/showPatient.tsx"),
-        route("/patients/:id", "routes/patient/patientview.tsx"),
+        route("/patients", "routes/patient/index.tsx"),
+        route("/patients/:id", "routes/patient/show.tsx"),
         route("/profile", "routes/profile/profile.tsx"),
         route("/profile/edit", "routes/profile/edit.tsx"),
     ]),

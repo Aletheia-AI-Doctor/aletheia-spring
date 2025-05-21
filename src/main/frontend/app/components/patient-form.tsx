@@ -17,6 +17,7 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
     const [newPatient, setNewPatient] = useState({
         name: '',
         sex: '',
+        birthdate:'',
         status: 'pending'
     });
 
@@ -36,6 +37,7 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
         setNewPatient({
             name: '',
             sex: '',
+            birthdate:'',
             status: 'pending'
         });
 
@@ -67,7 +69,16 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
                             {label: "Female", value: "female"},
                         ]}
                     />
+                    <Input
+                        type="date"
+                        id="birthdate"
+                        label="Birthdate"
+                        required
+                        value={newPatient.birthdate || ''}
+                        onChange={(e) => setNewPatient({ ...newPatient, birthdate: e.target.value })}
+                    />
                 </div>
+                
 
                 {errorMessage && (
                     <div className="mt-4 text-red-600">

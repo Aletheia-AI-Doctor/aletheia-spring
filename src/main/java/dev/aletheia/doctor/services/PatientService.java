@@ -4,10 +4,13 @@ import dev.aletheia.doctor.dtos.patient.PatientDto;
 import dev.aletheia.doctor.dtos.patient.PatientRegistrationDTO;
 import dev.aletheia.doctor.enums.Gender;
 import dev.aletheia.doctor.enums.PatientStatus;
+import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.models.Patient;
 import dev.aletheia.doctor.repositories.PatientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -24,15 +27,19 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
         super(Patient.class, PatientDto.class);
     }
     @Autowired
-    private PatientRepository PatientRepository;
+    private PatientRepository patientRepository;
     
     public PatientRepository getRepository() {
-        return PatientRepository;
-    }
-    public Optional<Patient> getByIdentifier(String identifier) {
-        return PatientRepository.findById(Long.valueOf(identifier));
+        return patientRepository;
     }
 
+    public Page<PatientDto> getAllPaginated(Pageable pageable) {
+        Doctor doctor = doctorService.getCurrentDoctor();
+
+        return patientRepository
+                .findAllByDoctor(doctor, pageable)
+                .map(this::convertToDto);
+    }
 
     public Patient createPatient(PatientRegistrationDTO PatientDTO) {
         Patient patient = new Patient();
@@ -41,6 +48,7 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
         patient.setName(PatientDTO.getName());
         patient.setAdmissionDate(LocalDate.now());
         patient.setStatus(PatientStatus.PENDING);
+        patient.setDoctor(doctorService.getCurrentDoctor());
         return save(patient);
     }
 }
