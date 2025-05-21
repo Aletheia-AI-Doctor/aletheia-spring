@@ -1,15 +1,15 @@
 import {type Scan, useGetScansQuery} from "~/features/scans/scansApiSlice";
 import If from "~/components/if";
 import Loading from "~/components/Loading";
-import React from "react";
+import React, {useEffect} from "react";
 import {Table, Td, Th} from "~/components/Table/table";
 import {useSearchParams} from "react-router";
 
 interface ScansTableProps {
-
+    refetchNow?: boolean;
 }
 
-export default function ScansTable({}: ScansTableProps) {
+export default function ScansTable({refetchNow}: ScansTableProps) {
 
     const [params, setParams] = useSearchParams();
 
@@ -21,6 +21,10 @@ export default function ScansTable({}: ScansTableProps) {
     }
 
     const { data: pagination, isLoading: isLoadingScans, refetch } = useGetScansQuery(req);
+
+    useEffect(() => {
+        refetch();
+    }, [refetchNow]);
 
     return (
         <If

@@ -13,15 +13,16 @@ import {
     useGetScansQuery
 } from "~/features/scans/scansApiSlice";
 import type { Route } from "./+types/diagnose";
-import {Link, useParams} from "react-router";
+import {Link, useParams, useSearchParams} from "react-router";
 import Loading from "~/components/Loading";
 import Button from "~/components/button";
 import Modal from "~/components/modal";
 import PatientForm from "~/components/patient-form";
-import type {Patient} from "~/features/patient/patientApiSlice";
+import {type Patient, useGetPatientByIdQuery} from "~/features/patient/patientApiSlice";
 import If from "~/components/if";
 import ScansTable from "~/components/ScansTable";
 import Card from "~/components/Card";
+import PatientDetailsCard from "~/components/patient-details-card";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -35,6 +36,13 @@ export function meta({}: Route.MetaArgs) {
 
 export default function DiagnosisPage() {
     const {model: selectedModel} = useParams();
+    const [params, setParams] = useSearchParams();
+    const patientId = params.get('patientId');
+    const [refetchNow, setRefetchNow] = useState(false);
+
+    const {data: patient, isLoading: isPatientLoading} = useGetPatientByIdQuery(patientId!, {
+        skip: !patientId,
+    });
 
     const [file, setFile] = useState<File | null>(null);
     const [diagnosisResult, setDiagnosisResult] = useState<string | null>(null);
@@ -69,6 +77,7 @@ export default function DiagnosisPage() {
     function handleSave() {
         setFile(null);
         setDiagnosisResult(null);
+        setRefetchNow(r => !r);
     }
 
     const handleFileUpload = (fileItems: any[]) => {
@@ -98,6 +107,11 @@ export default function DiagnosisPage() {
     return (
         <>
         <div className="p-4 max-w-4xl mx-auto">
+
+            {!isPatientLoading && patient && (
+                <PatientDetailsCard patient={patient} />
+            )}
+
             <h1 className="text-2xl font-bold mb-4">Medical Scan Diagnosis</h1>
 
             {!selectedModel ? (
@@ -109,7 +123,7 @@ export default function DiagnosisPage() {
                         {models.map((model) => (
                             <Link
                                 key={model.id}
-                                to={`/diagnose/${model.slug}`}
+                                to={patientId ? `/diagnose/${model.slug}?patientId=${patientId}` : `/diagnose/${model.slug}`}
                                 className="p-6 bg-blue-50 hover:bg-blue-100 rounded-lg text-center transition-colors"
                             >
                                 <h3 className="font-medium text-blue-800">{model.name}</h3>
@@ -121,7 +135,7 @@ export default function DiagnosisPage() {
                 <div className="bg-white rounded-lg shadow overflow-hidden">
                     <div className="bg-gray-50 p-4 flex items-center border-b">
                         <Link
-                            to={`/diagnose`}
+                            to={patientId ? `/diagnose?patientId=${patientId}` : `/diagnose`}
                             className="p-2 text-gray-600 hover:text-gray-900 mr-4"
                         >
                             <FontAwesomeIcon icon={faLeftLong} size="lg"/>
@@ -175,8 +189,17 @@ export default function DiagnosisPage() {
                                         <div className="mt-6 flex items-center space-x-6 justify-center">
                                             <Button disabled={isSavingScan} onClick={handleSave}
                                                     color="gray">Cancel</Button>
-                                            <Button disabled={isSavingScan} onClick={() => setOpen(true)}>Save to
-                                                patient</Button>
+                                            {patient ?
+                                                (
+                                                    <Button disabled={isSavingScan}
+                                                            onClick={() => handleSavePatient(patient)}>
+                                                        Save to patient
+                                                    </Button>
+                                                )
+                                                    : (
+                                                <Button disabled={isSavingScan} onClick={() => setOpen(true)}>Save to
+                                                    patient</Button>
+                                                )}
                                         </div>
                                     </If>
                                     {saveMessage && (
@@ -197,7 +220,7 @@ export default function DiagnosisPage() {
         </div>
 
             <Card>
-                <ScansTable />
+                <ScansTable refetchNow={refetchNow} />
             </Card>
         </>
     );

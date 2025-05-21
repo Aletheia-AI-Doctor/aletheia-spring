@@ -86,7 +86,14 @@ export const scansApiSlice = createApi({
         }),
 
         getScans: build.query<Pagination<Scan>, GetScansRequest>({
-            query: (req) => `api/scans` + queryParamsFromRequest(req, [`patientId=${req.patientId}`]),
+            query: (req) => {
+                const queryParams: any[] = [];
+                if (req.patientId) {
+                    queryParams.push(`patientId=${req.patientId}`);
+                }
+
+                return `api/scans` + queryParamsFromRequest(req, queryParams);
+            },
             providesTags: ['Scans'],
             transformResponse: (response: Pagination<Scan>, meta, arg) => {
                 return {
