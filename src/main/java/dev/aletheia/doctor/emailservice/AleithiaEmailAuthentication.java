@@ -18,7 +18,7 @@ public class AleithiaEmailAuthentication {
     }
 
     public void sendConfirmationRequest(String hrEmail, String doctorName, String doctorSpeciality,
-                                        String doctorLicenceNumber, String confirmationLink) {
+                                        String doctorLicenceNumber, String confirmationLink, String rejectionLink) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -34,6 +34,11 @@ public class AleithiaEmailAuthentication {
                     "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
                     "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
                     "Confirm Registration</button>" +
+                    "</form>" +
+                    "<form action=\"" + rejectionLink + "\" method=\"POST\">" +
+                    "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
+                    "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
+                    "Reject Registration</button>" +
                     "</form>" +
                     "</body></html>";
 
@@ -62,6 +67,32 @@ public class AleithiaEmailAuthentication {
                     "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
                     "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
                     "Login Now!</button>" +
+                    "</form>" +
+                    "</body></html>";
+
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            throw new EmailSendingException("Failed to send confirmation email", e);
+        }
+    }
+    public void sendRejectionDoctor(String doctorEmail, String doctorName,
+                                       String hospitalName, String appealLink) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(doctorEmail);
+            helper.setSubject("Doctor Registration rejected: " + doctorName);
+
+            String htmlContent = "<html><body>" +
+                    "<p>Dear Dr.</p>" + doctorName + "," +
+                    "<p>We are unhappy to announce that" + hospitalName +" hospital"+
+                    "<p>rejected to authenticate your account, you can click here to appeal</p>" +
+                    "<form action=\"" + appealLink + "\" method=\"GET\">" +
+                    "<button type=\"submit\" style=\"background-color: #4CAF50; color: white; " +
+                    "padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;\">" +
+                    "appeal</button>" +
                     "</form>" +
                     "</body></html>";
 

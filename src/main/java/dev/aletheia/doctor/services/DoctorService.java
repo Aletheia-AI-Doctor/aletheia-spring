@@ -4,6 +4,7 @@ import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
 import dev.aletheia.doctor.enums.DoctorSpeciality;
+import dev.aletheia.doctor.enums.DoctorStates;
 import dev.aletheia.doctor.models.ActivityLog;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.models.Hospital;
@@ -46,7 +47,7 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         doctor.setUsername(doctorDTO.getUsername());
         doctor.setEmail(doctorDTO.getEmail());
         doctor.setPassword(doctorDTO.getPassword());
-        doctor.setConfirmed(false);
+        doctor.setStatus(DoctorStates.PENDING);
         doctor.setSpeciality(DoctorSpeciality.valueOf(doctorDTO.getSpeciality()));
         doctor.setLicenseNumber(doctorDTO.getLicenseNumber());
         Hospital hospital = hospitalRepository.findById(doctorDTO.getHospitalId())
@@ -61,7 +62,17 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid confirmation token"));
 
-        doctor.setConfirmed(true);
+        doctor.setStatus(DoctorStates.CONFIRMED);
+        save(doctor);
+
+        return true;
+    }
+
+    public boolean rejectDoctor(Long doctorId) {
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new EntityNotFoundException("Invalid confirmation token"));
+
+        doctor.setStatus(DoctorStates.REJECTED);
         save(doctor);
 
         return true;

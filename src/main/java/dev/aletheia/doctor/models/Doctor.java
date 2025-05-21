@@ -2,6 +2,7 @@ package dev.aletheia.doctor.models;
 
 import dev.aletheia.doctor.annotations.Unique;
 import dev.aletheia.doctor.enums.DoctorSpeciality;
+import dev.aletheia.doctor.enums.DoctorStates;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -64,9 +65,9 @@ public class Doctor extends BaseModel {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Patient> patients;
 
-    @Column(name = "confirmed")
-    @ColumnDefault("false")
-    private Boolean confirmed;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private DoctorStates status;
 
     public void setPassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
@@ -82,9 +83,7 @@ public class Doctor extends BaseModel {
         return List.of(new SimpleGrantedAuthority("ROLE_DOCTOR"));
     }
 
-    public Boolean isConfirmed() {
-        return confirmed;
-    }
+
 
     @Override
     public String toString() {
