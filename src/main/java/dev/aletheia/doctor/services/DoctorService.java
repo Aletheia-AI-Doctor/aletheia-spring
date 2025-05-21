@@ -90,7 +90,7 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         log.setDoctor(doctor);
         log.setAction(action);
         log.setDescription(description);
-    activityLogRepository.save(log);
+        activityLogRepository.save(log);
 }
 
  

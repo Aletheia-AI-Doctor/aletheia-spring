@@ -20,8 +20,12 @@ public class DiagnosisService extends CRUDService<Diagnosis, DiagnosisDto> {
     protected DiagnosisService() {super(Diagnosis.class, DiagnosisDto.class);}
 
     public Diagnosis getByName(String name) {
+
+        
         return diagnosisRepository.findByName(name)
                 .orElseThrow(() -> new NotFoundException("Diagnosis not found"));
+
+
     }
 
     public Diagnosis getByNameAndModel(Model model, String name) {

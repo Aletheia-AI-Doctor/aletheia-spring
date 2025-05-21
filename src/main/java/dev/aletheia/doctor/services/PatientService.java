@@ -26,6 +26,7 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
     protected PatientService() {
         super(Patient.class, PatientDto.class);
     }
+
     @Autowired
     private PatientRepository patientRepository;
     
@@ -42,13 +43,47 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
     }
 
     public Patient createPatient(PatientRegistrationDTO PatientDTO) {
+        Doctor doctor = doctorService.getCurrentDoctor();
+
         Patient patient = new Patient();
         patient.setBirthdate(PatientDTO.getBirthdate());
         patient.setSex(Gender.fromString(PatientDTO.getSex()));
         patient.setName(PatientDTO.getName());
+        patient.setDoctor(doctor);
         patient.setAdmissionDate(LocalDate.now());
         patient.setStatus(PatientStatus.PENDING);
-        patient.setDoctor(doctorService.getCurrentDoctor());
-        return save(patient);
+
+        patient = save(patient);
+
+        doctorService.logActivity(
+                doctor,
+                "Add Patient",
+                "Added patient: " + patient.getName() + " with ID: " + savedPatient.getId() + " to the system.");
+
+        return patient;
     }
+
+    public Patient updatePatientStatus(Long patientId, String newStatus) {
+        Doctor doctor = doctorService.getCurrentDoctor();
+        Patient patient = getRepository().findById(patientId).get();
+
+        PatientStatus currentStatus = patient.getStatus();
+        PatientStatus updatedStatus = PatientStatus.fromString(newStatus);
+
+        if (currentStatus != updatedStatus) {
+            patient.setStatus(updatedStatus);
+
+            if (currentStatus == PatientStatus.PENDING && updatedStatus == PatientStatus.DIAGNOSED) {
+                doctorService.logActivity(
+                        doctor,
+                        "Diagnose Patient",
+                        "Changed status to diagnosed for: " + patient.getName() + " with ID: " + patient.getId());
+            }
+
+            return save(patient);
+        }
+
+        return patient;
+    }
+
 }

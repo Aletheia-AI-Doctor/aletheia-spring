@@ -5,9 +5,12 @@ import dev.aletheia.doctor.dtos.models.ModelDto;
 import dev.aletheia.doctor.exceptions.NotFoundException;
 import dev.aletheia.doctor.helpers.Response;
 import dev.aletheia.doctor.models.Diagnosis;
+import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.models.Model;
 import dev.aletheia.doctor.repositories.ModelRepository;
 import jakarta.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +21,8 @@ public class ModelService extends CRUDService<Model, ModelDto> {
     private final HttpService httpService;
     private final DiagnosisService diagnosisService;
     private final FileService fileService;
+    
+    
 
     public ModelRepository getRepository() { return modelRepository; }
 
@@ -26,8 +31,11 @@ public class ModelService extends CRUDService<Model, ModelDto> {
         this.httpService = httpService;
         this.diagnosisService = diagnosisService;
         this.fileService = fileService;
+        
     }
-
+    @Autowired
+    private DoctorService doctorService;
+    
     public Model getBySlug(String slug) {
         return modelRepository.findByPath(slug)
                 .orElseThrow(() -> new NotFoundException("Model not found"));
@@ -35,6 +43,12 @@ public class ModelService extends CRUDService<Model, ModelDto> {
 
     public DiagnosisDto predict(Model model, MultipartFile image) {
         String imagePath = fileService.saveFile(image);
+        Doctor doctor = doctorService.getCurrentDoctor();
+        doctorService.logActivity(
+        doctor,
+        "Add Scan",
+        "Uploaded scan for model: " + model.getPath()
+    );
 
         Response response = httpService.get("/" + model.getPath() + "?image_path=" + imagePath);
 

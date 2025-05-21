@@ -4,6 +4,7 @@ import type { Route } from "./+types/home";
 import{useGetDoctorPatientsQuery} from "~/features/doctor/doctorDashboardApiSlice";
 import { useGetDoctorAttributesQuery, useGetDoctorActivityLogQuery } from "~/features/doctor/doctorApiSlice";
 import Loading from "~/components/Loading";
+import { useGetDoctorActivityLogQuery } from "~/features/doctor/doctorApiSlice";
 
 
 export function meta({}: Route.MetaArgs) {
@@ -21,6 +22,13 @@ export default function Home(){
         isLoading: isLoadingDoctor,
     } = useGetDoctorAttributesQuery();
 
+    const {
+        data: activityLogs = [],
+        isLoading: isLoadingLogs,
+        isError: isErrorLogs,
+    } = useGetDoctorActivityLogQuery();
+      
+
     const{
         data: patientsData,
         isLoading: isLoadingPatients,
@@ -34,6 +42,8 @@ export default function Home(){
     if (isLoadingDoctor || isLoadingPatients || isActivityLoading || !activityLog || !doctor || !patientsData) {
         return <Loading />;
     }
+
+    
 
     return(
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
@@ -57,20 +67,31 @@ export default function Home(){
                 </div>
 
             </div>
-            <div className="mb-4">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-2">Activity Log:</h2>
-                <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
-                    {activityLog.length > 0 ? (
-                        <ul className="list-disc pl-5 text-gray-700">
-                            {activityLog.map((activity, index) => (
-                                <li key={index}>{activity.action}</li>
-                            ))}
+                <div className="mb-4">
+                    <h2 className="text-2xl font-semibold text-gray-700 mb-2">Activity Log:</h2>
+                    <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                        {isLoadingLogs ? (
+                            <p className="text-gray-500 italic">Loading activity log...</p>
+                            ) : isErrorLogs ? (
+                            <p className="text-red-500 italic">Failed to load activity log</p>
+                            ) : activityLogs.length > 0 ? (
+                            <ul className="list-disc pl-5 text-gray-700 space-y-2">
+                            {activityLogs.map((log) => (
+                                <li key={log.id}>
+                                    <span className="font-semibold">{log.action}</span> – {log.description}
+                                <div className="text-sm text-gray-500">
+                                    {new Date(log.createdAt).toLocaleString()}
+                                </div>
+                            </li>
+                        ))}
                         </ul>
                     ) : (
-                        <p className="text-gray-500 italic">\\ no recent activity</p>
-                    )}
+                        <p className="text-gray-500 italic">No recent activity</p>
+                )}
+                    </div>
                 </div>
+
             </div>
-        </div>
+        
     );
 }
