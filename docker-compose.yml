@@ -64,10 +64,7 @@ services:
     depends_on:
       - db
     volumes:
-    - ./src/main/models/app.py:/app/app.py
-    - ./src/main/models/mri.py:/app/mri.py
-    - ./src/main/models/model.py:/app/model.py
-    - ./src/main/models/download_models.py:/app/download_models.py
+    - ./src/main/models:/app
     - ./src/main/models/weights:/app/weights
     - ./src/main/models/.venv:/app/.venv
     - ./uploads:/app/uploads
