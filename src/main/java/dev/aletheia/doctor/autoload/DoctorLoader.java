@@ -32,6 +32,7 @@ public class DoctorLoader implements CommandLineRunner {
         doctor.setPassword("password");
         doctor.setUsername("johndoe");
         doctor.setEmail("johndoe@aletheia.dev");
+        doctor.setLicenseNumber("12345");
         doctor.setBio("Experienced cardiologist with over 10 years in the field. Passionate about heart health and patient care.");
         doctor.setConfirmedAt(LocalDateTime.now());
 
