@@ -10,13 +10,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy model code and download script
 COPY . .
 
-RUN chmod +x wait_for_it.sh
+# RUN chmod +x wait_for_it.sh
 # Create weights folder and download weights
-RUN python download_models.py && ./wait_for_it.sh \
-    weights/efficientnetb0_alzheimer.h5 \
-    weights/hybrid_metadata_model.h5 
-    # weights/NIH_Seresnet152_model.h5
+RUN python download_models.py
 
 EXPOSE 4000/tcp
 
-CMD ["python","-m","flask", "run", "--host=0.0.0.0", "--port=4000"]
+ENTRYPOINT ["python","-m","flask", "run", "--host=0.0.0.0", "--port=4000"]

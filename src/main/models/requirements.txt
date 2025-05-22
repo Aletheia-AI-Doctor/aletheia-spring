@@ -5,4 +5,4 @@ numpy
 keras
 pillow
 scikit-learn
-image_classifiers @ file:./pretrained_model/image_classifiers-1.0.0-py3-none-any.whl
+image_classifiers
