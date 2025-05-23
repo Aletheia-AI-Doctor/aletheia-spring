@@ -32,11 +32,6 @@ public class DoctorController {
 		this.emailService = emailService;
 	}
 
-    @GetMapping
-    public ResponseEntity<Object> index() {
-        return ResponseEntity.ok(doctorService.find(1L));
-    }
-
     @GetMapping("/currentUser")
     public DoctorDto getCurrentDoctor() {
         Doctor doctor = doctorService.getCurrentDoctor();
