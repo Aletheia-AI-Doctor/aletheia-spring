@@ -56,7 +56,7 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
         patient = save(patient);
 
         activityService.log(
-                "Add Scan",
+                "Add patient",
                 "Added patient: " + patient.getName() + " with ID: " + patient.getId() + " to the system."
         );
 

@@ -18,6 +18,7 @@ interface DoctorUpdate {
     name: string;
     email: string;
     password?: string;
+    bio: string;
 
 }
 
@@ -42,7 +43,7 @@ export const doctorApiSlice = createApi({
             providesTags: ['Doctor']
         }),
 
-        updateDoctorProfile: build.mutation<Doctor, { name: string, email: string, password: string }>({
+        updateDoctorProfile: build.mutation<Doctor, { name: string, email: string, password: string, bio:string}>({
             query: (updates) => ({
                 url: "api/doctors/update",
                 method: "PUT",

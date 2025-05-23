@@ -9,4 +9,5 @@ public class DoctorUpdateDto {
     private String name;
     private String email;
     private String password;
+    private String bio;
 }

@@ -26,7 +26,8 @@ export default function EditProfile() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        password: ""
+        password: "",
+        bio:""
     });
     const navigate = useNavigate();
 
@@ -35,7 +36,8 @@ export default function EditProfile() {
             setFormData({
                 name: data.name || "",
                 email: data.email || "",
-                password: ""
+                password: "",
+                bio: data.bio || "",
             });
         }
     }, [data]);
@@ -46,6 +48,7 @@ export default function EditProfile() {
         const updates: any = {
             name: formData.name, // always send name
             email: formData.email, // always send email
+            bio: formData.bio, // always send bio
         };
         
         if (formData.password) {
@@ -81,7 +84,7 @@ export default function EditProfile() {
                             <Input
                                 id="name"
                                 name="name"
-                                label="name"
+                                label="Name"
                                 value={formData.name}
                                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                                 className="text-base py-2.5 px-3.5"
@@ -103,6 +106,21 @@ export default function EditProfile() {
                             />
                             <p className="mt-1.5 text-sm text-gray-500">
                                 Leave unchanged to keep current email
+                            </p>
+                        </div>
+
+                        <div>
+                            <Input
+                                id="bio"
+                                name="bio"
+                                type="text"
+                                label="Bio"
+                                value={formData.bio}
+                                onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                className="text-base py-2.5 px-3.5"
+                            />
+                            <p className="mt-1.5 text-sm text-gray-500">
+                                Leave unchanged to keep current bio
                             </p>
                         </div>
 
