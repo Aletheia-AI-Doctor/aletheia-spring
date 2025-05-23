@@ -59,7 +59,7 @@ return (
                 <p>{calculateAge(patient.birthdate) ?? "Unknown"} years</p>
             </div>
             <div>
-                <p className="text-gray-500 font-medium">dignose</p>
+                <p className="text-gray-500 font-medium">Dignose</p>
                 <Link to={`/diagnose?patientId=${patient.id}`} className="text-blue-500 hover:underline">
                     Add scan
                 </Link>
