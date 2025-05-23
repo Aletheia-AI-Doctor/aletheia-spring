@@ -16,4 +16,4 @@ RUN python download_models.py
 
 EXPOSE 4000/tcp
 
-ENTRYPOINT ["python","-m","flask", "run", "--host=0.0.0.0", "--port=4000"]
+ENTRYPOINT ["python", "-m","flask", "run", "--host=0.0.0.0", "--port=4000"]
