@@ -25,7 +25,7 @@ def breast_cancer():
     return breast_cancer_model.predict(project_root + "/uploads/" + request.args.get("image_path"))
 
 
-# @app.route("/chestxray")
+# @app.route("/chest-xray")
 # def chestxray():
 #     project_root = os.path.dirname(os.path.abspath(__file__))
 #     return xray_model.predict(project_root + "/uploads/" + request.args.get("image_path"))

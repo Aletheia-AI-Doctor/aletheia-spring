@@ -17,5 +17,6 @@ public class PatientDto {
     private String name;
     private String sex;
     private LocalDate admissionDate;
+    private LocalDate birthdate;
     private String status;
 }
