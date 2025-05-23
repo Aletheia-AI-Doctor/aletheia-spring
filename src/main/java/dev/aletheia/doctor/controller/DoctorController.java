@@ -104,9 +104,14 @@ public class DoctorController {
             doctor.setEmail(dto.getEmail());
         }
 
-        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-            doctor.setPassword(dto.getPassword());
-        }
+		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+			doctor.setPassword(dto.getPassword());
+		}
+		
+		if (dto.getBio() != null) {
+			doctor.setBio(dto.getBio());
+		}
+		
 
         Doctor updated = doctorService.save(doctor);
         return ResponseEntity.ok(doctorService.convertToDto(updated));

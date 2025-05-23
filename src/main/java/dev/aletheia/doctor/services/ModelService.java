@@ -51,8 +51,9 @@ public class ModelService extends CRUDService<Model, ModelDto> {
         activityService.log(
                 "Add Scan",
                 "Uploaded scan for model: " + model.getPath()
-        );
 
+        );
+       
         Response response = httpService.get("/" + model.getPath() + "?image_path=" + imagePath);
 
         if (response.isSuccessful()) {
