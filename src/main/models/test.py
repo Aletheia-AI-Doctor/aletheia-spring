@@ -1,5 +1,9 @@
-from breast_cancer import BreastCancer
+from mri import MRI
+from chestXray import ChestXRay
 
-breast_cancer_model = BreastCancer()
+mri = MRI()
+chest_xray = ChestXRay()
 
-print(breast_cancer_model.predict("images/test_cancer.png"))
+print(mri.predict("images/test.jpg"))
+
+print(chest_xray.predict("images/test.jpg"))
