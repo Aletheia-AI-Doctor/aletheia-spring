@@ -10,6 +10,7 @@ import dev.aletheia.doctor.models.Model;
 import dev.aletheia.doctor.repositories.ModelRepository;
 import jakarta.transaction.Transactional;
 
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +47,24 @@ public class ModelService extends CRUDService<Model, ModelDto> {
                 .orElseThrow(() -> new NotFoundException("Model not found"));
     }
 
+    public String getValue(String input, String key) {
+        // Build the search pattern e.g., "image_path":"
+        String search = '"' + key + "\":\"";
+        int start = input.indexOf(search);
+        if (start == -1) {
+            return null;
+        }
+        // Move past the pattern to start of the value
+        start += search.length();
+        // Find the closing double quote
+        int end = input.indexOf('"', start);
+        if (end == -1) {
+            return null;
+        }
+        // Extract and return the value
+        return input.substring(start, end);
+    }
+
     public DiagnosisDto predict(Model model, MultipartFile image) {
         String imagePath = fileService.saveFile(image);
         activityService.log(
@@ -57,7 +76,12 @@ public class ModelService extends CRUDService<Model, ModelDto> {
         Response response = httpService.get("/" + model.getPath() + "?image_path=" + imagePath);
 
         if (response.isSuccessful()) {
-            DiagnosisDto diagnosis = diagnosisService.convertToDto(diagnosisService.getByName(response.getBody()));
+            String jsonResponse = response.getBody();
+
+            DiagnosisDto diagnosis = diagnosisService.convertToDto(
+                    diagnosisService.getByName(getValue(jsonResponse, "name"))
+            );
+            diagnosis.setImageResponsePath(getValue(jsonResponse, "image_path"));
 
             diagnosis.setImagePath(imagePath);
 

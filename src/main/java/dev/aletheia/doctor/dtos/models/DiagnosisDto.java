@@ -9,4 +9,5 @@ public class DiagnosisDto {
     private String id;
     private String name;
     private String imagePath;
+    private String imageResponsePath;
 }

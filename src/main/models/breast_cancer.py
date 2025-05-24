@@ -1,4 +1,4 @@
-from model import Model
+from model import Model, Diagnosis
 import numpy as np
 import cv2
 
@@ -36,7 +36,7 @@ class BreastCancer(Model):
         confidence = prediction[0][class_idx]
         return class_idx, confidence
 
-    def predict(self, image_path: str) -> str:
+    def predict(self, image_path: str) -> Diagnosis:
         img = preprocess_image(image_path)
         image_tiles = split_image(img, 50)
         predictions = []
@@ -51,9 +51,5 @@ class BreastCancer(Model):
 
         number_of_cancer = predictions.count(1)
         number_of_non = predictions.count(0)
-        print("Cancer:", number_of_cancer)
-        print("Non Cancer:", number_of_non)
-        if number_of_cancer > 2 * number_of_non:
-            return "Cancer"
 
-        return "No Cancer"
+        return Diagnosis("Cancer" if number_of_cancer > 2*number_of_non else "No Cancer")

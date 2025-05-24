@@ -1,9 +1,7 @@
-from mri import MRI
-from chestXray import ChestXRay
+# from mri import MRI
+from chest_xray import ChestXRay
 
-mri = MRI()
+# mri = MRI()
 chest_xray = ChestXRay()
-
-print(mri.predict("images/test.jpg"))
 
 print(chest_xray.predict("images/test.jpg"))

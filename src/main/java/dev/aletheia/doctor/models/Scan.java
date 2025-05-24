@@ -31,4 +31,7 @@ public class Scan extends BaseModel {
 
     @Column(name = "image")
     private String image;
+
+    @Column(name = "image_response")
+    private String imageResponse;
 }

@@ -14,10 +14,16 @@ public class ScanDto {
     private DiagnosisDto modelDiagnosis;
     private DiagnosisDto doctorDiagnosis;
     private String image;
+    private String imageResponse;
+    private String imageResponseUrl;
     private String imageUrl;
     private ModelDto model;
 
     public String getImageUrl() {
         return "/api/scans/" + image + "/image";
+    }
+
+    public String getImageResponseUrl() {
+        return "/api/scans/" + imageResponse + "/image";
     }
 }

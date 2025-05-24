@@ -23,7 +23,9 @@ public class Response {
 
         try {
             return (JSONObject) parser.parse(getBody());
-        } catch (ParseException ignored) {}
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         return null;
     }

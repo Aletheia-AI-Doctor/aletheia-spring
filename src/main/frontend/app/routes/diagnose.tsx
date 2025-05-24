@@ -10,7 +10,7 @@ import {
     useUploadScanMutation,
     useGetModelsQuery,
     useSaveScanMutation,
-    useGetScansQuery
+    useGetScansQuery, type Diagnosis
 } from "~/features/scans/scansApiSlice";
 import type { Route } from "./+types/diagnose";
 import {Link, useParams, useSearchParams} from "react-router";
@@ -45,7 +45,7 @@ export default function DiagnosisPage() {
     });
 
     const [file, setFile] = useState<File | null>(null);
-    const [diagnosisResult, setDiagnosisResult] = useState<string | null>(null);
+    const [diagnosisResult, setDiagnosisResult] = useState<Diagnosis | null>(null);
     const [imagePath, setImagePath] = useState<string | null>(null);
 
     // API hooks
@@ -58,7 +58,7 @@ export default function DiagnosisPage() {
 
     async function handleSavePatient(patient: Patient) {
         const response = await saveScan({
-            modelDiagnosis: diagnosisResult!,
+            modelDiagnosis: diagnosisResult!.name,
             imagePath: imagePath!,
             model: selectedModel!,
             patientId: patient.id,
@@ -97,10 +97,11 @@ export default function DiagnosisPage() {
                 scan: file,
                 model: selectedModel.toLowerCase()
             }).unwrap();
-            setDiagnosisResult(result.name);
+            console.log(result);
+            setDiagnosisResult(result);
             setImagePath(result.imagePath);
         } catch (error) {
-            setDiagnosisResult("Diagnosis failed. Please try again.");
+            setDiagnosisResult(null);
         }
     };
 
@@ -181,7 +182,7 @@ export default function DiagnosisPage() {
                                 <div>
                                     <div className="mt-6 mb-3 p-4 bg-blue-50 rounded-md">
                                         <h3 className="font-medium text-blue-800 mb-2">Diagnosis Result</h3>
-                                        <p className="text-gray-800">{diagnosisResult}</p>
+                                        <p className="text-gray-800">{diagnosisResult.name}</p>
                                     </div>
                                     <If
                                         replacement={<Loading message={"Saving scan..."}/>}
@@ -213,12 +214,13 @@ export default function DiagnosisPage() {
                                     </Modal>
                                 </div>
                             )}
-                            {/*{imagePath && (*/}
-                            {/*    <div className="mt-4">*/}
-                            {/*        <h3 className="font-medium text-blue-800 mb-2">Annotated Scan</h3>*/}
-                            {/*        <img src={`uploads/${imagePath}`} alt="Prediction result" className="rounded shadow-md" />*/}
-                            {/*    </div>*/}
-                            {/*    )}*/}
+
+                            {diagnosisResult?.imageResponseUrl && (
+                                <div className="mt-4">
+                                    <h3 className="font-medium text-blue-800 mb-2">Annotated Scan</h3>
+                                    <img src={diagnosisResult.imageResponseUrl} alt="Prediction result" className="rounded shadow-md" />
+                                </div>
+                                )}
                         </div>
                     </div>
                 </div>

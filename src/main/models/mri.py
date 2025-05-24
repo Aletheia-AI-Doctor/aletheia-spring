@@ -1,4 +1,4 @@
-from model import Model
+from model import Model, Diagnosis
 from PIL import Image
 import numpy as np
 
@@ -46,10 +46,10 @@ class MRI(Model):
             print(f"Error processing image: {str(e)}")
             return None, None, None
 
-    def predict(self, image_path: str) -> str:
+    def predict(self, image_path: str) -> Diagnosis:
         img_array = preprocess_image(image_path)
         dummy_metadata = np.zeros((1, 5))
         prediction = self.model.predict([img_array, dummy_metadata])
         class_idx = np.argmax(prediction, axis=1)[0]
 
-        return self.class_names.get(class_idx, "Unknown")
+        return Diagnosis(self.class_names.get(class_idx, "Unknown"))
