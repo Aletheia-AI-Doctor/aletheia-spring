@@ -24,6 +24,6 @@ public class ScanDto {
     }
 
     public String getImageResponseUrl() {
-        return "/api/scans/" + imageResponse + "/image";
+        return imageResponse == null ? "" : "/api/scans/" + imageResponse + "/image";
     }
 }

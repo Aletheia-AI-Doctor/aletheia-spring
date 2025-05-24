@@ -58,6 +58,8 @@ public class ScanController {
 
     @GetMapping("/{path}/image")
     public ResponseEntity<ByteArrayResource> getImage(@PathVariable String path) {
+        path = path.replaceAll(",", "/");
+
         ByteArrayResource image = fileService.getImage(path);
 
         if (image == null) {

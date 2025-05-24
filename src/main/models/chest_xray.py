@@ -25,7 +25,7 @@ class ChestXRay(Model):
         diagnosis = Diagnosis("normal" if results[0].boxes.conf.numel() == 0 else "pneumonia")
 
         if diagnosis.name == "pneumonia":
-            image_name = image_path.split("/")[-1]
-            diagnosis.image_path = f"/predictions/{image_name}"
+            image_name_without_extension = image_path.split("/")[-1].split(".")[0]
+            diagnosis.image_path = "predictions," + image_name_without_extension + ".jpg"
 
         return diagnosis

@@ -37,6 +37,7 @@ export default function ScansTable({refetchNow, patientId}: ScansTableProps) {
                     <tr>
                         <Th first>ID</Th>
                         <Th>Image</Th>
+                        <Th>Image Response</Th>
                         <Th>Model</Th>
                         <Th>Model Diagnosis</Th>
                         <Th>Doctor Diagnosis</Th>
@@ -52,6 +53,16 @@ export default function ScansTable({refetchNow, patientId}: ScansTableProps) {
                                 src={item.imageUrl}
                                 alt="Scan"
                                 style={{ width: "100px", height: "100px" }} />
+                        </Td>
+                        <Td>
+                            {item.imageResponseUrl ? (
+                                <img
+                                    src={item.imageResponseUrl}
+                                    alt="Response"
+                                    style={{width: "100px", height: "100px"}}/>
+                            ) : (
+                                "-"
+                            )}
                         </Td>
                         <Td>{item.model.name}</Td>
                         <Td>{item.modelDiagnosis.name}</Td>

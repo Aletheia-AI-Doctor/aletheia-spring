@@ -40,6 +40,7 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
             scan.setPatient(patient);
         }
         scan.setImage(saveScanDto.getImagePath());
+        scan.setImageResponse(saveScanDto.getImageResponsePath());
         scan.setDoctor(doctorService.getCurrentDoctor());
 
         return scanRepository.save(scan);

@@ -10,5 +10,6 @@ public class SaveScanDto {
     private String modelDiagnosis;
     private String doctorDiagnosis;
     private String imagePath;
+    private String imageResponsePath;
     private String model;
 }
