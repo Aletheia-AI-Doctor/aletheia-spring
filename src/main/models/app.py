@@ -1,7 +1,7 @@
 from flask import Flask,request
 from mri import MRI
 import os
-from chestXray import ChestXRay
+from chest_xray import ChestXRay
 from breast_cancer import BreastCancer
 
 app = Flask(__name__)
