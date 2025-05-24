@@ -213,6 +213,12 @@ export default function DiagnosisPage() {
                                     </Modal>
                                 </div>
                             )}
+                            {/*{imagePath && (*/}
+                            {/*    <div className="mt-4">*/}
+                            {/*        <h3 className="font-medium text-blue-800 mb-2">Annotated Scan</h3>*/}
+                            {/*        <img src={`uploads/${imagePath}`} alt="Prediction result" className="rounded shadow-md" />*/}
+                            {/*    </div>*/}
+                            {/*    )}*/}
                         </div>
                     </div>
                 </div>

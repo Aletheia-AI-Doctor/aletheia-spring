@@ -17,7 +17,7 @@ def preprocess_image(image_path):
 
 class MRI(Model):
     def __init__(self):
-        super().__init__("efficientnetb0_alzheimer.h5")
+        super().__init__("MRI_Model.keras")
         self.class_names = {
             0: 'Non Demented',
             1: 'Very Mild Dementia',

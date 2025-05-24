@@ -2,9 +2,9 @@ import os
 import gdown
 
 File_IDS = {
-    # "NIH_Seresnet152_model.h5":"1qixtL7BPZkMZSJDqHa0WYTg0AZdITsmG",
     "efficientnetb0_alzheimer.h5": "1woONx90w8AqezObAoq1U8-BqrNR_BI6v",
-    "hybrid_metadata_model.h5": "1I9DLTeuMh25HSBO9qmUURgKD0fqJ8zwp",
+    "MRI_Model.keras": "1qqlCIyAWBexGxJZPTEs8PXFtf8eK22Bi",
+    "last.pt": "12aXVwntxfTvEUcl6WE2Noe83Ia0y7S0E",
     "breast_cancer_detection.keras": "18QuheON6UViSjtaz2GrBRQBbuM3hjcnZ",
 }
 
@@ -24,6 +24,7 @@ def download_models():
             print(f"Downloaded {file_name} to {output_path}")
         else:
             print(f"{file_name} already exists")
+
 
 if __name__ == "__main__":
     download_models()
