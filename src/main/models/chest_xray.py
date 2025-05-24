@@ -26,6 +26,6 @@ class ChestXRay(Model):
 
         if diagnosis.name == "pneumonia":
             image_name = image_path.split("/")[-1]
-            diagnosis.image_path = f"/predictions/{image_name}"
+            diagnosis.image_path = "predictions|" + image_name
 
         return diagnosis

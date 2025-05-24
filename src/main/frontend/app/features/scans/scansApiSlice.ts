@@ -8,7 +8,7 @@ interface Diagnosis {
     id: number;
     name: string;
     imagePath: string;
-    imageResponseUrl: string;
+    imageResponsePath: string;
 }
 interface Model {
     id: string;

@@ -23,6 +23,7 @@ import If from "~/components/if";
 import ScansTable from "~/components/ScansTable";
 import Card from "~/components/Card";
 import PatientDetailsCard from "~/components/patient-details-card";
+import {ROOT_URL} from "~/base/consts";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -97,7 +98,6 @@ export default function DiagnosisPage() {
                 scan: file,
                 model: selectedModel.toLowerCase()
             }).unwrap();
-            console.log(result);
             setDiagnosisResult(result);
             setImagePath(result.imagePath);
         } catch (error) {
@@ -215,10 +215,10 @@ export default function DiagnosisPage() {
                                 </div>
                             )}
 
-                            {diagnosisResult?.imageResponseUrl && (
+                            {diagnosisResult?.imageResponsePath && (
                                 <div className="mt-4">
                                     <h3 className="font-medium text-blue-800 mb-2">Annotated Scan</h3>
-                                    <img src={diagnosisResult.imageResponseUrl} alt="Prediction result" className="rounded shadow-md" />
+                                    <img src={`${ROOT_URL}/scans/${diagnosisResult.imageResponsePath}/image`} alt="Prediction result" className="rounded shadow-md" />
                                 </div>
                                 )}
                         </div>
