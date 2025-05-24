@@ -47,7 +47,6 @@ export default function DiagnosisPage() {
 
     const [file, setFile] = useState<File | null>(null);
     const [diagnosisResult, setDiagnosisResult] = useState<Diagnosis | null>(null);
-    const [imagePath, setImagePath] = useState<string | null>(null);
 
     // API hooks
     const { data: models = [], isLoading: isLoadingModels } = useGetModelsQuery();
@@ -60,7 +59,8 @@ export default function DiagnosisPage() {
     async function handleSavePatient(patient: Patient) {
         const response = await saveScan({
             modelDiagnosis: diagnosisResult!.name,
-            imagePath: imagePath!,
+            imageResponsePath: diagnosisResult!.imageResponsePath,
+            imagePath: diagnosisResult!.imagePath,
             model: selectedModel!,
             patientId: patient.id,
         });
@@ -85,7 +85,6 @@ export default function DiagnosisPage() {
         if (fileItems.length > 0) {
             setFile(fileItems[0].file);
             setDiagnosisResult(null);
-            setImagePath(null);
         } else {
             setFile(null);
         }
@@ -99,7 +98,6 @@ export default function DiagnosisPage() {
                 model: selectedModel.toLowerCase()
             }).unwrap();
             setDiagnosisResult(result);
-            setImagePath(result.imagePath);
         } catch (error) {
             setDiagnosisResult(null);
         }
@@ -218,7 +216,7 @@ export default function DiagnosisPage() {
                             {diagnosisResult?.imageResponsePath && (
                                 <div className="mt-4">
                                     <h3 className="font-medium text-blue-800 mb-2">Annotated Scan</h3>
-                                    <img src={`${ROOT_URL}/scans/${diagnosisResult.imageResponsePath}/image`} alt="Prediction result" className="rounded shadow-md" />
+                                    <img className="rounded w-64" src={diagnosisResult.imageResponseUrl} alt="Prediction result" />
                                 </div>
                                 )}
                         </div>

@@ -1,4 +1,4 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
+import {type BaseQueryMeta, createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {ROOT_URL} from "~/base/consts";
 import {defaultHeadersFileUpload} from "~/base/helpers";
 import type {Patient} from "~/features/patient/patientApiSlice";
@@ -8,7 +8,9 @@ interface Diagnosis {
     id: number;
     name: string;
     imagePath: string;
+    imageUrl?: string;
     imageResponsePath: string;
+    imageResponseUrl?: string;
 }
 interface Model {
     id: string;
@@ -20,6 +22,7 @@ interface Model {
 interface SaveScanApiRequest {
     patientId?: number;
     modelDiagnosis: string;
+    imageResponsePath?: string;
     doctorDiagnosis?: string;
     imagePath: string;
     model: string;
@@ -36,6 +39,7 @@ interface Scan {
     modelDiagnosis: Diagnosis;
     doctorDiagnosis?: Diagnosis;
     imageUrl: string;
+    imageResponseUrl: string;
     model: Model;
 }
 
@@ -76,6 +80,12 @@ export const scansApiSlice = createApi({
                     formData: true,
                 };
             },
+            transformResponse: (response: Diagnosis, meta, arg) => {
+                return {
+                    ...response,
+                    imageResponseUrl: `${ROOT_URL}/api/scans/${response.imageResponsePath}/image`,
+                };
+            }
         }),
 
         saveScan: build.mutation<void, SaveScanApiRequest>({
@@ -102,6 +112,7 @@ export const scansApiSlice = createApi({
                     data: response.data.map(item => ({
                         ...item,
                         imageUrl: ROOT_URL + item.imageUrl,
+                        imageResponseUrl: item.imageResponseUrl ? ROOT_URL + item.imageResponseUrl : "",
                     })),
                 };
             },
