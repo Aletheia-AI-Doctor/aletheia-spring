@@ -67,7 +67,7 @@ services:
     - ./src/main/models:/app
     - ./src/main/models/weights:/app/weights
     - ./src/main/models/.venv:/app/.venv
-    - ./uploads:/app/uploads
+    - ./uploads:/app/uploads 
 
 
   db:
