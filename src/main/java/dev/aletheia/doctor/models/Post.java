@@ -23,8 +23,7 @@ public class Post extends BaseModel {
     @JoinColumn(name = "parent_id", updatable = false)
     private Post parent;
 
-    @Column(name = "title", nullable = false)
-    @NotBlank
+    @Column(name = "title")
     @Size(min = 1, max = 255)
     private String title;
 

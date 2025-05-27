@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 public class PostDto {
     private Long id;
+    private Long parentId;
     private String title;
     private String body;
     private DoctorDto doctor;

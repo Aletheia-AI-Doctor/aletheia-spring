@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/confirm-email/*").permitAll()
                         .requestMatchers("/api/reject-email/*").permitAll()
                         .requestMatchers("/api/doctors/appeal/*").permitAll()
+                        .requestMatchers("/api/posts/*").permitAll()
                         //.requestMatchers(HttpMethod.PATCH, "/api/doctors/currentUser").authenticated().anyRequest().authenticated()
 
 //                        .requestMatchers("/schoolYears").permitAll()
