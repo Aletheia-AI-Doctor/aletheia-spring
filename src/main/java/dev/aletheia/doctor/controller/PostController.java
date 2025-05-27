@@ -54,7 +54,7 @@ public class PostController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(postService.convertToDto(createdPost));
 
 	}
-	@PutMapping("/{postId}")
+	@PutMapping("/edit/{postId}")
 	public ResponseEntity<Object> update(@PathVariable Long postId,
 										 @Valid @RequestBody CreatePostDto updatePostDto) {
 		Post post = postService.findOrFail(postId);
