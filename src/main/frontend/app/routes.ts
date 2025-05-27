@@ -8,6 +8,7 @@ export default [
         route("/patients/:id", "routes/patient/show.tsx"),
         route("/profile", "routes/profile/profile.tsx"),
         route("/profile/edit", "routes/profile/edit.tsx"),
+        route("/activity", "routes/activity.tsx"),
     ]),
 
     layout("./routes/auth/layout.tsx", [

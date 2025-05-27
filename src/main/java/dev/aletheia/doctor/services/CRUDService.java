@@ -3,6 +3,8 @@ package dev.aletheia.doctor.services;
 import dev.aletheia.doctor.exceptions.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -28,6 +30,14 @@ abstract public class CRUDService<T, R> {
 
     public List<T> getAll() {
         return getRepository().findAll();
+    }
+
+    public Page<T> getAll(Pageable pageable) {
+        return getRepository().findAll(pageable);
+    }
+
+    public Page<R> getAllDTO(Pageable pageable) {
+        return getAll(pageable).map(this::convertToDto);
     }
 
     public List<R> getAllDTO() {

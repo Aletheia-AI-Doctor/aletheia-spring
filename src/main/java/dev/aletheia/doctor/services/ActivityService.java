@@ -5,6 +5,9 @@ import dev.aletheia.doctor.models.ActivityLog;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.repositories.ActivityLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Limit;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +33,18 @@ public class ActivityService extends CRUDService<ActivityLog, ActivityLogDto> {
         Doctor doctor = doctorService.getCurrentDoctor();
 
         return activityLogRepository
-                .findByDoctorIdOrderByCreatedAtDesc(doctor.getId())
+                .findByDoctorIdOrderByCreatedAtDesc(doctor.getId(), Limit.of(5))
                 .stream()
                 .map(this::convertToDto)
                 .toList();
+    }
+
+    public Page<ActivityLogDto> getAllDTO(Pageable pageable) {
+        Doctor doctor = doctorService.getCurrentDoctor();
+
+        return activityLogRepository
+                .findByDoctorIdOrderByCreatedAtDesc(doctor.getId(), pageable)
+                .map(this::convertToDto);
     }
 
     public void log(String action, String description) {
