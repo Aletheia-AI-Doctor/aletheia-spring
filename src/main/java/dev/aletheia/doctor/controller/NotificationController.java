@@ -18,6 +18,13 @@ public class NotificationController {
         this.postService = postService;
         this.voteService = voteService;
     }
+    @GetMapping("/notifications")
+    public ResponseEntity<Object> index() {
+        postService.getAllDTO();
+        voteService.getAllDTO();
+
+        return ResponseEntity.ok("Notifications endpoint is under construction.");
+    }
 
 
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class NotificationDto {
+    private long id;
     private long userId;
     private PostDto post;
     private VoteDto vote;
