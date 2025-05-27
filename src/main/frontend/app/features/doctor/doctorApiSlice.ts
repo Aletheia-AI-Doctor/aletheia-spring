@@ -22,14 +22,6 @@ interface DoctorUpdate {
 
 }
 
-interface ActivityLog {
-    id: number;
-    action: string;
-    description: string;
-    createdAt: string;
-}
-
-
 export const doctorApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
@@ -52,10 +44,6 @@ export const doctorApiSlice = createApi({
             invalidatesTags: ['Doctor']
         }),
 
-        getDoctorActivityLog: build.query<ActivityLog[], void>({
-            query: () => "api/activities"
-        }),
-
     }),
 
 
@@ -64,7 +52,5 @@ export const doctorApiSlice = createApi({
 
 export const {
     useGetDoctorAttributesQuery,
-    useUpdateDoctorProfileMutation,
-    useGetDoctorActivityLogQuery
-
+    useUpdateDoctorProfileMutation
 } = doctorApiSlice;
