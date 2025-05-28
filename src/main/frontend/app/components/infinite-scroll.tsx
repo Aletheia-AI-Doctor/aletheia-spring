@@ -31,9 +31,8 @@ export default function InfiniteScrollList<T>({
 
     // Handle new data and pagination state
     useEffect(() => {
-        if (!isLoading && isSuccess && currentData) {
+        if (!isLoading && isSuccess && currentData && currentData.data) {
             setData((prev) =>
-                // Avoid duplicates when resetting after hook changes
                 page === 1 ? currentData.data : [...prev, ...currentData.data]
             );
             setHasMore(currentData.page < currentData.totalPages);
@@ -72,11 +71,7 @@ export default function InfiniteScrollList<T>({
                         No items found
                     </div>
                 )
-            ) : (
-                data.map((item, index) => (
-                    <div key={index}>{renderItem(item)}</div>
-                ))
-            )}
+            ) : data.map(renderItem)}
 
             {/* Observer element for triggering next page load */}
             {hasMore && <div ref={observerRef} />}

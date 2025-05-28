@@ -9,6 +9,8 @@ export default [
         route("/profile", "routes/profile/profile.tsx"),
         route("/profile/edit", "routes/profile/edit.tsx"),
         route("/activity", "routes/activity.tsx"),
+        route("/doxa", "routes/community/index.tsx"),
+        route("/doxa/:id", "routes/community/show.tsx"),
     ]),
 
     layout("./routes/auth/layout.tsx", [

@@ -1,10 +1,19 @@
 import Loading from "~/components/Loading";
 import {type ActivityLog, useGetAllActivityLogsQuery} from "~/features/doctor/doctorActivityApiSlice";
 import InfiniteScrollList from "~/components/infinite-scroll";
+import type { Route } from "./+types/activity";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
+
+export function meta({}: Route.MetaArgs) {
+    return [
+        { title: "Activity Logs" },
+        { name: "description", content: "View your activity logs" },
+    ];
+}
+
 
 export default function Activity() {
     return (

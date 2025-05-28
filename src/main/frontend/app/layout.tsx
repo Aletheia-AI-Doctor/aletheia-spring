@@ -15,7 +15,8 @@ import {
     Cog6ToothIcon, DocumentMagnifyingGlassIcon,
     HomeIcon,
     XMarkIcon,
-    UserIcon, UsersIcon
+    UserIcon, UsersIcon,
+    ChatBubbleBottomCenterIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import {Link, Navigate, Outlet, useNavigate} from "react-router";
@@ -52,6 +53,7 @@ export default function Layout() {
         { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
         { name: 'Diagnose', href: '/diagnose', icon: DocumentMagnifyingGlassIcon, current: false },
         { name: 'Patients', href: '/patients', icon: UsersIcon, current: false },
+        { name: 'Doxa', href: '/doxa', icon: ChatBubbleBottomCenterIcon, current: false },
     ]);
 
     const doctor = useAppSelector((state) => state.auth.doctor);
