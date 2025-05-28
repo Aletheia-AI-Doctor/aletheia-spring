@@ -1,11 +1,13 @@
 package dev.aletheia.doctor.controller;
 
+import dev.aletheia.doctor.dtos.PaginationDTO;
 import dev.aletheia.doctor.dtos.posts.CreatePostDto;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.models.Post;
 import dev.aletheia.doctor.services.DoctorService;
 import dev.aletheia.doctor.services.PostService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +25,10 @@ public class PostController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> index() {
-		return ResponseEntity.ok(postService.getAllDTO());
+	public ResponseEntity<Object> index(@RequestParam(required = false) Integer page) {
+		return ResponseEntity.ok(new PaginationDTO<>(postService.getAllDTO(
+				PageRequest.of(page != null ? page : 0, 10)
+		)));
 	}
 
 	@GetMapping("/{postId}")
