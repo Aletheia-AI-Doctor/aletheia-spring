@@ -18,7 +18,7 @@ export default function Doxa() {
         <div>
             <h1>Doxa</h1>
             <p>Welcome to the Doxa community!</p>
-            <div className="grid grid-cols-12 w-full">
+            <Card className="grid grid-cols-12 w-full mt-8 gap-8">
                 <InfiniteScrollList
                     hook={useGetPostsQuery}
                     loadingComponent={(
@@ -26,13 +26,14 @@ export default function Doxa() {
                             <Loading />
                         </div>
                     )}
+                    emptyComponent={<div className="col-span-12 w-full">No posts found.</div>}
                     renderItem={(post: Post) => (
-                        <Card key={post.id} className="col-span-12 sm:col-span-6 md:col-span-4">
+                        <div key={post.id} className="col-span-12 sm:col-span-6 md:col-span-4">
                             {post.title}
-                        </Card>
+                        </div>
                     )}
                 />
-            </div>
+            </Card>
         </div>
     );
 }

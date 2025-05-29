@@ -12,18 +12,18 @@ import {
 import {
     Bars3Icon,
     BellIcon,
-    Cog6ToothIcon, DocumentMagnifyingGlassIcon,
+    DocumentMagnifyingGlassIcon,
     HomeIcon,
     XMarkIcon,
-    UserIcon, UsersIcon,
+    UsersIcon,
     ChatBubbleBottomCenterIcon
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import {Link, Navigate, Outlet, useNavigate} from "react-router";
+import {Link, Outlet, useNavigate} from "react-router";
 import AppLogoIcon from "~/components/app-logo-icon";
-import {getFromLocalStorage} from "~/base/helpers";
 import {useAppDispatch, useAppSelector} from "~/base/hooks";
-import {clearAuth} from "~/features/authentication/authenticationApiSlice";
+import {clearAuth, setDoctor} from "~/features/authentication/authenticationApiSlice";
+import {useGetDoctorAttributesQuery} from "~/features/doctor/doctorApiSlice";
 
 const userNavigation = [
     { name: 'Your profile', href: '/profile' },
@@ -56,8 +56,21 @@ export default function Layout() {
         { name: 'Doxa', href: '/doxa', icon: ChatBubbleBottomCenterIcon, current: false },
     ]);
 
-    const doctor = useAppSelector((state) => state.auth.doctor);
     const dispatch = useAppDispatch();
+    const { refetch } = useGetDoctorAttributesQuery();
+
+    useEffect(() => {
+        async function loadDoctor() {
+            const { data: doctorData } = await refetch();
+            if (doctorData) {
+                dispatch(setDoctor(doctorData));
+            }
+        }
+
+        loadDoctor();
+    }, [dispatch, refetch]);
+
+    const doctor = useAppSelector((state) => state.auth.doctor);
 
     function handleLogout() {
         dispatch(clearAuth());
@@ -140,8 +153,8 @@ export default function Layout() {
                                     <ul role="list" className="-mx-2 space-y-1">
                                         {navigation.map((item) => (
                                             <li key={item.name}>
-                                                <a
-                                                    href={item.href}
+                                                <Link
+                                                    to={item.href}
                                                     className={classNames(
                                                         item.current
                                                             ? 'bg-gray-800 text-white'
@@ -151,7 +164,7 @@ export default function Layout() {
                                                 >
                                                     <item.icon aria-hidden="true" className="size-6 shrink-0" />
                                                     {item.name}
-                                                </a>
+                                                </Link>
                                             </li>
                                         ))}
                                     </ul>
@@ -198,9 +211,9 @@ export default function Layout() {
                                 <Menu as="div" className="relative">
                                     <MenuButton className="-m-1.5 flex items-center p-1.5">
                                         <span className="sr-only">Open user menu</span>
-                                        <div
+                                        <img
                                             // alt=""
-                                            // src=""
+                                            src={doctor?.image}
                                             className="size-8 rounded-full bg-gray-50"
                                         />
                                         <span className="hidden lg:flex lg:items-center">

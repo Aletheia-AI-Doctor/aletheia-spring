@@ -26,7 +26,7 @@ export default function Activity() {
                 <InfiniteScrollList
                     hook={useGetAllActivityLogsQuery}
                     renderItem={(event: ActivityLog) => (
-                        <li className="relative pb-8">
+                        <li key={event.id} className="relative pb-8">
                             <div className="relative flex space-x-3">
                                 <div>
                                 <span

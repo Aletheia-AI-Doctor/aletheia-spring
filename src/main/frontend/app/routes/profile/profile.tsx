@@ -1,9 +1,9 @@
-import { useGetDoctorAttributesQuery } from "~/features/doctor/doctorApiSlice";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeartPulse, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import React from "react";
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/profile";
+import {useAppSelector} from "~/base/hooks";
 import Loading from "~/components/Loading";
 
 export function meta({}: Route.MetaArgs) {
@@ -15,12 +15,9 @@ export function meta({}: Route.MetaArgs) {
 
 export default function DrProfilePage(){
     const navigate = useNavigate();
-    const {
-        data: doctor,
-        isLoading
-    } = useGetDoctorAttributesQuery();
+    const doctor = useAppSelector((state) => state.auth.doctor);
 
-    if (isLoading || !doctor) {
+    if (!doctor) {
         return <Loading />;
     }
 

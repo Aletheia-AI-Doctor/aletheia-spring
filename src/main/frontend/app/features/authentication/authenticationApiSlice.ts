@@ -61,11 +61,12 @@ interface Doctor {
     username: string;
     email: string;
     bio: string;
-    specialty: DoctorSpeciality;
+    speciality: DoctorSpeciality;
     license: string;
     HospitalId: number;
     confirmed?: boolean;
     confirmationToken?: string;
+    image: string;
 }
 
 interface LoginApiRequest {
@@ -83,6 +84,8 @@ interface RegisterApiRequest {
     hospitalId: number;
 
 }
+
+export type { Doctor };
 
 // Define a service using a base URL and expected endpoints
 export const authenticationApiSlice = createApi({
