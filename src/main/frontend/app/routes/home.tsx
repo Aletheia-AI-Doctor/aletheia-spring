@@ -1,10 +1,10 @@
 import React from "react";
-import {Link, useNavigate} from "react-router";
+import {Link} from "react-router";
 import type { Route } from "./+types/home";
 import{useGetDoctorPatientsQuery} from "~/features/doctor/doctorDashboardApiSlice";
-import { useGetDoctorAttributesQuery } from "~/features/doctor/doctorApiSlice";
 import {useGetRecentActivityLogsQuery} from "~/features/doctor/doctorActivityApiSlice";
 import Loading from "~/components/Loading";
+import {useAppSelector} from "~/base/hooks";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -14,13 +14,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home(){
-    const navigate = useNavigate();
-
-    const {
-        data: doctor,
-        isLoading: isLoadingDoctor,
-    } = useGetDoctorAttributesQuery();
-      
+    const doctor = useAppSelector((state) => state.auth.doctor);
 
     const{
         data: patientsData,
@@ -32,7 +26,7 @@ export default function Home(){
         isLoading: isActivityLoading,
     } = useGetRecentActivityLogsQuery();
 
-    if (isLoadingDoctor || isLoadingPatients || isActivityLoading || !activityLog || !doctor || !patientsData) {
+    if (isLoadingPatients || isActivityLoading || !activityLog || !patientsData) {
         return <Loading />;
     }
 

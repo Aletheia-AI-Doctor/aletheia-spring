@@ -19,27 +19,21 @@ export default function InfiniteScrollList<T>({
     const [data, setData] = useState<T[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const observerRef = useRef<HTMLDivElement>(null);
+    const [lastPage, setLastPage] = useState(-1);
 
     const { data: currentData, isLoading, isSuccess } = hook({ page });
 
-    // Reset state when the hook changes (e.g., search parameters updated)
-    useEffect(() => {
-        setPage(1);
-        setData([]);
-        setHasMore(true);
-    }, [hook]);
-
-    // Handle new data and pagination state
     useEffect(() => {
         if (!isLoading && isSuccess && currentData && currentData.data) {
-            setData((prev) =>
-                page === 1 ? currentData.data : [...prev, ...currentData.data]
+            setData((prev) => currentData.page === lastPage ? prev : [...prev, ...currentData.data]
             );
-            setHasMore(currentData.page < currentData.totalPages);
+
+            setHasMore(currentData.page < currentData.totalPages -1);
+
+            setLastPage(currentData.page);
         }
     }, [isLoading, currentData, page, isSuccess]);
 
-    // Set up intersection observer for infinite scroll
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -61,7 +55,7 @@ export default function InfiniteScrollList<T>({
             }
             observer.disconnect();
         };
-    }, [hasMore, isLoading]); // Recreate observer when loading state changes
+    }, [hasMore, isLoading]);
 
     return (
         <>
@@ -73,10 +67,8 @@ export default function InfiniteScrollList<T>({
                 )
             ) : data.map(renderItem)}
 
-            {/* Observer element for triggering next page load */}
             {hasMore && <div ref={observerRef} />}
 
-            {/* Loading indicator */}
             {isLoading && (loadingComponent || <Loading />)}
         </>
     );

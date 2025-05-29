@@ -2,25 +2,8 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {ROOT_URL} from "~/base/consts";
 import {defaultHeaders} from "~/base/helpers";
-import {DoctorSpeciality} from '~/features/doctor/doctorSpeciality';
+import type {Doctor} from '~/features/authentication/authenticationApiSlice';
 
-
-interface Doctor {
-    id: number;
-    name: string;
-    username: string;
-    email: string;
-    speciality: DoctorSpeciality;
-    bio: string;
-}
-
-interface DoctorUpdate {
-    name: string;
-    email: string;
-    password?: string;
-    bio: string;
-
-}
 
 export const doctorApiSlice = createApi({
     baseQuery: fetchBaseQuery({
