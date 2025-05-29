@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -22,7 +23,7 @@ public class NotificationController {
     }
 
     @GetMapping("/getLastNotification")
-    public ResponseEntity<NotificationDto> getLastNotification() {
+    public ResponseEntity<Object> getLastNotification(@RequestParam NotificationDto notificationDto) {
         List<Post> replies = postService.getlastReplies();
         Integer votes = postService.getdoctorsVotes();
         NotificationDto notificationDto = new NotificationDto();

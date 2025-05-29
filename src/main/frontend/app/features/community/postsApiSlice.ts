@@ -39,30 +39,7 @@ export const postsApiSlice = createApi({
                     ]
                     : [{type: 'Posts', id: 'LIST'}],
         }),
-
-        getPost: build.query<Post, {postId: string}>({
-            query: ({postId}) => `api/posts/${postId}`,
-            providesTags: (result, error, {postId}) => [{type: 'Posts', id: postId}],
-        }),
-
-        createPost: build.mutation<Post, PostForm>({
-            query: (req) => ({
-                url: `api/posts`,
-                method: "POST",
-                body: req,
-            }),
-            invalidatesTags: [{type: 'Posts', id: 'LIST'}],
-        }),
-
-        editPost: build.mutation<Post, PostForm>({
-            query: (req) => ({
-                url: `api/posts/${req.id}/edit`,
-                method: "PUT",
-                body: req,
-            }),
-            invalidatesTags: (result, error, {id}) => [{type: 'Posts', id: id}],
-        }),
-    }),
+    })
 });
 
-export const { useGetPostsQuery, useGetPostQuery, useCreatePostMutation, useEditPostMutation } = postsApiSlice;
+export const { useGetPostsQuery} = postsApiSlice;
