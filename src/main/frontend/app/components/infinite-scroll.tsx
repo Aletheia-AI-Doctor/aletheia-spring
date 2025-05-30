@@ -24,6 +24,14 @@ export default function InfiniteScrollList<T>({
     const { data: currentData, isLoading, isSuccess } = hook({ page });
 
     useEffect(() => {
+        if (page === 1) {
+            setData([]);
+            setLastPage(-1);
+            setHasMore(true);
+        }
+    }, []);
+
+    useEffect(() => {
         if (!isLoading && isSuccess && currentData && currentData.data) {
             setData((prev) => currentData.page === lastPage ? prev : [...prev, ...currentData.data]
             );
