@@ -5,6 +5,7 @@ import{useGetDoctorPatientsQuery} from "~/features/doctor/doctorDashboardApiSlic
 import {useGetRecentActivityLogsQuery} from "~/features/doctor/doctorActivityApiSlice";
 import Loading from "~/components/Loading";
 import {useAppSelector} from "~/base/hooks";
+import Title from "~/components/title";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -26,19 +27,14 @@ export default function Home(){
         isLoading: isActivityLoading,
     } = useGetRecentActivityLogsQuery();
 
-    if (isLoadingPatients || isActivityLoading || !activityLog || !patientsData) {
+    if (isLoadingPatients || isActivityLoading || !activityLog || !patientsData || !doctor) {
         return <Loading />;
     }
-
-    
 
     return(
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
             <div className="flex items-center space-x-4 mb-6">
-                <h1 className="text-4xl font-bold text-blue-600">
-                    Hello! {doctor?.name ?? "Doctor"}
-                    <span className="ml-2 text-blue-400 text-lg">MD</span>
-                </h1>
+                <Title>Hello, {doctor.name}</Title>
             </div>
             <div className="mb-4">
                 <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
