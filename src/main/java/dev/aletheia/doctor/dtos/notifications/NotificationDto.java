@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dev.aletheia.doctor.dtos.posts.PostDto;
-import dev.aletheia.doctor.dtos.votes.VoteDto;
-import dev.aletheia.doctor.models.Post;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +12,7 @@ import lombok.Setter;
 public class NotificationDto {
     private long id;
     private long userId;
-    private List<Post> replies;
+    private List<PostDto> replies;
     private PostDto poste;
     private Integer vote;
 

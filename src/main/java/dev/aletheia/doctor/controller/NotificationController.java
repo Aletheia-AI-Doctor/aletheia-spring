@@ -16,22 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/notifications")
 public class NotificationController {
     private final PostService postService;
-    private final NotificationDto notificationDto;
 
-    public NotificationController(PostService postService, NotificationDto notificationDto) {
+    public NotificationController(PostService postService) {
         this.postService = postService;
-        this.notificationDto = notificationDto;
     }
 
     @GetMapping("/getLastNotification")
     public ResponseEntity<NotificationDto> getLastNotification() {
         List<Post> replies = postService.getlastReplies();
-        Integer votes=postService.getdoctorsVotes();
-        notificationDto.setReplies(replies);
+        Integer votes = postService.getdoctorsVotes();
+        NotificationDto notificationDto = new NotificationDto();
+
+        notificationDto.setReplies(replies.stream().map(postService::convertToDto).toList());
         notificationDto.setVote(votes);
         return ResponseEntity.ok(notificationDto);
-
     }
-
-
 }
