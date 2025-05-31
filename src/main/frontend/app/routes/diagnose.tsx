@@ -24,6 +24,7 @@ import ScansTable from "~/components/ScansTable";
 import Card from "~/components/Card";
 import PatientDetailsCard from "~/components/patient-details-card";
 import {ROOT_URL} from "~/base/consts";
+import Title from "~/components/title";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
@@ -105,16 +106,15 @@ export default function DiagnosisPage() {
 
     return (
         <>
-        <div className="p-4 max-w-4xl mx-auto">
+        <div>
+            <Title className="mb-6">Medical Scan Diagnosis</Title>
 
             {!isPatientLoading && patient && (
                 <PatientDetailsCard patient={patient} />
             )}
 
-            <h1 className="text-2xl font-bold mb-4">Medical Scan Diagnosis</h1>
-
             {!selectedModel ? (
-                <div className="bg-white rounded-lg shadow p-6">
+                <Card>
                     <h2 className="text-xl font-semibold mb-4">Select Scan Type</h2>
                     {isLoadingModels && <Loading message="Loading available models" />}
 
@@ -129,9 +129,9 @@ export default function DiagnosisPage() {
                             </Link>
                         ))}
                     </div>
-                </div>
+                </Card>
             ) : (
-                <div className="bg-white rounded-lg shadow overflow-hidden">
+                <Card>
                     <div className="bg-gray-50 p-4 flex items-center border-b">
                         <Link
                             to={patientId ? `/diagnose?patientId=${patientId}` : `/diagnose`}
@@ -221,11 +221,11 @@ export default function DiagnosisPage() {
                                 )}
                         </div>
                     </div>
-                </div>
+                </Card>
             )}
         </div>
 
-            <Card>
+            <Card className="mt-6">
                 <ScansTable refetchNow={refetchNow} patientId={patientId ?? undefined} />
             </Card>
         </>
