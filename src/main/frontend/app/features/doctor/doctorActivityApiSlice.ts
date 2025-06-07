@@ -20,15 +20,15 @@ export const doctorActivityApiSlice = createApi({
     }),
     reducerPath: "doctorActivityApi",
     tagTypes: ["ActivityLog"],
+    keepUnusedDataFor: 2,
     endpoints: build => ({
-
         getAllActivityLogs: build.query<Pagination<ActivityLog>, PageRequest>({
             query: (req) => `api/activities${queryParamsFromRequest(req)}`,
             providesTags: ["ActivityLog"],
         }),
 
         getRecentActivityLogs: build.query<ActivityLog[], void>({
-            query: () => "api/activities/recent"
+            query: () => "api/activities/recent",
         }),
     }),
 })

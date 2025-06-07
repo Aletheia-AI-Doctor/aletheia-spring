@@ -1,10 +1,19 @@
 import Loading from "~/components/Loading";
 import {type ActivityLog, useGetAllActivityLogsQuery} from "~/features/doctor/doctorActivityApiSlice";
 import InfiniteScrollList from "~/components/infinite-scroll";
+import type { Route } from "./+types/activity";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
+
+export function meta({}: Route.MetaArgs) {
+    return [
+        { title: "Activity Logs" },
+        { name: "description", content: "View your activity logs" },
+    ];
+}
+
 
 export default function Activity() {
     return (
@@ -17,7 +26,7 @@ export default function Activity() {
                 <InfiniteScrollList
                     hook={useGetAllActivityLogsQuery}
                     renderItem={(event: ActivityLog) => (
-                        <li className="relative pb-8">
+                        <li key={event.id} className="relative pb-8">
                             <div className="relative flex space-x-3">
                                 <div>
                                 <span

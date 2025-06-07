@@ -1,6 +1,7 @@
 package dev.aletheia.doctor.dtos.doctors;
 
 import dev.aletheia.doctor.enums.DoctorSpeciality;
+import dev.aletheia.doctor.helpers.HashUtil;
 import dev.aletheia.doctor.models.Hospital;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,11 @@ public class DoctorDto {
     private String bio;
     private String licenseNumber;
     private Long hospitalId;
+    private String image;
+
+    public String getImage() {
+        return "https://gravatar.com/avatar/" + HashUtil.sha256Hex(this.email) + "?d=identicon&s=200";
+    }
 
    /*public String getSpeciality() {
         return speciality.toString();

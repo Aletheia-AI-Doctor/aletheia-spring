@@ -11,11 +11,13 @@ import java.util.List;
 @Getter
 public class PostDto {
     private Long id;
+    private Long parentId;
     private String title;
     private String body;
     private DoctorDto doctor;
     private List<PostDto> replies;
     private Integer votes;
+    private Integer myVote; //to display his vote on a post
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private String createdAt;

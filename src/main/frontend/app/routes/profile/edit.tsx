@@ -1,15 +1,11 @@
 
-import { useGetDoctorAttributesQuery, useUpdateDoctorProfileMutation } from "~/features/doctor/doctorApiSlice";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeartPulse, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
+import { useUpdateDoctorProfileMutation } from "~/features/doctor/doctorApiSlice";
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/profile";
-import Loading from "~/components/Loading";
 import Input from "~/components/input";
 import Button from "~/components/button";
-import { useAppDispatch } from "~/base/hooks";
-
+import {useAppSelector} from "~/base/hooks";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -17,10 +13,8 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-
-
 export default function EditProfile() {
-    const { data, isLoading, error } = useGetDoctorAttributesQuery();
+    const data = useAppSelector((state) => state.auth.doctor);
     const [updateDoctorProfile, { isLoading: isUpdating }] = useUpdateDoctorProfileMutation();
 
     const [formData, setFormData] = useState({
@@ -65,9 +59,6 @@ export default function EditProfile() {
             alert("An error occurred while updating your profile.");
         }
     };
-
-    if (isLoading) return <Loading />;
-    if (error) return <div>Error loading profile data</div>;
 
     return (
         <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
