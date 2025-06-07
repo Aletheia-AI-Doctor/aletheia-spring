@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useLayoutEffect, useState} from 'react'
 import {
     Dialog,
     DialogBackdrop,
@@ -76,12 +76,12 @@ export default function Layout() {
         dispatch(clearAuth());
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         setNavigation(navigation.map((item) => {
             item.current = window.location.pathname === item.href;
             return item;
         }));
-    }, []);
+    }, [window.location.pathname]);
 
     return (
         <>

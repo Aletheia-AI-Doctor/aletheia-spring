@@ -1,4 +1,9 @@
 import type { Route } from "./+types/show";
+import {useParams} from "react-router";
+import {useGetPostQuery} from "~/features/community/postsApiSlice";
+import Loading from "~/components/Loading";
+import Title from "~/components/title";
+import Card from "~/components/Card";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -9,10 +14,23 @@ export function meta({}: Route.MetaArgs) {
 
 
 export default function DoxaPost() {
+    const {id} = useParams<{ id: string }>();
+
+    const {data: post, isLoading} = useGetPostQuery({postId: id!});
+
+    if (isLoading || !post) {
+        return <Loading />;
+    }
+
     return (
         <div>
-            <h1>Doxa</h1>
-            <p>Welcome to the Doxa community!</p>
+            <Card>
+                <Title>{post.title}</Title>
+
+                <div className="prose mt-4">
+                    {post.body}
+                </div>
+            </Card>
         </div>
     );
 }

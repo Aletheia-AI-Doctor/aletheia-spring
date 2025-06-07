@@ -3,6 +3,9 @@ import InfiniteScrollList from "~/components/infinite-scroll";
 import {type Post, useGetPostsQuery} from "~/features/community/postsApiSlice";
 import Card from "~/components/Card";
 import Loading from "~/components/Loading";
+import ReadMore from "~/components/readmore";
+import {Link} from "react-router";
+import Title from "~/components/title";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -16,9 +19,9 @@ export default function Doxa() {
 
     return (
         <div>
-            <h1>Doxa</h1>
+            <Title>Doxa</Title>
             <p>Welcome to the Doxa community!</p>
-            <Card className="grid grid-cols-12 w-full mt-8 gap-8">
+            <div className="grid grid-cols-12 w-full mt-8 gap-8">
                 <InfiniteScrollList
                     hook={useGetPostsQuery}
                     loadingComponent={(
@@ -28,12 +31,22 @@ export default function Doxa() {
                     )}
                     emptyComponent={<div className="col-span-12 w-full">No posts found.</div>}
                     renderItem={(post: Post) => (
-                        <div key={post.id} className="col-span-12 sm:col-span-6 md:col-span-4">
-                            {post.title}
-                        </div>
+                        <Link
+                            key={post.id}
+                            to={`/doxa/${post.id}`}
+                            className="col-span-12 xl:col-span-6 transition-all hover:scale-105 duration-200 hover:shadow-lg"
+                        >
+                        <Card className="col-span-12 xl:col-span-6">
+                            <h2 className="text-gray-900 text-lg">{post.title}</h2>
+
+                            <div className="prose">
+                                <ReadMore showReadMore={false} maxLength={200}>{post.body}</ReadMore>
+                            </div>
+                        </Card>
+                        </Link>
                     )}
                 />
-            </Card>
+            </div>
         </div>
     );
 }

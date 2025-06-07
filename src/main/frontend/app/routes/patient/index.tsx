@@ -9,6 +9,7 @@ import Card from "~/components/Card";
 import {Table, Td, Th} from "~/components/Table/table";
 import type {Scan} from "~/features/scans/scansApiSlice";
 import If from "~/components/if";
+import Title from "~/components/title";
 
 export function meta() {
     return [
@@ -30,10 +31,10 @@ export default function PatientPage() {
     const [showAddForm, setShowAddForm] = useState(false);
 
     return (
-        <div className="container mx-auto p-4 max-w-6xl">
-            <h1 className="text-2xl font-bold mb-6">Patients</h1>
+        <div>
+            <Title>Patients</Title>
 
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center my-6">
                 <Button
                     width="w-auto"
                     onClick={() => setShowAddForm(true)}
