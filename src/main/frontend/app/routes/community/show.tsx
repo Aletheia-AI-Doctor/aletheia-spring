@@ -4,6 +4,8 @@ import {useGetPostQuery} from "~/features/community/postsApiSlice";
 import Loading from "~/components/Loading";
 import Title from "~/components/title";
 import Card from "~/components/Card";
+import CreatePost from "~/components/create-post";
+import {useState} from "react";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -18,6 +20,8 @@ export default function DoxaPost() {
 
     const {data: post, isLoading} = useGetPostQuery({postId: id!});
 
+    const [newPost, setNewPost] = useState<string>("");
+
     if (isLoading || !post) {
         return <Loading />;
     }
@@ -31,6 +35,8 @@ export default function DoxaPost() {
                     {post.body}
                 </div>
             </Card>
+
+            <CreatePost value={newPost} onChange={setNewPost} onImageUpload={async (file: File) => "null"} />
         </div>
     );
 }
