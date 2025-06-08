@@ -54,12 +54,13 @@ export default function Doxa() {
                     )}
                     emptyComponent={<div className="col-span-12 w-full">No posts found.</div>}
                     renderItem={(post: Post) => (
+                        <Card padding="p-0" className="col-span-12 xl:col-span-6 transition-all hover:scale-105 duration-200 hover:shadow-lg">
                         <Link
                             key={post.id}
                             to={`/doxa/${post.id}`}
-                            className="col-span-12 xl:col-span-6 transition-all hover:scale-105 duration-200 hover:shadow-lg"
+                            className="h-full w-full block"
                         >
-                            <Card className="col-span-12 xl:col-span-6">
+                            <div className="p-6">
                                 <DoctorMedia doctor={post.doctor} />
                                 <h2 className="text-gray-900 text-lg mt-4">{post.title}</h2>
 
@@ -67,9 +68,9 @@ export default function Doxa() {
                                     className="prose"
                                     dangerouslySetInnerHTML={{__html: post.body.slice(0, 200)}}
                                 />
-
-                            </Card>
-                        </Link>
+                            </div>
+                            </Link>
+                        </Card>
                     )}
                 />
             </div>
