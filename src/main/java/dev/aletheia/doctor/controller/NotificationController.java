@@ -26,7 +26,6 @@ public class NotificationController {
     public ResponseEntity<Object> getLastNotification(@RequestParam NotificationDto notificationDto) {
         List<Post> replies = postService.getlastReplies();
         Integer votes = postService.getdoctorsVotes();
-        NotificationDto notificationDto = new NotificationDto();
 
         notificationDto.setReplies(replies.stream().map(postService::convertToDto).toList());
         notificationDto.setVote(votes);
