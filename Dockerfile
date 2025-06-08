@@ -16,7 +16,7 @@ RUN chmod +x entrypoint.sh
 EXPOSE 9000 5005
 ENTRYPOINT ["./entrypoint.sh"]
 
-FROM maven:3.9-eclipse-temurin-23 AS production
+FROM base AS production
 WORKDIR /app
 RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/apt/lists/*
 COPY wait-for-it.sh .
