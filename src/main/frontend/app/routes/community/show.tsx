@@ -4,6 +4,7 @@ import {type Post, useGetPostQuery} from "~/features/community/postsApiSlice";
 import Loading from "~/components/Loading";
 import CreatePost from "~/components/create-post";
 import Title from "~/components/title";
+import DoctorMedia from "~/components/doctor-media";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -16,24 +17,14 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
     return (
         <div className={!parent ? 'pl-4 ml-2 mt-4' : ''}>
             <div className="bg-white shadow-sm rounded-lg p-4">
-                {/* Doctor info */}
-                <div className="flex items-center gap-3 mb-2">
-                    <img
-                        src={post.doctor.image}
-                        alt={post.doctor.name}
-                        className="w-8 h-8 rounded-full object-cover"
-                    />
-                    <span className="text-sm font-medium text-gray-800">{post.doctor.name}</span>
-                </div>
+                <DoctorMedia doctor={post.doctor} />
 
-                {/* Post content */}
                 {parent && <Title>{post.title}</Title>}
                 <div
                     className={"mt-2 text-gray-700 " + (parent ? "prose" : "prose-sm")}
                     dangerouslySetInnerHTML={{ __html: post.body }}
                 />
 
-                {/* Reply form */}
                 <div className="mt-4">
                     <CreatePost onSubmit={refetch} parentId={post.id} />
                 </div>

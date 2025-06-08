@@ -15,7 +15,8 @@ export default function TextareaWysiwyg({ value, onChange, disabled }: TextareaW
     useEffect(() => {
         trixEditorRef.current!.addEventListener("trix-change", (event) => {
             // @ts-ignore
-            onChange(event.target!.innerHTML);
+            const newValue = event.target!.innerHTML;
+            onChange(newValue);
         });
     }, []);
 

@@ -3,15 +3,15 @@ import { useAppSelector } from "~/base/hooks";
 import Card from "~/components/Card";
 import Button from "~/components/button";
 import TextareaWysiwyg from "~/components/textarea-wysiwyg";
-import {useCreatePostMutation} from "~/features/community/postsApiSlice";
+import {type Post, useCreatePostMutation} from "~/features/community/postsApiSlice";
 import Input from "~/components/input";
 
 interface CreatePostProps {
     parentId?: number;
-    onSubmit?: () => void;
+    onSubmit?: (post: Post) => void;
 }
 
-export default function TrixEditor({parentId, onSubmit}: CreatePostProps) {
+export default function CreatePost({parentId, onSubmit}: CreatePostProps) {
     const doctor = useAppSelector(state => state.auth.doctor);
     const [value, onChange] = useState<string>("");
     const [title, setTitle] = useState<string>("");
@@ -32,7 +32,7 @@ export default function TrixEditor({parentId, onSubmit}: CreatePostProps) {
 
         if(response.error) {
             // @ts-ignore
-            console.error("Failed to create post:", response.error.message);
+            console.error(response.error);
             return;
         }
 
@@ -43,53 +43,42 @@ export default function TrixEditor({parentId, onSubmit}: CreatePostProps) {
             setShow(false);
         }
 
-        onSubmit && onSubmit();
+        onSubmit && onSubmit(response.data);
     }, [value]);
 
     return (
         show ? (
-                <div className="mt-6">
-                    <div className="flex justify-center space-x-4">
-                        <div className="shrink-0">
-                            <img
-                                alt="Doctor profile"
-                                src={doctor!.image}
-                                className="inline-block size-10 rounded-full"
+                <div>
+                    <form className="mt-4" onSubmit={handleSubmit}>
+                        {!isReply && (
+                            <Input
+                                id="title"
+                                label="Title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Title"
+                                className="mb-4"
                             />
-                        </div>
-                        <div className="flex">
-                            <form onSubmit={handleSubmit}>
-                                {!parentId && (
-                                    <Input
-                                        id="title"
-                                        label="Title"
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        placeholder="Title"
-                                        className="mb-4"
-                                    />
-                                )}
+                        )}
 
-                                <TextareaWysiwyg value={value} onChange={onChange}/>
+                        <TextareaWysiwyg value={value} onChange={onChange}/>
 
-                                <div className="flex justify-end">
-                                    {isReply && (
-                                        <Button width="w-auto" type="button" color="gray" className="mt-4 mr-2" onClick={() => setShow(false)}>
-                                            Cancel
-                                        </Button>
-                                    )}
-                                    <Button
-                                        className="mt-4"
-                                        type="submit"
-                                        width="w-auto"
-                                        disabled={!value.trim() || isLoading}
-                                    >
-                                        {isLoading ? "Posting..." : "Post"}
-                                    </Button>
-                                </div>
-                            </form>
+                        <div className="flex justify-end">
+                            {isReply && (
+                                <Button width="w-auto" type="button" color="gray" className="mt-4 mr-2" onClick={() => setShow(false)}>
+                                    Cancel
+                                </Button>
+                            )}
+                            <Button
+                                className="mt-4"
+                                type="submit"
+                                width="w-auto"
+                                disabled={!value.trim() || isLoading}
+                            >
+                                {isLoading ? "Posting..." : "Post"}
+                            </Button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             ) : (
             <div>

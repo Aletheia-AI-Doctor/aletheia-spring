@@ -7,6 +7,7 @@ interface InfiniteScrollListProps<T> {
     renderItem: (item: T) => React.ReactNode;
     emptyComponent?: React.ReactNode;
     loadingComponent?: React.ReactNode;
+    refresh?: number;
 }
 
 export default function InfiniteScrollList<T>({
@@ -14,14 +15,23 @@ export default function InfiniteScrollList<T>({
                                                   renderItem,
                                                   emptyComponent,
                                                   loadingComponent,
+                                                  refresh
                                               }: InfiniteScrollListProps<T>) {
+    refresh ??= 0;
     const [page, setPage] = useState(1);
     const [data, setData] = useState<T[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const observerRef = useRef<HTMLDivElement>(null);
     const [lastPage, setLastPage] = useState(-1);
 
-    const { data: currentData, isLoading, isSuccess } = hook({ page });
+    const { data: currentData, isLoading, isSuccess, refetch } = hook({ page });
+
+    useEffect(() => {
+        setPage(1);
+        setData([]);
+        setLastPage(-1);
+        setHasMore(true);
+    }, [refresh]);
 
     useEffect(() => {
         if (page === 1) {
