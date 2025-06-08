@@ -1,9 +1,8 @@
 import React, {useCallback, useState} from 'react';
 import { useAppSelector } from "~/base/hooks";
-import Card from "~/components/Card";
 import Button from "~/components/button";
 import TextareaWysiwyg from "~/components/textarea-wysiwyg";
-import {type Post, useCreatePostMutation} from "~/features/community/postsApiSlice";
+import {type Post, useCreatePostMutation, useEditPostMutation} from "~/features/community/postsApiSlice";
 import Input from "~/components/input";
 
 interface CreatePostProps {
@@ -12,12 +11,11 @@ interface CreatePostProps {
 }
 
 export default function CreatePost({parentId, onSubmit}: CreatePostProps) {
-    const doctor = useAppSelector(state => state.auth.doctor);
     const [value, onChange] = useState<string>("");
     const [title, setTitle] = useState<string>("");
     const [show, setShow] = useState<boolean>(!parentId);
 
-    const [createPost, {isLoading, isSuccess}] = useCreatePostMutation();
+    const [createPost, {isLoading}] = useCreatePostMutation();
 
     const isReply = parentId != undefined;
 

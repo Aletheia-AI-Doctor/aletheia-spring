@@ -13,6 +13,7 @@ interface Post {
 }
 
 interface PostForm {
+    id?: number;
     title?: string;
     parentId?: number;
     body: string;
@@ -52,7 +53,16 @@ export const postsApiSlice = createApi({
             }),
             invalidatesTags: [{type: 'Posts', id: 'LIST'}],
         }),
+
+        editPost: build.mutation<Post, PostForm>({
+            query: (req) => ({
+                url: `api/posts/${req.id}/edit`,
+                method: "PUT",
+                body: req,
+            }),
+            invalidatesTags: (result, error, {id}) => [{type: 'Posts', id: id}],
+        }),
     }),
 });
 
-export const { useGetPostsQuery, useGetPostQuery, useCreatePostMutation } = postsApiSlice;
+export const { useGetPostsQuery, useGetPostQuery, useCreatePostMutation, useEditPostMutation } = postsApiSlice;

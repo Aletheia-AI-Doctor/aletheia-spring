@@ -1,10 +1,14 @@
 import type { Route } from "./+types/show";
 import {useParams} from "react-router";
-import {type Post, useGetPostQuery} from "~/features/community/postsApiSlice";
+import {type Post, useEditPostMutation, useGetPostQuery} from "~/features/community/postsApiSlice";
 import Loading from "~/components/Loading";
 import CreatePost from "~/components/create-post";
 import Title from "~/components/title";
 import DoctorMedia from "~/components/doctor-media";
+import {useAppSelector} from "~/base/hooks";
+import {useState} from "react";
+import Button from "~/components/button";
+import TextareaWysiwyg from "~/components/textarea-wysiwyg";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -14,16 +18,69 @@ export function meta({}: Route.MetaArgs) {
 }
 
 function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => void, parent?: boolean }) {
+    const currentDoctor = useAppSelector((state) => state.auth.doctor);
+    const [editing, setEditing] = useState(false);
+    const [updatePost, {isLoading}] = useEditPostMutation();
+    const [content, setContent] = useState(post.body);
+
+    async function handleSubmit() {
+        const response = await updatePost({
+            id: post.id,
+            body: content,
+        });
+
+        if (response.error) {
+            // @ts-ignore
+            console.error(response.error);
+            return;
+        }
+
+        setEditing(false);
+        refetch();
+    }
+
     return (
         <div className={!parent ? 'pl-4 ml-2 mt-4' : ''}>
             <div className="bg-white shadow-sm rounded-lg p-4">
                 <DoctorMedia doctor={post.doctor} />
 
-                {parent && <Title>{post.title}</Title>}
-                <div
-                    className={"mt-2 text-gray-700 " + (parent ? "prose" : "prose-sm")}
-                    dangerouslySetInnerHTML={{ __html: post.body }}
-                />
+                <div className={"flex items-center " + (parent ? "justify-between" : "justify-end")}>
+                    {parent && <Title>{post.title}</Title>}
+                    {currentDoctor!.id === post.doctor.id && !editing && (
+                        <Button width="w-auto" color="gray" onClick={() => setEditing(true)}>Edit</Button>
+                    )}
+                </div>
+
+                {editing ? (
+                    <div className="mx-auto w-full mt-6">
+                        <form onSubmit={handleSubmit}>
+                            <TextareaWysiwyg value={content} onChange={setContent} />
+
+                            <div className="mt-4 flex justify-end">
+                                <Button
+                                    width="w-auto"
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="mr-2"
+                                >
+                                    Save
+                                </Button>
+                                <Button
+                                    width="w-auto"
+                                    onClick={() => setEditing(false)}
+                                    color="gray"
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
+                    ) : (
+                    <div
+                        className={"mt-2 text-gray-700 " + (parent ? "prose" : "prose-sm")}
+                        dangerouslySetInnerHTML={{ __html: post.body }}
+                    />
+                )}
 
                 <div className="mt-4">
                     <CreatePost onSubmit={refetch} parentId={post.id} />

@@ -60,7 +60,7 @@ public class PostController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(postService.convertToDto(createdPost));
 
 	}
-	@PutMapping("/edit/{postId}")
+	@PutMapping("/{postId}/edit")
 	public ResponseEntity<Object> update(@PathVariable Long postId,
 										 @Valid @RequestBody CreatePostDto updatePostDto) {
 		Post post = postService.findOrFail(postId);
@@ -68,10 +68,6 @@ public class PostController {
 
 		if (!post.getDoctor().getId().equals(currentDoctor.getId())) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-
-		if (post.getParent() == null && (updatePostDto.getTitle() == null || updatePostDto.getTitle().isBlank())) {
-			return ResponseEntity.badRequest().body("Title is required for main posts");
 		}
 
 		if (updatePostDto.getTitle() != null) {
