@@ -9,6 +9,14 @@ interface Post {
     title: string;
     body: string;
     doctor: Doctor;
+    replies: Post[];
+}
+
+interface PostForm {
+    id?: number;
+    title?: string;
+    parentId?: number;
+    body: string;
 }
 
 export type { Post };
@@ -23,14 +31,15 @@ export const postsApiSlice = createApi({
     endpoints: (build) => ({
         getPosts: build.query<Pagination<Post>, PageRequest>({
             query: (req) => `api/posts` + queryParamsFromRequest(req),
-            providesTags: ['Posts'],
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.data.map(({id}) => ({type: 'Posts' as const, id})),
+                        {type: 'Posts', id: 'LIST'},
+                    ]
+                    : [{type: 'Posts', id: 'LIST'}],
         }),
-
-        getPost: build.query<Post, {postId: string}>({
-            query: ({postId}) => `api/posts/${postId}`,
-            providesTags: ['Posts'],
-        }),
-    }),
+    })
 });
 
-export const { useGetPostsQuery, useGetPostQuery } = postsApiSlice;
+export const { useGetPostsQuery} = postsApiSlice;

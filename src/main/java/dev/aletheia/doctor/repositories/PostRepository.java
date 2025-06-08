@@ -1,6 +1,9 @@
 package dev.aletheia.doctor.repositories;
 
 import dev.aletheia.doctor.models.Post;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -8,8 +11,13 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    @NotNull
     @Query("SELECT p FROM posts p where p.parent IS NULL ORDER BY p.id DESC")
     List<Post> findAll();
+
+    @NotNull
+    @Query("SELECT p FROM posts p where p.parent IS NULL ORDER BY p.id DESC")
+    Page<Post> findAll(@NotNull Pageable pageable);
 
     @Query("SELECT p FROM posts p WHERE p.doctor.id =?1 and p.parent IS NULL ORDER BY p.id DESC")
     Post findByDoctorId(Long doctorId);

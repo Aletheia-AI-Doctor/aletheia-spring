@@ -37,7 +37,6 @@ export const patientsApiSlice = createApi({
         }),
         getPatientById: build.query<Patient, string>({
             query: (patientId) => {`api/patients/${{patientId}}/show`
-            console.log(`api/patients/${patientId}/show`)
             return `api/patients/${patientId}/show`},
             providesTags: ['Patients'],
         }),
