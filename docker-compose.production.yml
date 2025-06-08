@@ -72,7 +72,7 @@ services:
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     env_file:
-      - .env
+      - .env.prod
     ports:
       - "3307:3306"
     volumes:
