@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -50,7 +52,7 @@ public class PostController {
 			post.setTitle(null);
 		} else {
 			if (createPostDto.getTitle() == null || createPostDto.getTitle().isBlank()) {
-				return ResponseEntity.badRequest().body("Title is required for main posts");
+				return ResponseEntity.badRequest().body(Map.of("message", "Title is required for main posts"));
 			}
 			post.setTitle(createPostDto.getTitle());
 		}
@@ -58,7 +60,7 @@ public class PostController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(postService.convertToDto(createdPost));
 
 	}
-	@PutMapping("/edit/{postId}")
+	@PutMapping("/{postId}/edit")
 	public ResponseEntity<Object> update(@PathVariable Long postId,
 										 @Valid @RequestBody CreatePostDto updatePostDto) {
 		Post post = postService.findOrFail(postId);
@@ -66,10 +68,6 @@ public class PostController {
 
 		if (!post.getDoctor().getId().equals(currentDoctor.getId())) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-
-		if (post.getParent() == null && (updatePostDto.getTitle() == null || updatePostDto.getTitle().isBlank())) {
-			return ResponseEntity.badRequest().body("Title is required for main posts");
 		}
 
 		if (updatePostDto.getTitle() != null) {
