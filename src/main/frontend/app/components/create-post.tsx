@@ -1,98 +1,103 @@
-import React, { useRef } from 'react';
-import MdEditor, { Plugins } from 'react-markdown-editor-lite';
-import MarkdownIt from 'markdown-it';
-import 'react-markdown-editor-lite/lib/index.css';
+import React, {useCallback, useState} from 'react';
+import { useAppSelector } from "~/base/hooks";
+import Card from "~/components/Card";
+import Button from "~/components/button";
+import TextareaWysiwyg from "~/components/textarea-wysiwyg";
+import {useCreatePostMutation} from "~/features/community/postsApiSlice";
+import Input from "~/components/input";
 
 interface CreatePostProps {
-    value: string;
-    onChange: (markdown: string) => void;
-    onImageUpload: (file: File) => Promise<string>;
+    parentId?: number;
+    onSubmit?: () => void;
 }
 
-MdEditor.use(Plugins.TabInsert);
-MdEditor.use(Plugins.FullScreen);
+export default function TrixEditor({parentId, onSubmit}: CreatePostProps) {
+    const doctor = useAppSelector(state => state.auth.doctor);
+    const [value, onChange] = useState<string>("");
+    const [title, setTitle] = useState<string>("");
+    const [show, setShow] = useState<boolean>(!parentId);
 
-const CreatePost: React.FC<CreatePostProps> = ({ value, onChange, onImageUpload }) => {
-    const editorRef = useRef<MdEditor>(null);
-    const mdParser = new MarkdownIt();
+    const [createPost, {isLoading, isSuccess}] = useCreatePostMutation();
 
-    const handleImageUpload = async (file: File) => {
-        try {
-            const imageUrl = await onImageUpload(file);
-            if (editorRef.current) {
-                const editor = editorRef.current;
-                const cursorPositionStart = editor.getSelection().start;
-                const cursorPositionEnd = editor.getSelection().end;
-                const markdownImage = `![${file.name}](${imageUrl})`;
-                editor.insertText(markdownImage, true, {start:cursorPositionStart, end:cursorPositionEnd});
-            }
-        } catch (error) {
-            console.error('Image upload failed:', error);
+    const isReply = parentId != undefined;
+
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const response = await createPost({
+            body: value,
+            title,
+            parentId,
+        });
+
+        if(response.error) {
+            // @ts-ignore
+            console.error("Failed to create post:", response.error.message);
+            return;
         }
-    };
 
-    // Custom toolbar components
-    const CustomToolbar = () => (
-        <div className="custom-toolbar">
-            <button
-                className="toolbar-button"
-                title="Bold"
-                onClick={() => editorRef.current?.insertText('**Bold text**')}
-            >
-                <strong>B</strong>
-            </button>
-            <button
-                className="toolbar-button"
-                title="Italic"
-                onClick={() => editorRef.current?.insertText('*Italic text*')}
-            >
-                <em>I</em>
-            </button>
-            <label className="toolbar-button" title="Upload Image">
-                <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={(e) => {
-                        if (e.target.files?.[0]) handleImageUpload(e.target.files[0]);
-                        e.target.value = '';
-                    }}
-                />
-                <span>📷</span>
-            </label>
-            <button
-                className="toolbar-button"
-                title="Custom Button"
-                onClick={() => alert('Custom button clicked!')}
-            >
-                ✨
-            </button>
-        </div>
-    );
+        onChange("");
+        setTitle("");
+
+        if(isReply) {
+            setShow(false);
+        }
+
+        onSubmit && onSubmit();
+    }, [value]);
 
     return (
-        <div className="post-editor">
-            <CustomToolbar />
-            <MdEditor
-                ref={editorRef}
-                value={value}
-                style={{ height: '500px' }}
-                renderHTML={(text) => mdParser.render(text)}
-                onChange={({ text }) => onChange(text)}
-                view={{ menu: true, md: true, html: true }}
-                placeholder="Start writing your content here..."
-                config={{
-                    view: {
-                        html: false
-                    },
-                    table: {
-                        maxRow: 5,
-                        maxCol: 6
-                    }
-                }}
-            />
-        </div>
-    );
-};
+        show ? (
+                <div className="mt-6">
+                    <div className="flex justify-center space-x-4">
+                        <div className="shrink-0">
+                            <img
+                                alt="Doctor profile"
+                                src={doctor!.image}
+                                className="inline-block size-10 rounded-full"
+                            />
+                        </div>
+                        <div className="flex">
+                            <form onSubmit={handleSubmit}>
+                                {!parentId && (
+                                    <Input
+                                        id="title"
+                                        label="Title"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        placeholder="Title"
+                                        className="mb-4"
+                                    />
+                                )}
 
-export default CreatePost;
+                                <TextareaWysiwyg value={value} onChange={onChange}/>
+
+                                <div className="flex justify-end">
+                                    {isReply && (
+                                        <Button width="w-auto" type="button" color="gray" className="mt-4 mr-2" onClick={() => setShow(false)}>
+                                            Cancel
+                                        </Button>
+                                    )}
+                                    <Button
+                                        className="mt-4"
+                                        type="submit"
+                                        width="w-auto"
+                                        disabled={!value.trim() || isLoading}
+                                    >
+                                        {isLoading ? "Posting..." : "Post"}
+                                    </Button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+            <div>
+                <button type="button" className="cursor-pointer bg-gray-100 hover:bg-gray-200  rounded px-2 py-0.5 text-sm" onClick={() => setShow(true)}>
+                    Reply
+                </button>
+            </div>
+        )
+
+    );
+}

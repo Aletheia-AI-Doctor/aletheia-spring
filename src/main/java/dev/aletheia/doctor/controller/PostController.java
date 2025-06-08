@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -50,7 +52,7 @@ public class PostController {
 			post.setTitle(null);
 		} else {
 			if (createPostDto.getTitle() == null || createPostDto.getTitle().isBlank()) {
-				return ResponseEntity.badRequest().body("Title is required for main posts");
+				return ResponseEntity.badRequest().body(Map.of("message", "Title is required for main posts"));
 			}
 			post.setTitle(createPostDto.getTitle());
 		}
