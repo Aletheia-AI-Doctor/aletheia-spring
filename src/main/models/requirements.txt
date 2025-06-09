@@ -9,3 +9,4 @@ image_classifiers
 Ultralytics
 opencv-python-headless
 torch
+gunicorn
