@@ -17,13 +17,7 @@ EXPOSE 9000 5005
 ENTRYPOINT ["./entrypoint.sh"]
 
 FROM base AS production
-WORKDIR /app
-RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/apt/lists/*
-COPY wait-for-it.sh .
-RUN chmod +x wait-for-it.sh
-COPY --from=builder /app/target/*.jar app.jar
-RUN addgroup --system appuser && adduser --system --ingroup appuser appuser
-USER appuser
-EXPOSE 9000
-HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost:9000/actuator/health || exit 1
-ENTRYPOINT ["/wait-for-it.sh", "db:3306", "--", "java", "-jar", "app.jar"]
+COPY --from=builder /app/target/*.jar /app/app.jar
+RUN chmod +x /app/app.jar
+EXPOSE 9000/tcp
+ENTRYPOINT ["/wait-for-it.sh", "db:3306", "--", "java", "-jar", "/app/app.jar", "--server.port=9000"]
