@@ -1,8 +1,8 @@
-FROM python:3.12-slim-bookworm AS base
+FROM python:3.12-slim AS base 
+
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
     libsm6 \
@@ -10,41 +10,57 @@ RUN apt-get update && \
     libxrender-dev \
     libgomp1 \
     libgcc-s1 \
-    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ENV PYTHONUNBUFFERED=1 \
-    QT_QPA_PLATFORM=offscreen
+ENV PYTHONUNBUFFERED=1
+ENV QT_QPA_PLATFORM=offscreen
+
+ENV TF_ENABLE_ONEDNN_OPTS=0
+ENV FLASK_ENV=production
+
+COPY pretrained_model/ ./pretrained_model/
 
 COPY requirements.txt .
 
-FROM base AS development
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-RUN chmod +x entrypoint.sh
-EXPOSE 4000
-ENTRYPOINT ["./entrypoint.sh"]
-CMD ["--debug"]
+#RUN pip install --no-cache-dir -r requirements.txt
 
-FROM base AS builder
-RUN pip install --user -r requirements.txt
+#COPY . .
 
+#COPY entrypoint.sh /app/entrypoint.sh
+#RUN chmod +x /app/entrypoint.sh
+
+#EXPOSE 4000/tcp
+
+#ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
+
+# Development stage
+# Production stage
 FROM base AS production
-RUN useradd -m appuser && \
-    chown appuser:appuser /app
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PATH="/home/appuser/.local/bin:${PATH}"
+# Install production dependencies including Gunicorn
+RUN pip install --no-cache-dir --prefer-binary -r requirements.txt
 
-COPY --from=builder --chown=appuser:appuser /home/appuser/.local /home/appuser/.local
-COPY --chown=appuser:appuser pretrained_model/ ./pretrained_model/
-COPY --chown=appuser:appuser . .
-RUN chmod +x entrypoint.sh
+# Copy application code
+COPY . .
 
-USER appuser
+# Create necessary directories
+RUN mkdir -p /app/uploads && \
+    chmod -R 777 /app/uploads
 
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD curl -f http://localhost:4000/health || exit 1
+# Create non-root user
+RUN useradd -m myuser && \
+    chown -R myuser /app
+USER myuser
 
-EXPOSE 4000
-ENTRYPOINT ["./entrypoint.sh"]
+# Expose port
+EXPOSE 8000
+
+# Gunicorn configuration
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", \
+     "--workers", "4", \
+     "--threads", "2", \
+     "--timeout", "120", \
+     "--worker-class", "gevent", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-", \
+     "app:app"]
