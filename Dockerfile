@@ -10,14 +10,15 @@ FROM base AS builder
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-FROM base AS development
-COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
-EXPOSE 9000 5005
-ENTRYPOINT ["./entrypoint.sh"]
-
 FROM base AS production
 COPY --from=builder /app/target/*.jar /app/app.jar
 RUN chmod +x /app/app.jar
 EXPOSE 9000/tcp
 ENTRYPOINT ["/wait-for-it.sh", "db:3306", "--", "java", "-jar", "/app/app.jar", "--server.port=9000"]
+
+
+FROM base AS development
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+EXPOSE 9000 5005
+ENTRYPOINT ["./entrypoint.sh"]
