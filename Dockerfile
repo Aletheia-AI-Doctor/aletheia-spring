@@ -2,13 +2,19 @@ FROM maven:3.9-eclipse-temurin-23 AS base
 WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
-RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/apt/lists/*
+COPY .env.example .env
+RUN apt-get update && apt-get install -y netcat-traditional inotify-tools && rm -rf /var/lib/apt/lists/*
 COPY wait-for-it.sh .
 RUN chmod +x wait-for-it.sh
 
-FROM base AS builder
-COPY src ./src
+
+FROM maven:3.9-eclipse-temurin-23 AS builder
+WORKDIR /app
+COPY pom.xml .
+COPY src .
+RUN mvn dependency:go-offline -B
 RUN mvn clean package -DskipTests
+
 
 FROM base AS production
 COPY --from=builder /app/target/*.jar /app/app.jar
