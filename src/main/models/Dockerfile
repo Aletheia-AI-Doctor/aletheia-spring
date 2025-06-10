@@ -22,16 +22,17 @@ COPY pretrained_model/ ./pretrained_model/
 
 COPY requirements.txt .
 
-#RUN pip install --no-cache-dir -r requirements.txt
+FROM base AS development
+RUN pip install -r requirements.txt
 
-#COPY . .
+COPY . .
 
-#COPY entrypoint.sh /app/entrypoint.sh
-#RUN chmod +x /app/entrypoint.sh
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-#EXPOSE 4000/tcp
+EXPOSE 4000/tcp
 
-#ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
 
 # Development stage
 # Production stage

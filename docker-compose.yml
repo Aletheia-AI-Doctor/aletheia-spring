@@ -56,6 +56,7 @@ services:
     build:
       context: ./src/main/models
       dockerfile: Dockerfile
+      target: development
     container_name: python_models
     ports:
       - "4000:4000"

@@ -3,7 +3,7 @@ import gdown
 
 File_IDS = {
     "efficientnetb0_alzheimer.h5": "1woONx90w8AqezObAoq1U8-BqrNR_BI6v",
-    "MRI_Model.keras": "1qqlCIyAWBexGxJZPTEs8PXFtf8eK22Bi",
+    "MRI_Model.keras": "1wWwgYsZDLEo8-u8guLaZFitRrtg2qmX5",
     "last.pt": "12aXVwntxfTvEUcl6WE2Noe83Ia0y7S0E",
     "breast_cancer_detection.keras": "18QuheON6UViSjtaz2GrBRQBbuM3hjcnZ",
 }
