@@ -19,6 +19,7 @@ COPY --from=build-env /app/build ./build
 COPY --from=build-env /app/build/client ./build/client
 COPY package.json .
 RUN npm i --omit=dev
+RUN npm install --save-dev serve
 ENV PUBLIC_DIR=build
 CMD ["npm", "run", "start"]
 
