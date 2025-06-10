@@ -14,7 +14,7 @@ RUN npm run build
 
 FROM base AS production
 WORKDIR /app
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/build ./build
 COPY --from=builder /app/package.json .
 RUN npm install --omit=dev
 EXPOSE 3000
