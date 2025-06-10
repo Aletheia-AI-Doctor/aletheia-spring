@@ -16,8 +16,10 @@ RUN npm run build
 FROM node:22-alpine AS production
 WORKDIR /app
 COPY --from=build-env /app/build ./build
+COPY --from=build-env /app/build/client ./build/client
 COPY package.json .
 RUN npm i --omit=dev
+ENV PUBLIC_DIR=build
 CMD ["npm", "run", "start"]
 
 FROM development-dependencies-env AS development
