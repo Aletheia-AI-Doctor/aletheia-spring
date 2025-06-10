@@ -4,6 +4,7 @@ import dev.aletheia.doctor.dtos.PaginationDTO;
 import dev.aletheia.doctor.dtos.scans.SaveScanDto;
 import dev.aletheia.doctor.dtos.scans.ScanDto;
 import dev.aletheia.doctor.exceptions.NotFoundException;
+import dev.aletheia.doctor.models.Diagnosis;
 import dev.aletheia.doctor.models.Patient;
 import dev.aletheia.doctor.services.*;
 import org.springframework.core.io.ByteArrayResource;
@@ -69,6 +70,12 @@ public class ScanController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(image);
+    }
+    @PostMapping("/{id}/setDoctorDiagnosis")
+    public ResponseEntity<Object> setDoctorDiagnosis(@PathVariable Long id, @RequestBody Diagnosis diagnosis) {
+        scanService.setDoctorDiagnosis(scanService.findOrFail(id), diagnosis);
+
+        return ResponseEntity.ok(Map.of("message", "Scan updated"));
     }
 
 }

@@ -52,4 +52,12 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
                 : scanRepository.findAllByDoctorAndPatient(doctor, patient, pageable);
         return scans.map(this::convertToDto);
     }
+
+    public void setDoctorDiagnosis(Scan scan, Diagnosis diagnosis) {
+        if (scan.getDoctorDiagnosis() != null && scan.getDoctorDiagnosis().equals(diagnosis)) {
+            return; // No change needed
+        }
+        scan.setDoctorDiagnosis(diagnosis);
+        scanRepository.save(scan);
+    }
 }

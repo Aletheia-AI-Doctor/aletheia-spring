@@ -96,6 +96,15 @@ export const scansApiSlice = createApi({
             }),
         }),
 
+        setDoctorDiagnosis: build.mutation<void, { scanId: number, doctorDiagnosis: string }>({
+            query: ({scanId, doctorDiagnosis}) => ({
+                url: `api/scans/${scanId}/setDoctorDiagnosis`,
+                method: "PUT",
+                body: {doctorDiagnosis},
+            }),
+            invalidatesTags: ['Scans'],
+        }),
+
         getScans: build.query<Pagination<Scan>, GetScansRequest>({
             query: (req) => {
                 const queryParams: any[] = [];
@@ -122,4 +131,4 @@ export const scansApiSlice = createApi({
 
 
 
-export const {useUploadScanMutation, useGetModelsQuery, useSaveScanMutation, useGetScansQuery} = scansApiSlice
+export const {useUploadScanMutation, useGetModelsQuery, useSaveScanMutation, useGetScansQuery, useSetDoctorDiagnosis} = scansApiSlice

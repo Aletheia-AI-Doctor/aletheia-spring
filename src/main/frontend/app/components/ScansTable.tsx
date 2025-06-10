@@ -1,4 +1,5 @@
-import {type Scan, useGetScansQuery} from "~/features/scans/scansApiSlice";
+import {type Scan, useGetScansQuery, useSetDoctorDiagnosis} from "~/features/scans/scansApiSlice";
+import {useGetAllDiagnoses}from "~/features/diagnosis/diagnosisApiSlice";
 import If from "~/components/if";
 import Loading from "~/components/Loading";
 import React, {useEffect} from "react";

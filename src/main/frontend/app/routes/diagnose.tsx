@@ -25,6 +25,8 @@ import Card from "~/components/Card";
 import PatientDetailsCard from "~/components/patient-details-card";
 import {ROOT_URL} from "~/base/consts";
 import Title from "~/components/title";
+import {useGetAllDiagnoses} from "~/features/diagnosis/diagnosisApiSlice";
+import {useSetDoctorDiagnosis} from "~/features/scans/scansApiSlice";
 
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
