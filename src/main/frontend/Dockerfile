@@ -1,21 +1,24 @@
 FROM node:22-alpine AS base
 WORKDIR /app
-COPY package.json package-lock.json ./
-
-FROM base AS dependencies
+COPY package.json ./
 RUN npm install
 
-FROM dependencies AS development
-CMD ["npm", "run", "host"]
+FROM base AS development-dependencies-env
+RUN npm install
 
-FROM dependencies AS builder
+FROM base AS production-dependencies-env
+RUN npm ci --omit=dev
+
+FROM base AS build-env
 COPY . .
 RUN npm run build
 
-FROM base AS production
+FROM node:22-alpine AS production
 WORKDIR /app
-COPY --from=builder /app/build ./build
-COPY --from=builder /app/package.json .
-RUN npm install --omit=dev
-EXPOSE 3000
+COPY --from=build-env /app/build ./build
+COPY package.json .
+RUN npm i --omit=dev
 CMD ["npm", "run", "start"]
+
+FROM development-dependencies-env AS development
+CMD ["npm", "run", "host"]
