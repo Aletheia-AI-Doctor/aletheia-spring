@@ -11,16 +11,16 @@ RUN chmod +x wait-for-it.sh
 FROM maven:3.9-eclipse-temurin-23 AS builder
 WORKDIR /app
 COPY pom.xml .
-COPY src .
+COPY src ./src
 RUN mvn dependency:go-offline -B
 RUN mvn clean package -DskipTests
 
 
-FROM base AS old_development
+FROM base AS production
 COPY --from=builder /app/target/*.jar /app/app.jar
 RUN chmod +x /app/app.jar
 EXPOSE 9000/tcp
-ENTRYPOINT ["/wait-for-it.sh", "db:3306", "--", "java", "-jar", "/app/app.jar", "--server.port=9000"]
+ENTRYPOINT ["./wait-for-it.sh", "db:3306", "--", "java", "-jar", "/app/app.jar", "--server.port=9000"]
 
 
 FROM base AS development
