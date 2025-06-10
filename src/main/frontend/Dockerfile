@@ -17,7 +17,7 @@ WORKDIR /app
 COPY --from=build-env /app/build ./build
 COPY package.json .
 RUN npm install --omit=dev
-CMD ["npm", "run", "prod"]
+CMD ["npm", "run", "start"]
 
 FROM development-dependencies-env AS development
 CMD ["npm", "run", "host"]
