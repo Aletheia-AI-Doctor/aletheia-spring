@@ -30,7 +30,7 @@ services:
       target: production
     container_name: react_frontend
     ports:
-      - "80:3000"
+      - "3000:3000"
     volumes:
       - ./src/main/frontend:/app  # Mount source code for hot-reload
       - /app/node_modules/  # Isolate node_modules from host
