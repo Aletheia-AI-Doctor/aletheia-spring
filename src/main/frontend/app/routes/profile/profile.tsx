@@ -1,10 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeartPulse, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import React from "react";
-import { useNavigate } from "react-router";
 import type { Route } from "./+types/profile";
 import {useAppSelector} from "~/base/hooks";
 import Loading from "~/components/Loading";
+import Card from "~/components/Card";
+import Modal from "~/components/modal";
+import Button from "~/components/button";
+import EditProfile from "~/components/edit-profile";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -14,23 +17,20 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function DrProfilePage(){
-    const navigate = useNavigate();
     const doctor = useAppSelector((state) => state.auth.doctor);
+    const [editing, setEditing] = React.useState(false);
 
     if (!doctor) {
         return <Loading />;
     }
 
     return (
-        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <Card className="max-w-2xl mx-auto">
             <div className="flex items-center space-x-4 mb-6">
-                <div className="p-3 rounded-full bg-blue-50 text-blue-600">
-                    <FontAwesomeIcon icon={faUserDoctor} size="3x" />
-                </div>
+                <img src={doctor.image} alt={`${doctor.name}'s Picture`} className="rounded-full size-16" />
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800">
                         Dr. {doctor.name}
-                        <span className="ml-2 text-blue-600 text-lg">MD</span>
                     </h1>
                     <p className="text-gray-500">@{doctor.username}</p>
                 </div>
@@ -66,17 +66,19 @@ export default function DrProfilePage(){
                 </div>
             </div>
 
-            
+
 
             <div className="flex space-x-3">
-                
-                <button
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center"
-                    onClick={() => navigate('/profile/edit')}
+                <Button
+                    width="w-auto"
+                    onClick={() => setEditing(true)}
                 >
                     Edit Profile
-                </button>
+                </Button>
+                    <Modal open={editing} onClose={() => setEditing(false)}>
+                        <EditProfile onCancel={() => setEditing(false)} />
+                    </Modal>
             </div>
-        </div>
+        </Card>
     );
 }

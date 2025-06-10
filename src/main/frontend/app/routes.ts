@@ -7,7 +7,6 @@ export default [
         route("/patients", "routes/patient/index.tsx"),
         route("/patients/:id", "routes/patient/show.tsx"),
         route("/profile", "routes/profile/profile.tsx"),
-        route("/profile/edit", "routes/profile/edit.tsx"),
         route("/activity", "routes/activity.tsx"),
         route("/doxa", "routes/community/index.tsx"),
         route("/doxa/:id", "routes/community/show.tsx"),
