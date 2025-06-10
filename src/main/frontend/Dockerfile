@@ -1,7 +1,6 @@
 FROM node:22-alpine AS base
 WORKDIR /app
 COPY package.json ./
-RUN npm install
 
 FROM base AS development-dependencies-env
 RUN npm install
@@ -9,7 +8,7 @@ RUN npm install
 FROM base AS production-dependencies-env
 RUN npm ci --omit=dev
 
-FROM base AS build-env
+FROM development-dependencies-env AS build-env
 COPY . .
 RUN npm run build
 
@@ -17,7 +16,7 @@ FROM node:22-alpine AS production
 WORKDIR /app
 COPY --from=build-env /app/build ./build
 COPY package.json .
-RUN  npm install --omit=dev
+RUN npm install --omit=dev
 CMD ["npm", "run", "prod"]
 
 FROM development-dependencies-env AS development
