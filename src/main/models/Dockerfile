@@ -34,29 +34,17 @@ EXPOSE 4000/tcp
 
 ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
 
-# Development stage
-# Production stage
 FROM base AS production
 
-# Install production dependencies including Gunicorn
 RUN pip install --no-cache-dir --prefer-binary -r requirements.txt
-
-# Copy application code
 COPY . .
 
-# Create necessary directories
 RUN mkdir -p /app/uploads && \
     chmod -R 777 /app/uploads
-
-# Create non-root user
 RUN useradd -m myuser && \
     chown -R myuser /app
 USER myuser
-
-# Expose port
 EXPOSE 8000
-
-# Gunicorn configuration
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", \
      "--workers", "4", \
      "--threads", "2", \
