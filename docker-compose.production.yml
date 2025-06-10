@@ -11,7 +11,7 @@ services:
       - db
       - python_models
     env_file:
-      - .env.prod
+      - .env
     networks:
       - app-network
     environment:
@@ -73,7 +73,7 @@ services:
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     env_file:
-      - .env.prod
+      - .env
     ports:
       - "3307:3306"
     volumes:

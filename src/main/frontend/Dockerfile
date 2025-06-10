@@ -17,7 +17,8 @@ FROM node:22-alpine AS production
 WORKDIR /app
 COPY --from=build-env /app/build ./build
 COPY package.json .
-CMD ["npm", "run", "start"]
+RUN  npm install --omit=dev
+CMD ["npm", "run", "prod"]
 
 FROM development-dependencies-env AS development
 CMD ["npm", "run", "host"]
