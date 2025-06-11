@@ -37,8 +37,11 @@ public class DiagnosisService extends CRUDService<Diagnosis, DiagnosisDto> {
         return diagnosisRepository.findByNameAndModel(name, model)
                 .orElseThrow(() -> new NotFoundException("Diagnosis not found"));
     }
-    public Optional<Diagnosis> getAllDiagnoses(Optional<Model> model) {
-        return diagnosisRepository.findByModel(model);
+    public List<Diagnosis> getAllDiagnoses(Optional<Model> model) {
+        if (model.isEmpty()) {
+            throw new NotFoundException("Model not found");
+        }
+        return diagnosisRepository.findAllByModel(model.get());
     }
 
 

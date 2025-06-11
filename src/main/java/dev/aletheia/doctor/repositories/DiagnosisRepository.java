@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface DiagnosisRepository extends JpaRepository<Diagnosis, Long> {
     Optional<Diagnosis> findByName(String name);
     Optional<Diagnosis> findByNameAndModel(String name, Model model);
-    Optional<Diagnosis> findByModel(Optional<Model> model);
+    List<Diagnosis> findAllByModel(Model model);;
 }

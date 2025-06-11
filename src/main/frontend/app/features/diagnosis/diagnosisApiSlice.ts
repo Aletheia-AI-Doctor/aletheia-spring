@@ -1,32 +1,29 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import {ROOT_URL} from "~/base/consts";
-import {defaultHeaders} from "~/base/helpers";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { ROOT_URL } from "~/base/consts";
+import { defaultHeaders } from "~/base/helpers";
 
-interface diagnosis {
+interface Diagnosis {
     modelId: number;
     name: string;
+    id: number; // Add id to match DiagnosisDto
 }
 
-export type {diagnosis};
+export type { Diagnosis };
 
-// Define a service using a base URL and expected endpoints
 export const diagnosisApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
         prepareHeaders: (headers, {}) => defaultHeaders(headers),
     }),
     reducerPath: "diagnosisApi",
-    tagTypes: ["diagnosis"],
+    tagTypes: ["Diagnosis"],
     keepUnusedDataFor: 2,
     endpoints: build => ({
-
-        getAllDiagnoses: build.query<diagnosis[], void>({
-            query: () => "api/diagnoses/byModel",
-            providesTags: ["diagnosis"],
+        getAllDiagnoses: build.query<Diagnosis[], { modelId: number }>({
+            query: ({ modelId }) => `api/diagnoses/byModel?modelId=${modelId}`,
+            providesTags: ["Diagnosis"],
         }),
     }),
-})
+});
 
-
-
-export const {useGetAllDiagnosesQuery} = diagnosisApiSlice
+export const { useGetAllDiagnosesQuery } = diagnosisApiSlice;

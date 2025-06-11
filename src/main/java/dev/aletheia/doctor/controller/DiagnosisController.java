@@ -1,6 +1,6 @@
 package dev.aletheia.doctor.controller;
 
-
+import dev.aletheia.doctor.dtos.models.DiagnosisDto;
 import dev.aletheia.doctor.models.Diagnosis;
 import dev.aletheia.doctor.models.Model;
 import dev.aletheia.doctor.repositories.ModelRepository;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@RestController
 @RequestMapping("/api/diagnoses")
 public class DiagnosisController {
 
@@ -28,9 +29,9 @@ public class DiagnosisController {
     }
 
     @GetMapping("/byModel")
-    public ResponseEntity<Object> getDiagnosis(@RequestBody Long modelId){
+    public ResponseEntity<List<DiagnosisDto>> getDiagnosesByModel(@RequestParam("modelId") Long modelId) {
         Optional<Model> model = modelRepository.findById(modelId);
-        Optional<Diagnosis> diagnoses = diagnosisService.getAllDiagnoses(model);
+        List<Diagnosis> diagnoses = diagnosisService.getAllDiagnoses(model);
         return ResponseEntity.ok(diagnoses.stream().map(diagnosisService::convertToDto).toList());
     }
 }

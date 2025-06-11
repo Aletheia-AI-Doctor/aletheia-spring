@@ -5,7 +5,6 @@ import {
     useSetDoctorDiagnosisMutation,
 } from "~/features/scans/scansApiSlice";
 import { useGetAllDiagnosesQuery } from "~/features/diagnosis/diagnosisApiSlice";
-
 import If from "~/components/if";
 import Loading from "~/components/Loading";
 import { Table, Td, Th } from "~/components/Table/table";
@@ -31,11 +30,6 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
         isLoading: isLoadingScans,
         refetch,
     } = useGetScansQuery(requestParams);
-
-    const {
-        data: diagnosisList = [],
-        isLoading: isLoadingDiagnoses,
-    } = useGetAllDiagnosesQuery();
 
     const [setDoctorDiagnosis] = useSetDoctorDiagnosisMutation();
 
@@ -102,51 +96,62 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
                         <Th>Patient</Th>
                     </tr>
                 }
-                body={(item: Scan) => (
-                    <tr key={item.id}>
-                        <Td first>#{item.id}</Td>
-                        <Td>
-                            <img src={item.imageUrl} alt="Scan" className="w-[100px] h-[100px]" />
-                        </Td>
-                        <Td>
-                            {item.imageResponseUrl ? (
-                                <img src={item.imageResponseUrl} alt="Response" className="w-[100px] h-[100px]" />
-                            ) : (
-                                "-"
-                            )}
-                        </Td>
-                        <Td>{item.model?.name ?? "-"}</Td>
-                        <Td>{item.modelDiagnosis?.name ?? "-"}</Td>
-                        <Td>{item.doctorDiagnosis?.name ?? "-"}</Td>
-                        <Td>
-                            {!item.doctorDiagnosis ? (
-                                <div className="flex flex-col gap-2">
-                                    <Select
-                                        id={`diagnosis-${item.id}`}
-                                        value={selectedDiagnoses[item.id] || ""}
-                                        onChange={(e) =>
-                                            handleDiagnosisChange(String(item.id), e.target.value)
-                                        }
-                                        options={[
-                                            { label: "Select diagnosis", value: "" },
-                                            ...diagnosisList.map((d) => ({
-                                                label: d.name,
-                                                value: String(d.id),
-                                            })),
-                                        ]}
-                                        disabled={isLoadingDiagnoses || isSettingDiagnosis[String(item.id)]}
-                                    />
-                                    {errorMessages[String(item.id)] && (
-                                        <div className="text-red-500 text-sm">{errorMessages[String(item.id)]}</div>
-                                    )}
-                                </div>
-                            ) : (
-                                <span className="text-green-600">Diagnosis assigned</span>
-                            )}
-                        </Td>
-                        <Td>{item.patient?.name ?? "-"}</Td>
-                    </tr>
-                )}
+                body={(item: Scan) => {
+                    // Fetch diagnoses specific to the scan's model
+                    const { data: diagnosisList = [], isLoading: isLoadingDiagnoses } = useGetAllDiagnosesQuery(
+                        { modelId: item.model?.id ?? 0 },
+                        { skip: !item.model?.id } // Skip query if modelId is not available
+                    );
+
+                    return (
+                        <tr key={item.id}>
+                            <Td first>#{item.id}</Td>
+                            <Td>
+                                <img src={item.imageUrl} alt="Scan" className="w-[100px] h-[100px]" />
+                            </Td>
+                            <Td>
+                                {item.imageResponseUrl ? (
+                                    <img src={item.imageResponseUrl} alt="Response" className="w-[100px] h-[100px]" />
+                                ) : (
+                                    "-"
+                                )}
+                            </Td>
+                            <Td>{item.model?.name ?? "-"}</Td>
+                            <Td>{item.modelDiagnosis?.name ?? "-"}</Td>
+                            <Td>{item.doctorDiagnosis?.name ?? "-"}</Td>
+                            <Td>
+                                {!item.doctorDiagnosis ? (
+                                    <div className="flex flex-col gap-2">
+                                        <Select
+                                            id={`diagnosis-${item.id}`}
+                                            value={selectedDiagnoses[item.id] || ""}
+                                            onChange={(e) =>
+                                                handleDiagnosisChange(String(item.id), e.target.value)
+                                            }
+                                            options={[
+                                                { label: "Select diagnosis", value: "" },
+                                                ...diagnosisList.map((d) => ({
+                                                    label: d.name,
+                                                    value: String(d.id),
+                                                })),
+                                            ]}
+                                            disabled={isLoadingDiagnoses || isSettingDiagnosis[String(item.id)] || !item.model?.id}
+                                        />
+                                        {errorMessages[String(item.id)] && (
+                                            <div className="text-red-500 text-sm">{errorMessages[String(item.id)]}</div>
+                                        )}
+                                        {!item.model?.id && (
+                                            <div className="text-red-500 text-sm">No model associated with this scan</div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <span className="text-green-600">Diagnosis assigned</span>
+                                )}
+                            </Td>
+                            <Td>{item.patient?.name ?? "-"}</Td>
+                        </tr>
+                    );
+                }}
             />
         </If>
     );
