@@ -15,13 +15,13 @@ export const diagnosisApiSlice = createApi({
         baseUrl: ROOT_URL,
         prepareHeaders: (headers, {}) => defaultHeaders(headers),
     }),
-    reducerPath: "doctorActivityApi",
+    reducerPath: "diagnosisApi",
     tagTypes: ["diagnosis"],
     keepUnusedDataFor: 2,
     endpoints: build => ({
 
         getAllDiagnoses: build.query<diagnosis[], void>({
-            query: () => "api/diagnoses",
+            query: () => "api/diagnoses/byModel",
             providesTags: ["diagnosis"],
         }),
     }),
@@ -29,4 +29,4 @@ export const diagnosisApiSlice = createApi({
 
 
 
-export const {useGetAllDiagnoses} = diagnosisApiSlice
+export const {useGetAllDiagnosesQuery} = diagnosisApiSlice

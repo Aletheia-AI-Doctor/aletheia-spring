@@ -131,4 +131,4 @@ export const scansApiSlice = createApi({
 
 
 
-export const {useUploadScanMutation, useGetModelsQuery, useSaveScanMutation, useGetScansQuery, useSetDoctorDiagnosis} = scansApiSlice
+export const {useUploadScanMutation, useGetModelsQuery, useSaveScanMutation, useGetScansQuery, useSetDoctorDiagnosisMutation} = scansApiSlice
