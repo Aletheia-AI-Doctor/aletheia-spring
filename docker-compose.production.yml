@@ -30,12 +30,8 @@ services:
     container_name: react_frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./src/main/frontend:/app  # Mount source code for hot-reload
-      - /app/node_modules/  # Isolate node_modules from host
     environment:
       - NODE_ENV=production
-      - VITE_APP_SERVER_URL=http://localhost:8080
     depends_on:
       - app
     networks:
