@@ -17,30 +17,25 @@ ENV TF_ENABLE_ONEDNN_OPTS=0
 ENV FLASK_ENV=production
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-COPY download_models.py .
-RUN python download_models.py
 
 FROM base AS development
 COPY . .
 COPY entrypoint.sh /app/entrypoint.sh
+COPY download_models.py .
+RUN python download_models.py
 RUN chmod +x /app/entrypoint.sh
 EXPOSE 4000/tcp
 ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
 
 
 FROM base AS production
+COPY download_models.py .
+RUN python download_models.py
 COPY . .
 RUN mkdir -p /app/uploads && \
     chmod -R 777 /app/uploads
 RUN useradd -m myuser && \
     chown -R myuser /app
 USER myuser
-EXPOSE 8000
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", \
-     "--workers", "4", \
-     "--threads", "2", \
-     "--timeout", "120", \
-     "--worker-class", "gevent", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-", \
-     "app:app"]
+EXPOSE 4000
+ENTRYPOINT ["/bin/bash", "/app/entrypoint-production.sh"]
