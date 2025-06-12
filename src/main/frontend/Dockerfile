@@ -11,6 +11,7 @@ RUN npm ci --omit=dev
 
 FROM production-dependencies-env AS build-env
 COPY . .
+RUN npm install --package-lock-only && npm ci
 RUN npm run build
 
 FROM nginx:1.25-alpine AS production
