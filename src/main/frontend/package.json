@@ -3,12 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npx react-router build",
+    "build": "vite build",
     "dev": "npx react-router dev",
-    "start": "npx @react-router/serve ./build/server/index.js",
+    "start": "serve -s build",
     "typecheck": "react-router typegen && tsc",
     "host": "vite --host --port 3000",
-    "prod": "npm run build && npm run start"
+   "prod": "npm run build && npm run start"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.7.2",

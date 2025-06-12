@@ -1,7 +1,8 @@
 FROM node:22-alpine AS base
 WORKDIR /app
-COPY package.json ./
+COPY package.json package-lock.json ./
 RUN npm install
+
 
 FROM base AS development-dependencies-env
 RUN npm install
@@ -15,13 +16,10 @@ RUN npm run build
 
 FROM node:22-alpine AS production
 WORKDIR /app
-COPY --from=build-env /app/build ./build
-COPY --from=build-env /app/build/client ./build/client
-COPY package.json .
-RUN npm i --omit=dev
-RUN npm install --save-dev serve
-ENV PUBLIC_DIR=build
-CMD ["npm", "run", "start"]
+RUN npm install -g serve
+COPY --from=build-env /app/dist ./dist
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
 
 FROM development-dependencies-env AS development
 CMD ["npm", "run", "host"]
