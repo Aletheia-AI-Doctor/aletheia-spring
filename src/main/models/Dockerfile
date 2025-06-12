@@ -15,7 +15,6 @@ ENV PYTHONUNBUFFERED=1
 ENV QT_QPA_PLATFORM=offscreen
 ENV TF_ENABLE_ONEDNN_OPTS=0
 ENV FLASK_ENV=production
-COPY pretrained_model/ ./pretrained_model/
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY download_models.py .
@@ -30,7 +29,6 @@ ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
 
 
 FROM base AS production
-RUN pip install --no-cache-dir --prefer-binary -r requirements.txt
 COPY . .
 RUN mkdir -p /app/uploads && \
     chmod -R 777 /app/uploads
