@@ -11,10 +11,11 @@ RUN npm ci --omit=dev
 
 FROM production-dependencies-env AS build-env
 COPY . .
+RUN npm install --package-lock-only && npm ci
 RUN npm run build
 
 FROM nginx:1.25-alpine AS production
-COPY --from=build-env /app/build /usr/share/nginx/html
+COPY --from=build-env /app/build/client /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]

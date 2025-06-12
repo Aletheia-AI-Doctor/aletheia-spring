@@ -10,6 +10,7 @@ import dev.aletheia.doctor.services.DigitalSignService;
 import dev.aletheia.doctor.services.DoctorService;
 import dev.aletheia.doctor.services.JWTService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,11 @@ public class AuthenticationController {
     private final JWTService jwtService;
 
     private final DigitalSignService digitalSignService;
+
+    @Value("${spring.application.url}")
+    private String appUrl;
+    @Value("${spring.application.frontend_url}")
+    private String frontendUrl;
 
     public AuthenticationController(DoctorService doctorService, AleithiaEmailAuthentication emailService, JWTService jwtService, DigitalSignService digitalSignService) {
         this.doctorService = doctorService;
@@ -65,8 +71,8 @@ public class AuthenticationController {
         Doctor doctor = doctorService.createDoctor(doctorDTO);
         String tokenConfirm;
         String tokenReject;
-        String confirmationUrl = "http://localhost:8080/api/confirm-email/" + doctor.getId();
-        String rejectionUrl = "http://localhost:8080/api/reject-email/" + doctor.getId();
+        String confirmationUrl = appUrl + "/api/confirm-email/" + doctor.getId();
+        String rejectionUrl = appUrl + "/api/reject-email/" + doctor.getId();
 
         try {
              tokenConfirm = digitalSignService.signData(confirmationUrl);
@@ -96,10 +102,10 @@ public class AuthenticationController {
 
     @PostMapping ("/api/confirm-email/{id}")
     public ResponseEntity<Void> confirmEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
-        String frontendConfirmUrl = "http://localhost:3000/confirm-email/"+id;
+        String frontendConfirmUrl = frontendUrl + "/confirm-email/"+id;
         boolean verify = false;
        try{
-           verify = digitalSignService.verifySignature("http://localhost:8080/api/confirm-email/" + id, token);
+           verify = digitalSignService.verifySignature(appUrl + "/api/confirm-email/" + id, token);
        }catch(Exception e) {
            e.printStackTrace();
        }
@@ -141,10 +147,10 @@ public class AuthenticationController {
 
     @PostMapping ("/api/reject-email/{id}")
     public ResponseEntity<Void> rejectEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
-        String frontendConfirmUrl = "http://localhost:3000/confirm-email/"+id;
+        String frontendConfirmUrl = frontendUrl + "/confirm-email/"+id;
         boolean verify = false;
         try{
-            verify = digitalSignService.verifySignature("http://localhost:8080/api/reject-email/" + id, token);
+            verify = digitalSignService.verifySignature(appUrl + "/api/reject-email/" + id, token);
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -161,7 +167,7 @@ public class AuthenticationController {
         // Confirm the doctor
         doctorService.rejectDoctor(id);
         String tokenAppeal;
-        String appealURL = "http://localhost:8080/api/doctors/appeal/"+id;
+        String appealURL = appUrl + "/api/doctors/appeal/"+id;
         // Send confirmation email
         try {
             tokenAppeal= digitalSignService.signData(appealURL);
