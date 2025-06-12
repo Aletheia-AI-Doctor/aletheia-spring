@@ -38,6 +38,6 @@ RUN useradd -m myuser && \
     chown -R myuser /app
 USER myuser
 COPY entrypoint_production.sh /app/entrypoint_production.sh
-RUN chmod +x /app/entrypoint-production.sh
+RUN chmod +x /app/entrypoint_production.sh
 EXPOSE 4000/tcp
-ENTRYPOINT ["/bin/bash", "/app/entrypoint-production.sh"]
+ENTRYPOINT ["/bin/bash", "/app/entrypoint_production.sh"]
