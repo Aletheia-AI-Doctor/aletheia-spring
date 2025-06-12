@@ -32,8 +32,5 @@ ENV FLASK_ENV=production
 RUN python download_models.py
 RUN chmod +x entrypoint_production.sh
 RUN mkdir -p uploads
-RUN useradd -m models_user && chown -R models_user /app
-RUN mkdir -p weights && chown -R models_user /app/weights
-USER models_user
 EXPOSE 4000/tcp
 ENTRYPOINT ["/bin/bash", "/app/entrypoint_production.sh"]
