@@ -97,10 +97,10 @@ export const scansApiSlice = createApi({
         }),
 
         setDoctorDiagnosis: build.mutation<void, { scanId: number, doctorDiagnosis: string }>({
-            query: ({scanId, doctorDiagnosis}) => ({
+            query: ({ scanId, doctorDiagnosis }) => ({
                 url: `api/scans/${scanId}/setDoctorDiagnosis`,
-                method: "PUT",
-                body: {doctorDiagnosis},
+                method: "POST", // Change to POST
+                body: { doctorDiagnosis }, // Send diagnosis ID as string
             }),
             invalidatesTags: ['Scans'],
         }),

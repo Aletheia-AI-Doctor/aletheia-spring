@@ -2,10 +2,10 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.PaginationDTO;
 import dev.aletheia.doctor.dtos.scans.SaveScanDto;
-import dev.aletheia.doctor.dtos.scans.ScanDto;
 import dev.aletheia.doctor.exceptions.NotFoundException;
 import dev.aletheia.doctor.models.Diagnosis;
 import dev.aletheia.doctor.models.Patient;
+import dev.aletheia.doctor.models.Scan;
 import dev.aletheia.doctor.services.*;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/api/scans")
@@ -26,11 +25,14 @@ public class ScanController {
     private final FileService fileService;
     private final PatientService patientService;
 
-    public ScanController(ScanService scanService, DoctorService doctorService, FileService fileService, PatientService patientService) {
+    private final DiagnosisService diagnosisService;
+
+    public ScanController(ScanService scanService, DoctorService doctorService, FileService fileService, PatientService patientService, DiagnosisService diagnosisService) {
         this.scanService = scanService;
         this.doctorService = doctorService;
         this.fileService = fileService;
         this.patientService = patientService;
+        this.diagnosisService = diagnosisService;
     }
 
     @PostMapping
@@ -72,9 +74,21 @@ public class ScanController {
                 .body(image);
     }
     @PostMapping("/{id}/setDoctorDiagnosis")
-    public ResponseEntity<Object> setDoctorDiagnosis(@PathVariable Long id, @RequestBody Diagnosis diagnosis) {
-        scanService.setDoctorDiagnosis(scanService.findOrFail(id), diagnosis);
+    public ResponseEntity<Object> setDoctorDiagnosis(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String diagnosisId = request.get("doctorDiagnosis");
+        if (diagnosisId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Diagnosis ID is required"));
+        }
 
+        Scan scan = scanService.findOrFail(id);
+        Diagnosis diagnosis = diagnosisService.findOrFail(Long.parseLong(diagnosisId));
+
+        // Validate that the diagnosis belongs to the scan's model
+        if (!diagnosis.getModel().equals(scan.getModelDiagnosis().getModel())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Diagnosis does not belong to the scan's model"));
+        }
+
+        scanService.setDoctorDiagnosis(scan, diagnosis);
         return ResponseEntity.ok(Map.of("message", "Scan updated"));
     }
 

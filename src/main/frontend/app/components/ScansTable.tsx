@@ -59,9 +59,11 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
             });
 
             if ("error" in result) {
+                // Handle error response from backend
+                const errorMessage = result.error?.data?.error || "Failed to set diagnosis";
                 setErrorMessages((prev) => ({
                     ...prev,
-                    [scanId]: result.error?.message || "Failed to set diagnosis",
+                    [scanId]: errorMessage,
                 }));
             } else {
                 setSelectedDiagnoses((prev) => {
