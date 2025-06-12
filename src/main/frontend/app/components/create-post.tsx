@@ -9,9 +9,6 @@ interface CreatePostProps {
     onImageUpload: (file: File) => Promise<string>;
 }
 
-MdEditor.use(Plugins.TabInsert);
-MdEditor.use(Plugins.FullScreen);
-
 const CreatePost: React.FC<CreatePostProps> = ({ value, onChange, onImageUpload }) => {
     const editorRef = useRef<MdEditor>(null);
     const mdParser = new MarkdownIt();
