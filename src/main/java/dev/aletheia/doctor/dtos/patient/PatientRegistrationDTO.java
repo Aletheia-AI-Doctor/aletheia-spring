@@ -15,5 +15,13 @@ public class PatientRegistrationDTO {
     private LocalDate birthdate;
     private String sex;
     private String status;
-    
+
+
+    public void setBirthdate(LocalDate birthdate) {
+        if (birthdate != null && !birthdate.isAfter(LocalDate.now())) {
+            this.birthdate = birthdate;
+        } else {
+            throw new IllegalArgumentException("Birthdate must be a valid date and not in the future");
+        }
+    }
 }

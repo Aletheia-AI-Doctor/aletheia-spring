@@ -18,6 +18,14 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+
 @RestController
 @RequestMapping("/api/doctors")
 public class DoctorController {
@@ -88,27 +96,63 @@ public class DoctorController {
 
 	}
     @PutMapping("/update")
-    public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
-        Doctor doctor = doctorService.getCurrentDoctor();
+	public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
+		Doctor doctor = doctorService.getCurrentDoctor();
 
-        if (dto.getName() != null) {
-            doctor.setName(dto.getName());
-        }
+		if (dto.getName() != null) {
+			doctor.setName(dto.getName());
+		}
 
-        if (dto.getEmail() != null) {
-            doctor.setEmail(dto.getEmail());
-        }
+		if (dto.getEmail() != null) {
+			doctor.setEmail(dto.getEmail());
+		}
 
 		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
 			doctor.setPassword(dto.getPassword());
 		}
-		
+
 		if (dto.getBio() != null) {
 			doctor.setBio(dto.getBio());
 		}
-		
 
-        Doctor updated = doctorService.save(doctor);
-        return ResponseEntity.ok(doctorService.convertToDto(updated));
+		Doctor updated = doctorService.save(doctor);
+		return ResponseEntity.ok(doctorService.convertToDto(updated));
+	}
+	
+@Controller
+@RequestMapping("/register")
+public class RegistrationController {
+
+    @Autowired
+    private DoctorService doctorService;
+
+    @GetMapping
+    public String showForm(Model model) {
+        model.addAttribute("doctor", new DoctorRegistrationDTO());
+        return "register";
     }
+
+    @PostMapping
+    public String register(@ModelAttribute("doctor") @Valid DoctorRegistrationDTO doctorDto,
+                           BindingResult result,
+                           Model model) {
+
+        if (doctorService.emailExists(doctorDto.getEmail())) {
+            result.rejectValue("email", "error.doctor", "Email is already in use");
+        }
+
+        if (doctorService.usernameExists(doctorDto.getUsername())) {
+            result.rejectValue("username", "error.doctor", "Username is already in use");
+        }
+
+        if (result.hasErrors()) {
+            return "register";
+        }
+
+        doctorService.createDoctor(doctorDto);
+        return "redirect:/login?success";
+    }
+}
+
+	
 }

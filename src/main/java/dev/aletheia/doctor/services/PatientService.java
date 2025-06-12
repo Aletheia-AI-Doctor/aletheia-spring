@@ -44,14 +44,22 @@ public class PatientService extends CRUDService<Patient, PatientDto> {
                 .map(this::convertToDto);
     }
 
+
+
     public Patient createPatient(PatientRegistrationDTO PatientDTO) {
+        
+
         Patient patient = new Patient();
         patient.setBirthdate(PatientDTO.getBirthdate());
+
         patient.setSex(Gender.fromString(PatientDTO.getSex()));
         patient.setName(PatientDTO.getName());
         patient.setDoctor(doctorService.getCurrentDoctor());
         patient.setAdmissionDate(LocalDate.now());
         patient.setStatus(PatientStatus.PENDING);
+
+
+        
 
         patient = save(patient);
 

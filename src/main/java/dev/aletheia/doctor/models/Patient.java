@@ -4,6 +4,8 @@ import dev.aletheia.doctor.enums.Gender;
 import dev.aletheia.doctor.enums.PatientStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,11 +34,16 @@ public class Patient extends BaseModel {
     private List<Scan> scans;
 
     @Column(name = "birthdate")
+    @NotNull(message = "Birthdate is required")
+    @PastOrPresent(message = "Birthdate cannot be in the future")
     private LocalDate birthdate;
 
     @Column(name = "sex")
+    @NotNull(message = "Sex is required")
     @Enumerated(EnumType.STRING)
     private Gender sex;
+
+    
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
