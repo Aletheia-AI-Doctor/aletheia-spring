@@ -18,6 +18,7 @@ ENV FLASK_ENV=production
 COPY pretrained_model/ ./pretrained_model/
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+COPY download_models.py .
 RUN python download_models.py
 
 FROM base AS development
