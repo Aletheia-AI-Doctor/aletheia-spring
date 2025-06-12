@@ -32,12 +32,10 @@ FROM base AS production
 COPY download_models.py .
 RUN python download_models.py
 COPY . .
-RUN mkdir -p /app/uploads && \
-    chmod -R 777 /app/uploads
-RUN useradd -m myuser && \
-    chown -R myuser /app
-USER myuser
 COPY entrypoint_production.sh /app/entrypoint_production.sh
 RUN chmod +x /app/entrypoint_production.sh
+RUN mkdir -p /app/uploads
+RUN useradd -m myuser && chown -R myuser /app
+USER myuser
 EXPOSE 4000/tcp
 ENTRYPOINT ["/bin/bash", "/app/entrypoint_production.sh"]
