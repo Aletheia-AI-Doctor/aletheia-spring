@@ -28,16 +28,11 @@ public class PatientController {
 
 
     @PutMapping("/add")
-    public ResponseEntity<?> create( @RequestBody @Valid Patient patient, BindingResult result) {
+    public ResponseEntity<Object> create( @RequestBody @Valid PatientRegistrationDTO patient, BindingResult result) {
         if (result.hasErrors()) {
-            String errorMessages = result.getAllErrors().stream()
-            .map(error -> error.getDefaultMessage())
-            .collect(Collectors.joining("; ")); 
-    return ResponseEntity.badRequest().body(errorMessages);
+        return ResponseEntity.badRequest().body("Validation failed");
 }
-
-        
-    patientService.save(patient);
+    patientService.createPatient(patient);
     return ResponseEntity.ok("Patient saved");
 }
 

@@ -15,8 +15,7 @@ public class PatientRegistrationDTO {
     private LocalDate birthdate;
     private String sex;
     private String status;
-
-
+    
     public void setBirthdate(LocalDate birthdate) {
         if (birthdate != null && !birthdate.isAfter(LocalDate.now())) {
             this.birthdate = birthdate;
