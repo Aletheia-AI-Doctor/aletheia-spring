@@ -99,8 +99,8 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
                 body={(item: Scan) => {
                     // Fetch diagnoses specific to the scan's model
                     const { data: diagnosisList = [], isLoading: isLoadingDiagnoses } = useGetAllDiagnosesQuery(
-                        { modelId: item.model?.id ?? 0 },
-                        { skip: !item.model?.id } // Skip query if modelId is not available
+                        { modelId: item.model.id ?? 0 },
+                        { skip: !item.model.id }
                     );
 
                     return (

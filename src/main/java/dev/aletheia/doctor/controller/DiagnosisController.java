@@ -1,5 +1,4 @@
 package dev.aletheia.doctor.controller;
-
 import dev.aletheia.doctor.dtos.models.DiagnosisDto;
 import dev.aletheia.doctor.models.Diagnosis;
 import dev.aletheia.doctor.models.Model;
