@@ -10,6 +10,7 @@ import dev.aletheia.doctor.services.DigitalSignService;
 import dev.aletheia.doctor.services.ActivityService;
 import dev.aletheia.doctor.services.DoctorService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
@@ -25,6 +26,9 @@ public class DoctorController {
     private final DoctorService doctorService;
 	private final DigitalSignService digitalSignService;
 	private final AleithiaEmailAuthentication emailService;
+
+	@Value("${spring.application.url}")
+	private String appUrl;
 
 	public DoctorController(DoctorService doctorService, DigitalSignService digitalSignService, AleithiaEmailAuthentication emailService) {
 		this.doctorService = doctorService;
@@ -55,8 +59,8 @@ public class DoctorController {
 	public ResponseEntity<Object> appeal(@PathVariable Long id, @RequestParam(name = "token") String token) throws IOException {
 		String tokenConfirm;
 		String tokenReject;
-		String confirmationUrl = "http://localhost:8080/api/confirm-email/" + id;
-		String rejectionUrl = "http://localhost:8080/api/reject-email/" + id;
+		String confirmationUrl = appUrl + "/api/confirm-email/" + id;
+		String rejectionUrl = appUrl + "/api/reject-email/" + id;
 
 		try {
 			tokenConfirm = digitalSignService.signData(confirmationUrl);
