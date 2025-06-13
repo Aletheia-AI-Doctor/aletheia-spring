@@ -54,8 +54,8 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
     }
 
     public void setDoctorDiagnosis(Scan scan, Diagnosis diagnosis) {
-        if (scan.getDoctorDiagnosis() != null && scan.getDoctorDiagnosis().equals(diagnosis)) {
-            return; // No change needed
+        if (scan.getDoctorDiagnosis() != null && scan.getDoctorDiagnosis().getId().equals(diagnosis.getId())) {
+            return;
         }
         scan.setDoctorDiagnosis(diagnosis);
         scanRepository.save(scan);

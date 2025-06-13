@@ -19,30 +19,21 @@ public class DiagnosisService extends CRUDService<Diagnosis, DiagnosisDto> {
     @Autowired
     private DiagnosisRepository diagnosisRepository;
 
-    private ModelRepository modelRepository;
     public DiagnosisRepository getRepository() { return diagnosisRepository; }
 
     protected DiagnosisService() {super(Diagnosis.class, DiagnosisDto.class);}
 
     public Diagnosis getByName(String name) {
-
-        
         return diagnosisRepository.findByName(name)
                 .orElseThrow(() -> new NotFoundException("Diagnosis not found"));
-
-
     }
 
     public Diagnosis getByNameAndModel(Model model, String name) {
         return diagnosisRepository.findByNameAndModel(name, model)
                 .orElseThrow(() -> new NotFoundException("Diagnosis not found"));
     }
-    public List<Diagnosis> getAllDiagnoses(Optional<Model> model) {
-        if (model.isEmpty()) {
-            throw new NotFoundException("Model not found");
-        }
-        return diagnosisRepository.findAllByModel(model.get());
+
+    public List<Diagnosis> getAllDiagnoses(Model model) {
+        return diagnosisRepository.findAllByModel(model);
     }
-
-
 }

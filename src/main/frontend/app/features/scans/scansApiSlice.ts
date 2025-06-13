@@ -1,4 +1,4 @@
-import {type BaseQueryMeta, createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {ROOT_URL} from "~/base/consts";
 import {defaultHeadersFileUpload} from "~/base/helpers";
 import type {Patient} from "~/features/patient/patientApiSlice";
@@ -12,8 +12,9 @@ interface Diagnosis {
     imageResponsePath: string;
     imageResponseUrl?: string;
 }
+
 interface Model {
-    id: string;
+    id: number;
     name: string;
     path: string;
     slug: string;
@@ -43,11 +44,11 @@ interface Scan {
     model: Model;
 }
 
-export type { Diagnosis, Model, Scan };
-
 type GetScansRequest = PageRequest & {
     patientId?: number;
 };
+
+export type { Diagnosis, Model, Scan, GetScansRequest };
 
 // Define a service using a base URL and expected endpoints
 export const scansApiSlice = createApi({
@@ -96,15 +97,6 @@ export const scansApiSlice = createApi({
             }),
         }),
 
-        setDoctorDiagnosis: build.mutation<void, { scanId: number, doctorDiagnosis: string }>({
-            query: ({ scanId, doctorDiagnosis }) => ({
-                url: `api/scans/${scanId}/setDoctorDiagnosis`,
-                method: "POST", // Change to POST
-                body: { doctorDiagnosis }, // Send diagnosis ID as string
-            }),
-            invalidatesTags: ['Scans'],
-        }),
-
         getScans: build.query<Pagination<Scan>, GetScansRequest>({
             query: (req) => {
                 const queryParams: any[] = [];
@@ -131,4 +123,4 @@ export const scansApiSlice = createApi({
 
 
 
-export const {useUploadScanMutation, useGetModelsQuery, useSaveScanMutation, useGetScansQuery, useSetDoctorDiagnosisMutation} = scansApiSlice
+export const {useUploadScanMutation, useGetModelsQuery, useSaveScanMutation, useGetScansQuery} = scansApiSlice

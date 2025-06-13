@@ -73,11 +73,13 @@ public class ScanController {
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(image);
     }
-    @PostMapping("/{id}/setDoctorDiagnosis")
+
+
+    @PatchMapping("/{id}/doctor-diagnosis")
     public ResponseEntity<Object> setDoctorDiagnosis(@PathVariable Long id, @RequestBody Map<String, String> request) {
-        String diagnosisId = request.get("doctorDiagnosis");
+        String diagnosisId = request.get("diagnosis");
         if (diagnosisId == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Diagnosis ID is required"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Diagnosis is required"));
         }
 
         Scan scan = scanService.findOrFail(id);

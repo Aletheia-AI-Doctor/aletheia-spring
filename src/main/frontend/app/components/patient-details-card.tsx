@@ -1,9 +1,7 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router";
 import React from "react";
 import {type Patient, useUpdatestatusMutation} from "~/features/patient/patientApiSlice";
 import Card from "~/components/Card";
+import StyledLink from "~/components/styled-link";
 
 interface PatientDetailsCardProps {
     patient: Patient,
@@ -34,11 +32,6 @@ export default function PatientDetailsCard({patient, refetch}: PatientDetailsCar
 
 return (
     <Card className="flex flex-col md:flex-row items-center gap-6 mb-6">
-        {/* Avatar */}
-        <div
-            className="w-28 h-28 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center shadow-inner">
-            <FontAwesomeIcon icon={faUserCircle} size="3x" className="text-gray-400"/>
-        </div>
 
         {/* Info */}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-800">
@@ -60,9 +53,9 @@ return (
             </div>
             <div>
                 <p className="text-gray-500 font-medium">Dignose</p>
-                <Link to={`/diagnose?patientId=${patient.id}`} className="text-blue-500 hover:underline">
+                <StyledLink to={`/diagnose?patientId=${patient.id}`}>
                     Add scan
-                </Link>
+                </StyledLink>
 
             </div>
             <div>

@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {
+    type GetScansRequest,
     type Scan,
     useGetScansQuery,
-    useSetDoctorDiagnosisMutation,
 } from "~/features/scans/scansApiSlice";
-import { useGetAllDiagnosesQuery } from "~/features/diagnosis/diagnosisApiSlice";
+import {type Diagnosis, useGetAllDiagnosesQuery, useChangeDoctorDiagnosisMutation} from "~/features/diagnosis/diagnosisApiSlice";
 import If from "~/components/if";
 import Loading from "~/components/Loading";
 import { Table, Td, Th } from "~/components/Table/table";
 import Select from "~/components/select";
+import {Link, useSearchParams} from "react-router";
+import StyledLink from "~/components/styled-link";
 
 interface ScansTableProps {
     refetchNow?: boolean;
@@ -20,18 +22,36 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
     const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
     const [isSettingDiagnosis, setIsSettingDiagnosis] = useState<Record<string, boolean>>({});
 
-    const requestParams = {
-        page: 1,
-        ...(patientId ? { patientId } : {}),
-    };
+    const { data: diagnosisList = [], isLoading: isLoadingDiagnoses } = useGetAllDiagnosesQuery();
+
+    const diagnosisByModel = useMemo(() => {
+        const modelDiagnosisMap: Record<number, Diagnosis[]> = {};
+        diagnosisList.forEach((diagnosis) => {
+            if (!modelDiagnosisMap[diagnosis.model.id]) {
+                modelDiagnosisMap[diagnosis.model.id] = [];
+            }
+
+            modelDiagnosisMap[diagnosis.model.id].push(diagnosis);
+        });
+        return modelDiagnosisMap;
+    }, [diagnosisList]);
+
+    const [params, setParams] = useSearchParams();
+    const req: GetScansRequest = {
+        page: parseInt(params.get('page') ?? '1'),
+    }
+
+    if(patientId) {
+        req.patientId = patientId as number;
+    }
 
     const {
         data: pagination,
         isLoading: isLoadingScans,
         refetch,
-    } = useGetScansQuery(requestParams);
+    } = useGetScansQuery(req);
 
-    const [setDoctorDiagnosis] = useSetDoctorDiagnosisMutation();
+    const [setDoctorDiagnosis] = useChangeDoctorDiagnosisMutation();
 
     useEffect(() => {
         if (refetchNow) refetch();
@@ -55,12 +75,12 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
         try {
             const result = await setDoctorDiagnosis({
                 scanId: Number(scanId),
-                doctorDiagnosis: diagnosisId,
+                diagnosis: diagnosisId,
             });
 
-            if ("error" in result) {
-                // Handle error response from backend
-                const errorMessage = result.error?.data?.error || "Failed to set diagnosis";
+            if (result.error) {
+                // @ts-ignore
+                const errorMessage = result.error!.data?.error || "Failed to set diagnosis";
                 setErrorMessages((prev) => ({
                     ...prev,
                     [scanId]: errorMessage,
@@ -83,7 +103,7 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
     };
 
     return (
-        <If replacement={<Loading message="Loading scans..." />} condition={!isLoadingScans && pagination}>
+        <If replacement={<Loading message="Loading scans..." />} condition={!isLoadingScans && !isLoadingDiagnoses && !!pagination}>
             <Table
                 pagination={pagination!}
                 header={
@@ -94,17 +114,10 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
                         <Th>Model</Th>
                         <Th>Model Diagnosis</Th>
                         <Th>Doctor Diagnosis</Th>
-                        <Th>Assign Diagnosis</Th>
                         <Th>Patient</Th>
                     </tr>
                 }
                 body={(item: Scan) => {
-                    // Fetch diagnoses specific to the scan's model
-                    const { data: diagnosisList = [], isLoading: isLoadingDiagnoses } = useGetAllDiagnosesQuery(
-                        { modelId: item.model.id ?? 0 },
-                        { skip: !item.model.id }
-                    );
-
                     return (
                         <tr key={item.id}>
                             <Td first>#{item.id}</Td>
@@ -120,37 +133,33 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
                             </Td>
                             <Td>{item.model?.name ?? "-"}</Td>
                             <Td>{item.modelDiagnosis?.name ?? "-"}</Td>
-                            <Td>{item.doctorDiagnosis?.name ?? "-"}</Td>
                             <Td>
-                                {!item.doctorDiagnosis ? (
-                                    <div className="flex flex-col gap-2">
-                                        <Select
-                                            id={`diagnosis-${item.id}`}
-                                            value={selectedDiagnoses[item.id] || ""}
-                                            onChange={(e) =>
-                                                handleDiagnosisChange(String(item.id), e.target.value)
-                                            }
-                                            options={[
-                                                { label: "Select diagnosis", value: "" },
-                                                ...diagnosisList.map((d) => ({
-                                                    label: d.name,
-                                                    value: String(d.id),
-                                                })),
-                                            ]}
-                                            disabled={isLoadingDiagnoses || isSettingDiagnosis[String(item.id)] || !item.model?.id}
-                                        />
-                                        {errorMessages[String(item.id)] && (
-                                            <div className="text-red-500 text-sm">{errorMessages[String(item.id)]}</div>
-                                        )}
-                                        {!item.model?.id && (
-                                            <div className="text-red-500 text-sm">No model associated with this scan</div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <span className="text-green-600">Diagnosis assigned</span>
-                                )}
+                                <div className="flex flex-col gap-2">
+                                    <Select
+                                        id={`diagnosis-${item.id}`}
+                                        value={selectedDiagnoses[item.id] || item.doctorDiagnosis?.id?.toString() || ""}
+                                        onChange={(e) =>
+                                            handleDiagnosisChange(String(item.id), e.target.value)
+                                        }
+                                        placeholder="-- Select diagnosis --"
+                                        options={
+                                            diagnosisByModel[item.model.id].map((d) => ({
+                                                label: d.name,
+                                                value: String(d.id),
+                                            }))
+                                        }
+                                        disabled={isLoadingDiagnoses || isSettingDiagnosis[String(item.id)] || !item.model?.id}
+                                    />
+                                    {errorMessages[String(item.id)] && (
+                                        <div className="text-red-500 text-sm">{errorMessages[String(item.id)]}</div>
+                                    )}
+                                </div>
                             </Td>
-                            <Td>{item.patient?.name ?? "-"}</Td>
+                            <Td>
+                                <StyledLink to={`/patients/${item.patient?.id}`}>
+                                {item.patient?.name ?? "-"}
+                                </StyledLink>
+                            </Td>
                         </tr>
                     );
                 }}

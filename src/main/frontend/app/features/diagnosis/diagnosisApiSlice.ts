@@ -1,11 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ROOT_URL } from "~/base/consts";
 import { defaultHeaders } from "~/base/helpers";
+import type {Model} from "~/features/scans/scansApiSlice";
 
 interface Diagnosis {
-    modelId: number;
+    model: Model;
     name: string;
-    id: number; // Add id to match DiagnosisDto
+    id: number;
 }
 
 export type { Diagnosis };
@@ -19,11 +20,19 @@ export const diagnosisApiSlice = createApi({
     tagTypes: ["Diagnosis"],
     keepUnusedDataFor: 2,
     endpoints: build => ({
-        getAllDiagnoses: build.query<Diagnosis[], { modelId: number }>({
-            query: ({ modelId }) => `api/diagnoses/byModel?modelId=${modelId}`,
+        getAllDiagnoses: build.query<Diagnosis[], void>({
+            query: () => `api/diagnoses`,
             providesTags: ["Diagnosis"],
+        }),
+
+        changeDoctorDiagnosis: build.mutation<void, { scanId: number, diagnosis: string }>({
+            query: ({ scanId, diagnosis }) => ({
+                url: `api/scans/${scanId}/doctor-diagnosis`,
+                method: "PATCH",
+                body: { diagnosis },
+            }),
         }),
     }),
 });
 
-export const { useGetAllDiagnosesQuery } = diagnosisApiSlice;
+export const { useGetAllDiagnosesQuery, useChangeDoctorDiagnosisMutation } = diagnosisApiSlice;

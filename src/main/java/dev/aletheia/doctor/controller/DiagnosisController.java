@@ -1,36 +1,21 @@
 package dev.aletheia.doctor.controller;
-import dev.aletheia.doctor.dtos.models.DiagnosisDto;
-import dev.aletheia.doctor.models.Diagnosis;
-import dev.aletheia.doctor.models.Model;
-import dev.aletheia.doctor.repositories.ModelRepository;
+import dev.aletheia.doctor.dtos.models.DiagnosisWithModelDto;
 import dev.aletheia.doctor.services.DiagnosisService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/diagnoses")
 public class DiagnosisController {
 
     private final DiagnosisService diagnosisService;
-    private final ModelRepository modelRepository;
 
-    public DiagnosisController(DiagnosisService diagnosisService, ModelRepository modelRepository) {
+    public DiagnosisController(DiagnosisService diagnosisService) {
         this.diagnosisService = diagnosisService;
-        this.modelRepository = modelRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<Diagnosis>> getAllDiagnoses() {
-        return ResponseEntity.ok(diagnosisService.getAll());
-    }
-
-    @GetMapping("/byModel")
-    public ResponseEntity<List<DiagnosisDto>> getDiagnosesByModel(@RequestParam("modelId") Long modelId) {
-        Optional<Model> model = modelRepository.findById(modelId);
-        List<Diagnosis> diagnoses = diagnosisService.getAllDiagnoses(model);
-        return ResponseEntity.ok(diagnoses.stream().map(diagnosisService::convertToDto).toList());
+    public ResponseEntity<Object> getAllDiagnoses() {
+        return ResponseEntity.ok(diagnosisService.getAll().stream().map(DiagnosisWithModelDto::new).toList());
     }
 }
