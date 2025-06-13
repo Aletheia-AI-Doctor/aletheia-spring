@@ -37,21 +37,21 @@ export default function Votes({post}: VotesProps) {
     }, [isLoading, isSuccess]);
 
     return (
-        <div className="flex items-center border border-gray-600 rounded-full px-1 py-0.5">
+        <div className="flex items-center border border-gray-600 rounded-full">
             <button
                 onClick={() => handleVote(true)}
                 className={"hover:bg-blue-100 rounded-l-full transition-colors duration-200 pr-2 " + (myVote === 1 ? "text-blue-500 bg-blue-200" : "")}
                 aria-label="Upvote"
             >
-                <ChevronUpIcon className="size-8 pl-2 text-gray-900" />
+                <ChevronUpIcon className="size-7 pl-2 text-gray-900" />
             </button>
-            <span className="text-lg px-2">{votes}</span>
+            <span className="px-2 text-sm text-gray-700">{votes}</span>
             <button
                 onClick={() => handleVote(false)}
                 className={"hover:bg-red-100 rounded-r-full transition-colors duration-200 pl-2 " + (myVote === -1 ? "text-red-500 bg-red-200" : "")}
                 aria-label="Downvote"
             >
-                <ChevronDownIcon className="size-8 pr-2" />
+                <ChevronDownIcon className="size-7 pr-2" />
             </button>
         </div>
     );

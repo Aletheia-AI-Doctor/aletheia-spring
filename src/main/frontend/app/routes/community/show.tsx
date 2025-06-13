@@ -42,13 +42,13 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
 
     return (
         <div className={!parent ? 'pl-4 ml-2 mt-4' : ''}>
-            <div className="bg-white shadow-sm rounded-lg p-4">
+            <div className="bg-white shadow-sm rounded-lg p-4 relative">
                 <DoctorMedia doctor={post.doctor} />
 
                 <div className={"flex items-center " + (parent ? "justify-between" : "justify-end")}>
                     {parent && <Title>{post.title}</Title>}
                     {currentDoctor!.id === post.doctor.id && !editing && (
-                        <Button width="w-auto" color="gray" onClick={() => setEditing(true)}>Edit</Button>
+                        <Button className="absolute right-0 top-0 mr-4 mt-4" width="w-auto" color="gray" onClick={() => setEditing(true)}>Edit</Button>
                     )}
                 </div>
 
@@ -78,7 +78,7 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
                     </div>
                     ) : (
                     <div
-                        className={"mt-2 text-gray-700 " + (parent ? "prose" : "prose-sm")}
+                        className={"text-gray-700 " + (parent ? "mt-2 prose" : "prose-sm")}
                         dangerouslySetInnerHTML={{ __html: post.body }}
                     />
                 )}
