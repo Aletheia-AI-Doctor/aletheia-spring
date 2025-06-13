@@ -10,6 +10,8 @@ interface Post {
     body: string;
     doctor: Doctor;
     replies: Post[];
+    votes: number;
+    myVote: number;
 }
 
 interface PostForm {
@@ -17,6 +19,17 @@ interface PostForm {
     title?: string;
     parentId?: number;
     body: string;
+}
+
+interface SetVoteRequest {
+    postId: number;
+    vote: boolean;
+}
+
+interface SetVoteResponse {
+    votes: number;
+    myVote: number;
+    message: string;
 }
 
 export type { Post };
@@ -62,7 +75,16 @@ export const postsApiSlice = createApi({
             }),
             invalidatesTags: (result, error, {id}) => [{type: 'Posts', id: id}],
         }),
+
+        setVote: build.mutation<SetVoteResponse, SetVoteRequest>({
+            query: ({postId, vote}) => ({
+                url: `api/posts/${postId}/vote`,
+                method: "POST",
+                body: {vote},
+            }),
+            invalidatesTags: (result, error, {postId}) => [{type: 'Posts', id: postId}],
+        }),
     }),
 });
 
-export const { useGetPostsQuery, useGetPostQuery, useCreatePostMutation, useEditPostMutation } = postsApiSlice;
+export const { useGetPostsQuery, useGetPostQuery, useCreatePostMutation, useEditPostMutation, useSetVoteMutation } = postsApiSlice;

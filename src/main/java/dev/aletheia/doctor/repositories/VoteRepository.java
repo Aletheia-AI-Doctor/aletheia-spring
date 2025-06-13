@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VoteRepository extends JpaRepository<Vote, Long> {
@@ -13,4 +14,7 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
 
     @Query("SELECT COALESCE(SUM(v.value), 0) FROM Vote v WHERE v.post.id = :postId")
     Optional<Integer> sumVotesByPostId(@Param("postId") Long postId);
+
+    @Query("SELECT v FROM Vote v WHERE v.post.id IN (:postIds) AND v.doctor.id = :doctorId")
+    List<Vote> findMyVotes(List<Long> postIds, Long doctorId);
 }

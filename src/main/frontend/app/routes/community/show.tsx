@@ -9,6 +9,7 @@ import {useAppSelector} from "~/base/hooks";
 import {useState} from "react";
 import Button from "~/components/button";
 import TextareaWysiwyg from "~/components/textarea-wysiwyg";
+import Votes from "~/components/votes";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -81,6 +82,10 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
                         dangerouslySetInnerHTML={{ __html: post.body }}
                     />
                 )}
+
+                <div className="mt-4 flex items-center justify-between">
+                    <Votes post={post} />
+                </div>
 
                 <div className="mt-4">
                     <CreatePost onSubmit={refetch} parentId={post.id} />
