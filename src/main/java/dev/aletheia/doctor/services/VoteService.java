@@ -7,6 +7,8 @@ import dev.aletheia.doctor.repositories.VoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class VoteService extends CRUDService<Vote, VoteDto>  {
 
@@ -22,7 +24,7 @@ public class VoteService extends CRUDService<Vote, VoteDto>  {
 
     public VoteRepository getRepository() {return voteRepository;}
 
-    public VoteDto votePost(Long postId, Integer voteValue) {
+    public Vote vote(Long postId, Integer voteValue) {
         Post post = postService.findOrFail(postId);
         Doctor doctor = doctorService.getCurrentDoctor();
 
@@ -37,7 +39,7 @@ public class VoteService extends CRUDService<Vote, VoteDto>  {
             }
             // Otherwise update the vote
             existingVote.setValue(voteValue);
-            return convertToDto(voteRepository.save(existingVote));
+            return voteRepository.save(existingVote);
         }
 
         Vote newVote = new Vote();
@@ -45,14 +47,14 @@ public class VoteService extends CRUDService<Vote, VoteDto>  {
         newVote.setDoctor(doctor);
         newVote.setValue(voteValue);
 
-        return convertToDto(voteRepository.save(newVote));
+        return voteRepository.save(newVote);
     }
 
     public Integer getPostVotes(Long postId) {
         return voteRepository.sumVotesByPostId(postId).orElse(0);
     }
 
-    public Integer getMyVote(Long postId){
+    public Integer getMyVote(Long postId) {
         Post post = postService.findOrFail(postId);
         Doctor doctor = doctorService.getCurrentDoctor();
         return voteRepository.findByPostAndDoctor(post, doctor)

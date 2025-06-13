@@ -2,10 +2,14 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.PaginationDTO;
 import dev.aletheia.doctor.dtos.posts.CreatePostDto;
+import dev.aletheia.doctor.dtos.posts.PostDto;
+import dev.aletheia.doctor.dtos.votes.SetVoteDto;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.models.Post;
+import dev.aletheia.doctor.models.Vote;
 import dev.aletheia.doctor.services.DoctorService;
 import dev.aletheia.doctor.services.PostService;
+import dev.aletheia.doctor.services.VoteService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -20,10 +24,12 @@ public class PostController {
 
 	private final PostService postService;
 	private final DoctorService doctorService;
+	private final VoteService voteService;
 
-	public PostController(PostService postService, DoctorService doctorService) {
+	public PostController(PostService postService, DoctorService doctorService, VoteService voteService) {
 		this.postService = postService;
 		this.doctorService= doctorService;
+		this.voteService = voteService;
 	}
 
 	@GetMapping
@@ -35,7 +41,7 @@ public class PostController {
 
 	@GetMapping("/{postId}")
 	public ResponseEntity<Object> show(@PathVariable Long postId) {
-		return ResponseEntity.ok(postService.convertToDto(postService.findOrFail(postId)));
+		return ResponseEntity.ok(postService.getPostDto(postId));
 	}
 
 	@PostMapping
@@ -56,10 +62,16 @@ public class PostController {
 			}
 			post.setTitle(createPostDto.getTitle());
 		}
-		Post createdPost = postService.save(post);
-		return ResponseEntity.status(HttpStatus.CREATED).body(postService.convertToDto(createdPost));
 
+		Post createdPost = postService.save(post);
+		PostDto dto = postService.convertToDto(createdPost);
+		voteService.vote(createdPost.getId(), 1);
+
+		dto.setMyVote(1);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(dto);
 	}
+
 	@PutMapping("/{postId}/edit")
 	public ResponseEntity<Object> update(@PathVariable Long postId,
 										 @Valid @RequestBody CreatePostDto updatePostDto) {
@@ -77,7 +89,21 @@ public class PostController {
 		post.setBody(updatePostDto.getBody());
 
 		Post updatedPost = postService.save(post);
-		return ResponseEntity.ok(postService.convertToDto(updatedPost));
+		PostDto dto = postService.convertToDto(updatedPost);
+		dto.setMyVote(voteService.getMyVote(postId));
+
+		return ResponseEntity.ok(dto);
+	}
+
+	@PostMapping("/{postId}/vote")
+	public ResponseEntity<Object> vote(@PathVariable Long postId, @RequestBody SetVoteDto voteDto) {
+		Vote myVote = voteService.vote(postId, voteDto.getVote() ? 1 : -1);
+
+		return ResponseEntity.ok(Map.of(
+				"message", "Vote recorded",
+				"votes", voteService.getPostVotes(postId),
+				"myVote", myVote != null ? myVote.getValue() : 0
+		));
 	}
 
 	@DeleteMapping("/{postId}")

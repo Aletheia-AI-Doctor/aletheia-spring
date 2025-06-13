@@ -17,7 +17,7 @@ public class PostDto {
     private DoctorDto doctor;
     private List<PostDto> replies;
     private Integer votes;
-    private Integer myVote; //to display his vote on a post
+    private Integer myVote;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private String createdAt;
