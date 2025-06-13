@@ -26,6 +26,7 @@ import PatientDetailsCard from "~/components/patient-details-card";
 import {ROOT_URL} from "~/base/consts";
 import Title from "~/components/title";
 
+
 // Register the plugins
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 

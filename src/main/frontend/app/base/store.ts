@@ -9,6 +9,7 @@ import {doctorDashboardApiSlice} from "~/features/doctor/doctorDashboardApiSlice
 import {hospitalApiSlice} from "~/features/hospital/hospitalApiSlice";
 import {doctorActivityApiSlice} from "~/features/doctor/doctorActivityApiSlice";
 import {postsApiSlice} from "~/features/community/postsApiSlice";
+import {diagnosisApiSlice} from "~/features/diagnosis/diagnosisApiSlice";
 
 const rootReducer = combineSlices(
     scansApiSlice,
@@ -19,7 +20,8 @@ const rootReducer = combineSlices(
     doctorDashboardApiSlice,
     hospitalApiSlice,
     doctorActivityApiSlice,
-    postsApiSlice
+    postsApiSlice,
+    diagnosisApiSlice
 )
 export type RootState = ReturnType<typeof rootReducer>
 
@@ -40,7 +42,8 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
                 .concat(doctorDashboardApiSlice.middleware)
                 .concat(doctorActivityApiSlice.middleware)
                 .concat(postsApiSlice.middleware)
-                .concat(hospitalApiSlice.middleware);
+                .concat(hospitalApiSlice.middleware)
+                .concat(diagnosisApiSlice.middleware);
 
         },
         preloadedState
