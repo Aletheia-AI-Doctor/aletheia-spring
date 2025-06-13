@@ -100,7 +100,7 @@ public class DoctorController {
 public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
     Doctor doctor = doctorService.getCurrentDoctor();
 
-    // Validate and update email
+    
     if (dto.getEmail() != null && !dto.getEmail().equals(doctor.getEmail())) {
         if (doctorService.isEmailTaken(dto.getEmail(), doctor.getId())) {
             return ResponseEntity.badRequest().body("Email is already taken.");
@@ -108,7 +108,7 @@ public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
         doctor.setEmail(dto.getEmail());
     }
 
-    // Validate and update username
+   
     if (dto.getUsername() != null && !dto.getUsername().equals(doctor.getUsername())) {
         if (doctorService.isUsernameTaken(dto.getUsername(), doctor.getId())) {
             return ResponseEntity.badRequest().body("Username is already taken.");
@@ -121,7 +121,7 @@ public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
     }
 
     if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-        // Assuming password hashing is handled in save() or needs to be done here
+        
         doctor.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
     }
 

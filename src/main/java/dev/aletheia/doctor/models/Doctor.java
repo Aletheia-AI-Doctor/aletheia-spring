@@ -4,12 +4,13 @@ import dev.aletheia.doctor.annotations.Unique;
 import dev.aletheia.doctor.enums.DoctorSpeciality;
 import dev.aletheia.doctor.enums.DoctorStates;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,8 @@ import java.util.List;
 @DynamicUpdate
 public class Doctor extends BaseModel {
 
+
+
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Name is mandatory")
     private String name;
@@ -36,20 +39,24 @@ public class Doctor extends BaseModel {
 
     @Column(name = "license_number", nullable = false, unique = true)
     // @Unique(table = "doctors", value = "license_number", message = "license_number must be unique")
-    @NotBlank(message = "license_number is mandatory")
+    @NotBlank(message = "License number is required")
+    @Pattern(regexp = "\\d+", message = "License number must be numeric")
     private String licenseNumber;
 
     @Column(name = "email", nullable = false, unique = true)
     // @Unique(table = "doctors", value = "email", message = "Email must be unique")
-    @Email(message = "Email should be valid")
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
 
     @Column(name = "password", nullable = false)
     @Size(min = 6, max = 255, message = "Password should be at least 6 characters")
+    @NotBlank(message = "Password is required")
     private String password;
 
     @Column(name = "speciality")
     @Enumerated(EnumType.STRING)
+    @NotBlank(message = "Speciality is required")
     private DoctorSpeciality speciality;
 
     @Column(name = "bio", columnDefinition="TEXT")
@@ -60,6 +67,7 @@ public class Doctor extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "hospital_id")
+    @NotNull(message = "Hospital ID is required")
     private Hospital hospital;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
