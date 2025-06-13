@@ -42,7 +42,13 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     public boolean usernameExists(String username) {
         return doctorRepository.existsByUsername(username);
     }
+    public boolean isUsernameTaken(String username, Long currentUserId) {
+        return doctorRepository.existsByUsernameAndIdNot(username, currentUserId);
+    }
     
+    public boolean isEmailTaken(String email, Long currentUserId) {
+        return doctorRepository.existsByEmailAndIdNot(email, currentUserId);
+    }
 
     protected DoctorService() {super(Doctor.class, DoctorDto.class);}
 

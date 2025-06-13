@@ -11,6 +11,7 @@ import dev.aletheia.doctor.services.ActivityService;
 import dev.aletheia.doctor.services.DoctorService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
 
@@ -96,29 +97,42 @@ public class DoctorController {
 
 	}
     @PutMapping("/update")
-	public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
-		Doctor doctor = doctorService.getCurrentDoctor();
+public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
+    Doctor doctor = doctorService.getCurrentDoctor();
 
-		if (dto.getName() != null) {
-			doctor.setName(dto.getName());
-		}
+    // Validate and update email
+    if (dto.getEmail() != null && !dto.getEmail().equals(doctor.getEmail())) {
+        if (doctorService.isEmailTaken(dto.getEmail(), doctor.getId())) {
+            return ResponseEntity.badRequest().body("Email is already taken.");
+        }
+        doctor.setEmail(dto.getEmail());
+    }
 
-		if (dto.getEmail() != null) {
-			doctor.setEmail(dto.getEmail());
-		}
+    // Validate and update username
+    if (dto.getUsername() != null && !dto.getUsername().equals(doctor.getUsername())) {
+        if (doctorService.isUsernameTaken(dto.getUsername(), doctor.getId())) {
+            return ResponseEntity.badRequest().body("Username is already taken.");
+        }
+        doctor.setUsername(dto.getUsername());
+    }
 
-		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-			doctor.setPassword(dto.getPassword());
-		}
+    if (dto.getName() != null) {
+        doctor.setName(dto.getName());
+    }
 
-		if (dto.getBio() != null) {
-			doctor.setBio(dto.getBio());
-		}
+    if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+        // Assuming password hashing is handled in save() or needs to be done here
+        doctor.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
+    }
 
-		Doctor updated = doctorService.save(doctor);
-		return ResponseEntity.ok(doctorService.convertToDto(updated));
-	}
-	
+    if (dto.getBio() != null) {
+        doctor.setBio(dto.getBio());
+    }
+
+    Doctor updated = doctorService.save(doctor);
+    return ResponseEntity.ok(doctorService.convertToDto(updated));
+}
+
 @Controller
 @RequestMapping("/register")
 public class RegistrationController {

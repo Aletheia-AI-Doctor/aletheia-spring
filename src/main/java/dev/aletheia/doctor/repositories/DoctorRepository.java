@@ -24,7 +24,9 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     boolean existsByUsernameAndIdNot(String username, Long id);
 
     boolean existsByEmail(String email);
+
     boolean existsByUsername(String username);
+    
     
     
 
