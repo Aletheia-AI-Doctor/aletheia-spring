@@ -12,6 +12,7 @@ interface InputProps {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder?: string;
     className?: string;
+    error?: string;
     defaultValue?: string;
     dir?: string;
     checked?: boolean;

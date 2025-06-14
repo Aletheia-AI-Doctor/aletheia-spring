@@ -20,7 +20,15 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId);
 
     boolean existsByEmailAndIdNot(String email, Long id);
+
     boolean existsByUsernameAndIdNot(String username, Long id);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByUsername(String username);
+    
+    
+    
 
 }
 

@@ -11,6 +11,7 @@ interface SelectProps {
     placeholder?: string;
     className?: string;
     dir?: string;
+    error?: string;
     defaultValue?: string;
     options: Array<{ value: string; label: string }>;
     disabled?: boolean;
