@@ -20,10 +20,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class Patient extends BaseModel {
 
     @Column(name = "name", nullable = false)
-    @NotBlank(message = "Name is required")
     private String name;
-
-    
 
     @ManyToOne
     @JoinColumn(name = "doctor_id")
@@ -34,16 +31,11 @@ public class Patient extends BaseModel {
     private List<Scan> scans;
 
     @Column(name = "birthdate")
-    @NotNull(message = "Birthdate is required")
-    @PastOrPresent(message = "Birthdate cannot be in the future")
     private LocalDate birthdate;
 
     @Column(name = "sex")
-    @NotNull(message = "Sex is required")
     @Enumerated(EnumType.STRING)
     private Gender sex;
-
-    
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
