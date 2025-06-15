@@ -32,23 +32,7 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     @Autowired
     private HospitalRepository hospitalRepository;
 
-    public DoctorRepository getRepository() {
-        return doctorRepository;
-    }
-    public boolean emailExists(String email) {
-        return doctorRepository.existsByEmail(email);
-    }
-    
-    public boolean usernameExists(String username) {
-        return doctorRepository.existsByUsername(username);
-    }
-    public boolean isUsernameTaken(String username, Long currentUserId) {
-        return doctorRepository.existsByUsernameAndIdNot(username, currentUserId);
-    }
-    
-    public boolean isEmailTaken(String email, Long currentUserId) {
-        return doctorRepository.existsByEmailAndIdNot(email, currentUserId);
-    }
+    public DoctorRepository getRepository() { return doctorRepository; }
 
     protected DoctorService() {super(Doctor.class, DoctorDto.class);}
 
@@ -57,24 +41,12 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     }
 
     public Doctor createDoctor(DoctorRegistrationDTO doctorDTO) {
-
-        if (doctorRepository.existsByEmail(doctorDTO.getEmail())) {
-            throw new IllegalArgumentException("Email is already in use.");
-        }
-    
-        // Check for existing username
-        if (doctorRepository.existsByUsername(doctorDTO.getUsername())) {
-            throw new IllegalArgumentException("Username is already in use.");
-        }
-
         Doctor doctor = new Doctor();
 
         doctor.setName(doctorDTO.getName());
         doctor.setUsername(doctorDTO.getUsername());
         doctor.setEmail(doctorDTO.getEmail());
         doctor.setPassword(doctorDTO.getPassword());
-
-    
         doctor.setStatus(DoctorStates.PENDING);
         doctor.setSpeciality(DoctorSpeciality.valueOf(doctorDTO.getSpeciality()));
         doctor.setLicenseNumber(doctorDTO.getLicenseNumber());

@@ -24,7 +24,6 @@ export default function PatientPage() {
     const {
         data: pagination,
         isLoading,
-        isError,
     } = useGetPatientsQuery({
         page: parseInt(params.get('page') ?? '1'),
     });
@@ -43,7 +42,6 @@ export default function PatientPage() {
                     Add patient
                 </Button>
             </div>
-            
 
             <Modal open={showAddForm} onClose={() => setShowAddForm(false)}>
                 <PatientForm onClose={() => setShowAddForm(false)}/>
