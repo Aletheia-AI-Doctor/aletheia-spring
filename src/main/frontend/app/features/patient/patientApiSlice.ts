@@ -29,22 +29,22 @@ export const patientsApiSlice = createApi({
         }),
         addPatient: build.mutation<Patient, Partial<Patient>>({
             query: (newPatient) => ({
-                url: "api/patients/add",
-                method: "PUT",
+                url: "api/patients",
+                method: "POST",
                 body: newPatient,
             }),
             invalidatesTags: ['Patients'],
         }),
         getPatientById: build.query<Patient, string>({
             query: (patientId) => {`api/patients/${{patientId}}/show`
-            return `api/patients/${patientId}/show`},
+            return `api/patients/${patientId}`},
             providesTags: ['Patients'],
         }),
        
         updatestatus: build.mutation<Patient, Partial<Patient>>({
             query: (patient) => ({
-                url: `api/patients/${patient.id}/update`,
-                method: "PUT",
+                url: `api/patients/${patient.id}/status`,
+                method: "PATCH",
                 body: patient,
             }),
             invalidatesTags: ['Patients'],

@@ -10,6 +10,8 @@ import {hospitalApiSlice} from "~/features/hospital/hospitalApiSlice";
 import {doctorActivityApiSlice} from "~/features/doctor/doctorActivityApiSlice";
 import {postsApiSlice} from "~/features/community/postsApiSlice";
 import {diagnosisApiSlice} from "~/features/diagnosis/diagnosisApiSlice";
+import { errorMiddleware } from "~/features/errors/globalErrorMiddleware";
+import errorsReducer from "~/features/errors/errorSlice";
 
 const rootReducer = combineSlices(
     scansApiSlice,
@@ -21,7 +23,11 @@ const rootReducer = combineSlices(
     hospitalApiSlice,
     doctorActivityApiSlice,
     postsApiSlice,
-    diagnosisApiSlice
+    diagnosisApiSlice,
+    {
+        reducerPath: 'globalErrors',
+        reducer: errorsReducer,
+    }
 )
 export type RootState = ReturnType<typeof rootReducer>
 
@@ -35,6 +41,7 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
             return getDefaultMiddleware({
                 serializableCheck: false
             })
+                .concat(errorMiddleware)
                 .concat(scansApiSlice.middleware)
                 .concat(authenticationApiSlice.middleware)
                 .concat(patientsApiSlice.middleware)

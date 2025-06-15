@@ -1,4 +1,6 @@
 import {useEffect, useState} from "react";
+import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
+import type {SerializedError} from "@reduxjs/toolkit";
 
 export const getFromLocalStorage = (key: string) => {
     if (!key || typeof window === 'undefined') {
@@ -106,4 +108,19 @@ export function formatDateOnlyString(date: string): string {
     });
 }
 
+export function getInputErrors(error: FetchBaseQueryError | undefined): Record<string, string[]> {
+    const errors = {} as Record<string, string[]>;
+    if (! error) {
+        return errors;
+    }
+    type RawErrors = { [key: string]: string[] };
+    // @ts-ignore
+    const rawErrors: RawErrors = error.data.errors;
+
+    for (const [key, value] of Object.entries(rawErrors)) {
+        errors[key] = value;
+    }
+
+    return errors;
+}
 

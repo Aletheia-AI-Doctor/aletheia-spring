@@ -10,15 +10,12 @@ interface PatientFormProps {
 }
 
 export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
-
     const [addPatient, { isLoading }] = useAddPatientMutation();
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [newPatient, setNewPatient] = useState({
         name: '',
         sex: '',
-        birthdate:'',
-        status: 'pending'
+        birthdate: '',
     });
 
     const handleAddPatient = async (event: FormEvent) => {
@@ -27,8 +24,6 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
         const response = await addPatient(newPatient);
 
         if (response.error) {
-            // @ts-ignore
-            setErrorMessage(response.error.message);
             return;
         }
 
@@ -37,8 +32,7 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
         setNewPatient({
             name: '',
             sex: '',
-            birthdate:'',
-            status: 'pending'
+            birthdate:''
         });
 
         onClose && onClose();
@@ -54,6 +48,7 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
                         value={newPatient.name}
                         onChange={(e) => setNewPatient({...newPatient, name: e.target.value})}
                         id="name"
+                        name="name"
                         label="Name"
                     />
 
@@ -62,6 +57,7 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
                         onChange={(e) => setNewPatient({...newPatient, sex: e.target.value})}
                         placeholder="-- Choose --"
                         label="Sex"
+                        name="sex"
                         required
                         value={newPatient.sex}
                         options={[
@@ -71,6 +67,7 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
                     />
                     <Input
                         type="date"
+                        name="birthdate"
                         id="birthdate"
                         label="Birthdate"
                         required
@@ -78,13 +75,7 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
                         onChange={(e) => setNewPatient({ ...newPatient, birthdate: e.target.value })}
                     />
                 </div>
-                
 
-                {errorMessage && (
-                    <div className="mt-4 text-red-600">
-                        {errorMessage}
-                    </div>
-                )}
                 <div className="flex justify-end space-x-3 mt-6">
                     <Button
                         type="submit"

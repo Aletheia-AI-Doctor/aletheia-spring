@@ -33,17 +33,17 @@ import org.springframework.web.bind.annotation.*;
 public class DoctorController {
 
     private final DoctorService doctorService;
-	private final DigitalSignService digitalSignService;
-	private final AleithiaEmailAuthentication emailService;
+    private final DigitalSignService digitalSignService;
+    private final AleithiaEmailAuthentication emailService;
 
-	@Value("${spring.application.url}")
-	private String appUrl;
+    @Value("${spring.application.url}")
+    private String appUrl;
 
-	public DoctorController(DoctorService doctorService, DigitalSignService digitalSignService, AleithiaEmailAuthentication emailService) {
-		this.doctorService = doctorService;
-		this.digitalSignService = digitalSignService;
-		this.emailService = emailService;
-	}
+    public DoctorController(DoctorService doctorService, DigitalSignService digitalSignService, AleithiaEmailAuthentication emailService) {
+        this.doctorService = doctorService;
+        this.digitalSignService = digitalSignService;
+        this.emailService = emailService;
+    }
 
     @GetMapping("/currentUser")
     public DoctorDto getCurrentDoctor() {
@@ -64,113 +64,77 @@ public class DoctorController {
         return ResponseEntity.ok(allCounts);
     }
 
-	@PostMapping("/appeal/{id}")
-	public ResponseEntity<Object> appeal(@PathVariable Long id, @RequestParam(name = "token") String token) throws IOException {
-		String tokenConfirm;
-		String tokenReject;
-		String confirmationUrl = appUrl + "/api/confirm-email/" + id;
-		String rejectionUrl = appUrl + "/api/reject-email/" + id;
+    @PostMapping("/appeal/{id}")
+    public ResponseEntity<Object> appeal(@PathVariable Long id, @RequestParam(name = "token") String token) throws IOException {
+        String tokenConfirm;
+        String tokenReject;
+        String confirmationUrl = appUrl + "/api/confirm-email/" + id;
+        String rejectionUrl = appUrl + "/api/reject-email/" + id;
 
-		try {
-			tokenConfirm = digitalSignService.signData(confirmationUrl);
-			tokenReject = digitalSignService.signData(rejectionUrl);
-		} catch (Exception e) {
-			throw new RuntimeException("Error signing data: " + e.getMessage(), e);
-		}
+        try {
+            tokenConfirm = digitalSignService.signData(confirmationUrl);
+            tokenReject = digitalSignService.signData(rejectionUrl);
+        } catch (Exception e) {
+            throw new RuntimeException("Error signing data: " + e.getMessage(), e);
+        }
 
-		Doctor doctor = doctorService.findOrFail(id);
+        Doctor doctor = doctorService.findOrFail(id);
 
-		confirmationUrl += "?token=" + tokenConfirm;
-		rejectionUrl += "?token=" + tokenReject;
+        confirmationUrl += "?token=" + tokenConfirm;
+        rejectionUrl += "?token=" + tokenReject;
 
-		emailService.sendConfirmationRequest(
-				doctor.getHospital().getHr_email(),
-				doctor.getName(),
-				doctor.getSpeciality().toString(),
-				doctor.getLicenseNumber(),
-				confirmationUrl,
-				rejectionUrl
-		);
+        emailService.sendConfirmationRequest(
+                doctor.getHospital().getHr_email(),
+                doctor.getName(),
+                doctor.getSpeciality().toString(),
+                doctor.getLicenseNumber(),
+                confirmationUrl,
+                rejectionUrl
+        );
         doctor.setStatus(DoctorStates.PENDING);
         doctorService.save(doctor);
 
-		return ResponseEntity.ok(Map.of(
-				"message", "Appeal successful! Please check your email for confirmation instructions.",
-				"success", true
-		));
+        return ResponseEntity.ok(Map.of(
+                "message", "Appeal successful! Please check your email for confirmation instructions.",
+                "success", true
+        ));
 
-	}
+    }
+
     @PutMapping("/update")
-public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
-    Doctor doctor = doctorService.getCurrentDoctor();
+    public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
+        Doctor doctor = doctorService.getCurrentDoctor();
 
-    
-    if (dto.getEmail() != null && !dto.getEmail().equals(doctor.getEmail())) {
-        if (doctorService.isEmailTaken(dto.getEmail(), doctor.getId())) {
-            return ResponseEntity.badRequest().body("Email is already taken.");
-        }
-        doctor.setEmail(dto.getEmail());
-    }
 
-   
-    if (dto.getUsername() != null && !dto.getUsername().equals(doctor.getUsername())) {
-        if (doctorService.isUsernameTaken(dto.getUsername(), doctor.getId())) {
-            return ResponseEntity.badRequest().body("Username is already taken.");
-        }
-        doctor.setUsername(dto.getUsername());
-    }
-
-    if (dto.getName() != null) {
-        doctor.setName(dto.getName());
-    }
-
-    if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-        
-        doctor.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
-    }
-
-    if (dto.getBio() != null) {
-        doctor.setBio(dto.getBio());
-    }
-
-    Doctor updated = doctorService.save(doctor);
-    return ResponseEntity.ok(doctorService.convertToDto(updated));
-}
-
-@Controller
-@RequestMapping("/register")
-public class RegistrationController {
-
-    @Autowired
-    private DoctorService doctorService;
-
-    @GetMapping
-    public String showForm(Model model) {
-        model.addAttribute("doctor", new DoctorRegistrationDTO());
-        return "register";
-    }
-
-    @PostMapping
-    public String register(@ModelAttribute("doctor") @Valid DoctorRegistrationDTO doctorDto,
-                           BindingResult result,
-                           Model model) {
-
-        if (doctorService.emailExists(doctorDto.getEmail())) {
-            result.rejectValue("email", "error.doctor", "Email is already in use");
+        if (dto.getEmail() != null && !dto.getEmail().equals(doctor.getEmail())) {
+            if (doctorService.isEmailTaken(dto.getEmail(), doctor.getId())) {
+                return ResponseEntity.badRequest().body("Email is already taken.");
+            }
+            doctor.setEmail(dto.getEmail());
         }
 
-        if (doctorService.usernameExists(doctorDto.getUsername())) {
-            result.rejectValue("username", "error.doctor", "Username is already in use");
+
+        if (dto.getUsername() != null && !dto.getUsername().equals(doctor.getUsername())) {
+            if (doctorService.isUsernameTaken(dto.getUsername(), doctor.getId())) {
+                return ResponseEntity.badRequest().body("Username is already taken.");
+            }
+            doctor.setUsername(dto.getUsername());
         }
 
-        if (result.hasErrors()) {
-            return "register";
+        if (dto.getName() != null) {
+            doctor.setName(dto.getName());
         }
 
-        doctorService.createDoctor(doctorDto);
-        return "redirect:/login?success";
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+
+            doctor.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
+        }
+
+        if (dto.getBio() != null) {
+            doctor.setBio(dto.getBio());
+        }
+
+        Doctor updated = doctorService.save(doctor);
+        return ResponseEntity.ok(doctorService.convertToDto(updated));
     }
-}
-
-	
 }

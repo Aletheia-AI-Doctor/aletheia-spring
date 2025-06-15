@@ -1,11 +1,14 @@
 package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.PaginationDTO;
+import dev.aletheia.doctor.dtos.patient.PatientStatusDto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import dev.aletheia.doctor.dtos.patient.PatientDto;
@@ -27,14 +30,15 @@ public class PatientController {
     }
 
 
-    @PutMapping("/add")
-    public ResponseEntity<Object> create( @RequestBody @Valid PatientRegistrationDTO patient, BindingResult result) {
-        if (result.hasErrors()) {
-        return ResponseEntity.badRequest().body("Validation failed");
-}
-    patientService.createPatient(patient);
-    return ResponseEntity.ok("Patient saved");
-}
+    @PostMapping
+    public ResponseEntity<Object> create(@RequestBody @Valid PatientRegistrationDTO patientDto) {
+        Patient patient = patientService.createPatient(patientDto);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Patient created successfully",
+                "patient", patientService.convertToDto(patient)
+        ));
+    }
 
     @GetMapping
     public ResponseEntity<Object> getAllPatient(@RequestParam @Nullable Integer page) {
@@ -47,13 +51,13 @@ public class PatientController {
         );
     }
 
-    @GetMapping("/{patientId}/show")
+    @GetMapping("/{patientId}")
     public ResponseEntity<Object> getPatient(@PathVariable Long patientId) {
         return ResponseEntity.ok(patientService.convertToDto(patientService.findOrFail(patientId)));
     }
 
-    @PutMapping("/{patientId}/update")
-    public ResponseEntity<Object> updatepatientstatus(@PathVariable Long patientId, @RequestBody PatientDto patientDTO) {
+    @PatchMapping("/{patientId}/status")
+    public ResponseEntity<Object> updatePatientStatus(@PathVariable Long patientId, @RequestBody PatientStatusDto patientDTO) {
         Patient patient = patientService.findOrFail(patientId);
 
         patientService.updatePatientStatus(patientService.findOrFail(patientId), PatientStatus.fromString(patientDTO.getStatus()));

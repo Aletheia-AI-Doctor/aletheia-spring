@@ -1,7 +1,7 @@
 FROM maven:3.9-eclipse-temurin-23 AS base
 WORKDIR /app
 COPY pom.xml .
-RUN mvn dependency:go-offline -B -Djavafx.platform=linux
+RUN mvn dependency:go-offline -B
 COPY .env.example .env
 RUN apt-get update && apt-get install -y netcat-traditional inotify-tools && rm -rf /var/lib/apt/lists/*
 COPY wait-for-it.sh .
