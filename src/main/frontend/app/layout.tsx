@@ -18,12 +18,13 @@ import {
     UsersIcon,
     ChatBubbleBottomCenterIcon
 } from '@heroicons/react/24/outline'
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import {Link, Outlet, useNavigate} from "react-router";
 import AppLogoIcon from "~/components/app-logo-icon";
 import {useAppDispatch, useAppSelector} from "~/base/hooks";
 import {clearAuth, setDoctor} from "~/features/authentication/authenticationApiSlice";
 import {useGetDoctorAttributesQuery} from "~/features/doctor/doctorApiSlice";
+import GlobalNotifications from "~/components/notification";
 
 const userNavigation = [
     { name: 'Your profile', href: '/profile' },
@@ -242,6 +243,7 @@ export default function Layout() {
 
                     <main className="py-10">
                         <div className="px-4 sm:px-6 lg:px-8">
+                            <GlobalNotifications />
                             <PrivateRoute />
                         </div>
                     </main>
