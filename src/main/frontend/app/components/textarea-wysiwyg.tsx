@@ -21,7 +21,7 @@ export default function TextareaWysiwyg({ value, onChange, disabled }: TextareaW
     }, []);
 
     return (
-        <div className="prose">
+        <div className="prose w-full min-w-full">
             <input
                 type="hidden"
                 id="trix"
@@ -30,7 +30,10 @@ export default function TextareaWysiwyg({ value, onChange, disabled }: TextareaW
             { /* @ts-ignore */}
             <trix-editor
                 disabled={disabled}
-                ref={trixEditorRef} input="trix"/>
+                ref={trixEditorRef}
+                className="h-[240px]"
+                input="trix"
+            />
         </div>
     );
 }

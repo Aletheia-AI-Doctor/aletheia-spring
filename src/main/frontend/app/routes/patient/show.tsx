@@ -8,8 +8,8 @@ import Card from "~/components/Card";
 
 export function meta() {
     return [
-        {title: "Patient VIEW"},
-        {name: "description", content: "Patient VIEW"},
+        {title: "View Patient"},
+        {name: "description", content: "View Patient"},
     ];
 }
 

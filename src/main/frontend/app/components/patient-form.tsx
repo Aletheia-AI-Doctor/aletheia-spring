@@ -3,6 +3,8 @@ import {type Patient, useAddPatientMutation} from "~/features/patient/patientApi
 import Input from "~/components/input";
 import Select from "~/components/select";
 import Button from "~/components/button";
+import {useAppDispatch} from "~/base/hooks";
+import {sendSuccessNotification} from "~/features/notifications/notificationSlice";
 
 interface PatientFormProps {
     onClose?: () => void;
@@ -17,6 +19,8 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
         sex: '',
         birthdate: '',
     });
+
+    const dispatch = useAppDispatch();
 
     const handleAddPatient = async (event: FormEvent) => {
         event.preventDefault();
@@ -34,6 +38,8 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
             sex: '',
             birthdate:''
         });
+
+        dispatch(sendSuccessNotification("Patient added successfully!"));
 
         onClose && onClose();
     };

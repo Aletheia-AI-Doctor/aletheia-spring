@@ -1,9 +1,10 @@
 import React, {useCallback, useState} from 'react';
-import { useAppSelector } from "~/base/hooks";
+import {useAppDispatch, useAppSelector} from "~/base/hooks";
 import Button from "~/components/button";
 import TextareaWysiwyg from "~/components/textarea-wysiwyg";
 import {type Post, useCreatePostMutation, useEditPostMutation} from "~/features/community/postsApiSlice";
 import Input from "~/components/input";
+import {sendSuccessNotification} from "~/features/notifications/notificationSlice";
 
 interface CreatePostProps {
     parentId?: number;
@@ -18,6 +19,7 @@ export default function CreatePost({parentId, onSubmit}: CreatePostProps) {
     const [createPost, {isLoading}] = useCreatePostMutation();
 
     const isReply = parentId != undefined;
+    const dispatch = useAppDispatch();
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,6 +42,7 @@ export default function CreatePost({parentId, onSubmit}: CreatePostProps) {
         if(isReply) {
             setShow(false);
         }
+        dispatch(sendSuccessNotification("Posted successfully!"));
 
         onSubmit && onSubmit(response.data);
     }, [value]);

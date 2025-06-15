@@ -7,9 +7,17 @@ interface ModalProps {
     children?: React.ReactNode;
     title?: string;
     footer?: React.ReactNode;
+    size?: "sm" | "md" | "lg" | "xl";
 }
 
-export default function Modal({open, onClose, children, title, footer} : ModalProps) {
+export default function Modal({open, onClose, children, title, footer, size} : ModalProps) {
+    const sizeClass = {
+        sm: "sm:max-w-lg",
+        md: "sm:max-w-2xl",
+        lg: "sm:max-w-3xl",
+        xl: "sm:max-w-4xl",
+    }[size ?? "sm"];
+
     return (
         <Dialog open={open} onClose={onClose} className="relative z-10">
             <DialogBackdrop
@@ -21,7 +29,7 @@ export default function Modal({open, onClose, children, title, footer} : ModalPr
                 <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <DialogPanel
                         transition
-                        className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+                        className={"relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:p-6 data-closed:sm:translate-y-0 data-closed:sm:scale-95 " + sizeClass}
                     >
                         <div>
                             <div className="mt-3 sm:mt-5">

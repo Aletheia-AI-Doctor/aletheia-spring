@@ -36,15 +36,14 @@ export default function Doxa() {
     return (
         <div>
             <Title>Doxa</Title>
-            <p>Welcome to the Doxa community!</p>
 
-            <Button onClick={() => setOpen(true)} className="mt-4 mb-4" width="w-auto">
+            <Button className="mt-6" onClick={() => setOpen(true)} width="w-auto">
                 Ask Question
             </Button>
-            <Modal open={open} onClose={() => setOpen(false)} title="Ask Question">
+            <Modal size="lg" open={open} onClose={() => setOpen(false)} title="Ask Question">
                 <CreatePost onSubmit={handelPostCreate} />
             </Modal>
-            <div className="grid grid-cols-12 w-full mt-8 gap-8 max-w-3xl mx-auto">
+            <div className="grid grid-cols-12 w-full mt-4 gap-8">
                 <InfiniteScrollList
                     hook={useGetPostsQuery}
                     refresh={refresh}
