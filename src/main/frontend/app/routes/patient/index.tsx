@@ -34,21 +34,20 @@ export default function PatientPage() {
         <div>
             <Title>Patients</Title>
 
-            <div className="flex justify-between items-center my-6">
-                <Button
-                    width="w-auto"
-                    onClick={() => setShowAddForm(true)}
-                >
-                    Add patient
-                </Button>
-            </div>
+            <Button
+                className="mt-6"
+                width="w-auto"
+                onClick={() => setShowAddForm(true)}
+            >
+                Add patient
+            </Button>
             
 
             <Modal open={showAddForm} onClose={() => setShowAddForm(false)}>
                 <PatientForm onClose={() => setShowAddForm(false)}/>
             </Modal>
 
-            <Card>
+            <Card className="mt-4">
                 <If
                     replacement={<Loading message="Loading scans..."/>}
                     condition={!isLoading && pagination !== undefined}>

@@ -1,38 +1,3 @@
 @import "tailwindcss";
 
 @plugin "@tailwindcss/typography";
-
-
-.post-editor {
-    border: 1px solid #e1e1e1;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.custom-toolbar {
-    padding: 10px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e1e1e1;
-    display: flex;
-    gap: 8px;
-}
-
-.toolbar-button {
-    background: white;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-}
-
-.toolbar-button:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
-}
-
-.toolbar-button:active {
-    transform: translateY(1px);
-}

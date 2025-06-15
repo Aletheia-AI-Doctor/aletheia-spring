@@ -4,6 +4,7 @@ import Input from "~/components/input";
 import Button from "~/components/button";
 import {useAppDispatch, useAppSelector} from "~/base/hooks";
 import {setDoctor} from "~/features/authentication/authenticationApiSlice";
+import {sendSuccessNotification} from "~/features/notifications/notificationSlice";
 
 
 export default function EditProfile({onCancel} : {onCancel: () => void}) {
@@ -51,7 +52,7 @@ export default function EditProfile({onCancel} : {onCancel: () => void}) {
             return;
         }
 
-        alert("Profile updated successfully!");
+        dispatch(sendSuccessNotification("Profile updated successfully!"))
 
         onCancel();
 

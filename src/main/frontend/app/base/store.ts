@@ -12,6 +12,7 @@ import {postsApiSlice} from "~/features/community/postsApiSlice";
 import {diagnosisApiSlice} from "~/features/diagnosis/diagnosisApiSlice";
 import { errorMiddleware } from "~/features/errors/globalErrorMiddleware";
 import errorsReducer from "~/features/errors/errorSlice";
+import notificationReducer from "~/features/notifications/notificationSlice";
 
 const rootReducer = combineSlices(
     scansApiSlice,
@@ -27,7 +28,11 @@ const rootReducer = combineSlices(
     {
         reducerPath: 'globalErrors',
         reducer: errorsReducer,
-    }
+    },
+    {
+        reducerPath: 'notifications',
+        reducer: notificationReducer,
+    },
 )
 export type RootState = ReturnType<typeof rootReducer>
 

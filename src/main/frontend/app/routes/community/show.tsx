@@ -5,11 +5,12 @@ import Loading from "~/components/Loading";
 import CreatePost from "~/components/create-post";
 import Title from "~/components/title";
 import DoctorMedia from "~/components/doctor-media";
-import {useAppSelector} from "~/base/hooks";
+import {useAppDispatch, useAppSelector} from "~/base/hooks";
 import {useState} from "react";
 import Button from "~/components/button";
 import TextareaWysiwyg from "~/components/textarea-wysiwyg";
 import Votes from "~/components/votes";
+import {sendSuccessNotification} from "~/features/notifications/notificationSlice";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -24,6 +25,7 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
     const [updatePost, {isLoading}] = useEditPostMutation();
     const [content, setContent] = useState(post.body);
 
+    const dispatch = useAppDispatch();
     async function handleSubmit() {
         const response = await updatePost({
             id: post.id,
@@ -35,6 +37,8 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
             console.error(response.error);
             return;
         }
+
+        dispatch(sendSuccessNotification("Post saved successfully!"));
 
         setEditing(false);
         refetch();
