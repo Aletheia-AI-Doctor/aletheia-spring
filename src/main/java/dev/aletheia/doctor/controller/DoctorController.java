@@ -2,12 +2,10 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
-import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
 import dev.aletheia.doctor.emailservice.AleithiaEmailAuthentication;
 import dev.aletheia.doctor.enums.DoctorStates;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DigitalSignService;
-import dev.aletheia.doctor.services.ActivityService;
 import dev.aletheia.doctor.services.DoctorService;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +17,6 @@ import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
 
 
 @RestController

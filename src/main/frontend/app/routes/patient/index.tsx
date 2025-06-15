@@ -24,7 +24,6 @@ export default function PatientPage() {
     const {
         data: pagination,
         isLoading,
-        isError,
     } = useGetPatientsQuery({
         page: parseInt(params.get('page') ?? '1'),
     });

@@ -5,7 +5,7 @@ export default function AppLogoIcon(props: DetailedHTMLProps<ImgHTMLAttributes<H
     return (
         <img
             {...props}
-            className={"rounded-full " + props.className}
+            className={"rounded-md " + props.className}
             alt="Alethia's Logo2"
             src={logo}
         />

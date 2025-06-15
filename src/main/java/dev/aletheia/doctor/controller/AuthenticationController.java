@@ -10,6 +10,7 @@ import dev.aletheia.doctor.services.DigitalSignService;
 import dev.aletheia.doctor.services.DoctorService;
 import dev.aletheia.doctor.services.JWTService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +68,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/api/register")
-    public ResponseEntity<Object> create(@RequestBody DoctorRegistrationDTO doctorDTO) {
+    public ResponseEntity<Object> create(@RequestBody @Valid DoctorRegistrationDTO doctorDTO) {
         Doctor doctor = doctorService.createDoctor(doctorDTO);
         String tokenConfirm;
         String tokenReject;

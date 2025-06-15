@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
 import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import java.util.List;
 
 
@@ -57,16 +59,6 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
     }
 
     public Doctor createDoctor(DoctorRegistrationDTO doctorDTO) {
-
-        if (doctorRepository.existsByEmail(doctorDTO.getEmail())) {
-            throw new IllegalArgumentException("Email is already in use.");
-        }
-    
-        // Check for existing username
-        if (doctorRepository.existsByUsername(doctorDTO.getUsername())) {
-            throw new IllegalArgumentException("Username is already in use.");
-        }
-
         Doctor doctor = new Doctor();
 
         doctor.setName(doctorDTO.getName());

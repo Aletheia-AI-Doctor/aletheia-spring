@@ -3,16 +3,17 @@ import Input from "~/components/input";
 import Button from "~/components/button";
 import { DoctorSpeciality } from '~/features/doctor/doctorSpeciality';
 import {useGetHospitalsQuery} from "~/features/hospital/hospitalApiSlice";
-import {useConfirmEmailMutation} from "~/features/authentication/authenticationApiSlice";
 import {useRegisterMutation} from "~/features/authentication/authenticationApiSlice";
 import React, {useEffect} from "react";
 import Logo from "~/components/app-logo-2";
-import {useNavigate, useNavigation} from "react-router";
+import {useNavigate} from "react-router";
 import Select from "~/components/select";
+import {useAppDispatch} from "~/base/hooks";
+import {addError, clearAllErrors} from "~/features/errors/errorSlice";
 
 export function meta({}: Route.MetaArgs) {
     return [
-        {title: "registration"},
+        {title: "Create Account - Aletheia"},
     ];
 }
 
@@ -21,21 +22,22 @@ export default function registration() {
     const [formData, setFormData] = React.useState({
         name: "",
         email: "",
+        username: "",
         password: "",
         passwordConfirmation: "",
-        speciality: "" as DoctorSpeciality, // Use the enum type
-        licence: "",
+        speciality: "" as DoctorSpeciality,
+        licenseNumber: "",
         hospital: "",
     });
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-    const [confirmEmail] = useConfirmEmailMutation();
-    // API Queries
-    const [register, { isLoading, isSuccess, isError, error, data }] = useRegisterMutation();
+
+    const [register, { isLoading, isSuccess, error, data }] = useRegisterMutation();
     const {
         data: hospitals = [],
         isLoading: hospitalsLoading,
         isError: hospitalsError,
     } = useGetHospitalsQuery();
+
+    const dispatch = useAppDispatch();
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -48,17 +50,20 @@ export default function registration() {
         e.preventDefault();
 
         if (formData.password !== formData.passwordConfirmation) {
-            setErrorMessage("Passwords don't match");
+            dispatch(addError({
+                key: "passwordConfirmation",
+                message: "Passwords do not match."
+            }));
             return;
         }
 
         register({
             name: formData.name,
             email: formData.email,
-            username: formData.email.split('@')[0],
+            username: formData.username,
             password: formData.password,
             speciality: formData.speciality,
-            licenseNumber: formData.licence,
+            licenseNumber: formData.licenseNumber,
             hospitalId: Number(formData.hospital)
         });
     }
@@ -68,26 +73,19 @@ export default function registration() {
     useEffect(() => {
         if (isSuccess && data) {
 
-            setErrorMessage(null);
+            dispatch(clearAllErrors());
 
             navigation("/login", {replace: true})
         }
-        if (isError) {
-            setErrorMessage(
-                error && 'data' in error
-                    ? (error.data as { message?: string })?.message || "Registration failed"
-                    : "Registration failed"
-            );
-        }
-    }, [isSuccess, isError, data, error]);
+    }, [isSuccess, data, error]);
     const specialtyOptions = Object.values(DoctorSpeciality);
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                    <Logo className="mx-auto h-10 w-auto" />
+                    <Logo className="mx-auto h-20 w-auto" />
                     <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-                        create your account
+                        Create Your Account
                     </h2>
                 </div>
 
@@ -100,6 +98,15 @@ export default function registration() {
                                 required
                                 label="Full Name"
                                 value={formData.name}
+                                onChange={handleChange}
+                            />
+                            <Input
+                                id="username"
+                                name="username"
+                                autoComplete="off"
+                                required
+                                label="Username"
+                                value={formData.username}
                                 onChange={handleChange}
                             />
                             <Input
@@ -146,11 +153,11 @@ export default function registration() {
                                 />
                             </div>
                             <Input
-                                id="licence"
-                                name="licence"
+                                id="licenseNumber"
+                                name="licenseNumber"
                                 required
                                 label="Medical License Number"
-                                value={formData.licence}
+                                value={formData.licenseNumber}
                                 onChange={handleChange}
                             />
 
@@ -179,8 +186,6 @@ export default function registration() {
                                     {isLoading ? "Loading..." : "Register"}
                                 </Button>
                             </div>
-
-                            {errorMessage && <div className="text-red-600 text-sm/6">{errorMessage}</div>}
                         </form>
                     </div>
                 </div>

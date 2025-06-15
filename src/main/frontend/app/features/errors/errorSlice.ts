@@ -12,6 +12,13 @@ export const errorsSlice = createSlice({
             delete state[action.payload];
         },
         clearAllErrors: (state) => ({}),
+        addError: (state, action: PayloadAction<{ key: string; message: string }>) => {
+            const { key, message } = action.payload;
+            if (!state[key]) {
+                state[key] = [];
+            }
+            state[key].push(message);
+        },
         setErrors: (state, action: PayloadAction<ErrorsState>) => {
             const errors = action.payload
             Object.keys(state).forEach(key => {
@@ -25,6 +32,6 @@ export const errorsSlice = createSlice({
     },
 })
 
-export const { clearError, clearAllErrors, setErrors } = errorsSlice.actions
+export const { clearError, clearAllErrors, addError, setErrors } = errorsSlice.actions
 
 export default errorsSlice.reducer
