@@ -61,6 +61,9 @@ public class Http {
         };
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+                .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+                .writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+                .callTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
                 .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS);
         try {
             SSLContext sslContext = SSLContext.getInstance("SSL");
