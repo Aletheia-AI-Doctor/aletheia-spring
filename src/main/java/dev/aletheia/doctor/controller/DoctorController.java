@@ -8,14 +8,18 @@ import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DigitalSignService;
 import dev.aletheia.doctor.services.DoctorService;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.Optional;
 
 
@@ -26,14 +30,16 @@ public class DoctorController {
     private final DoctorService doctorService;
     private final DigitalSignService digitalSignService;
     private final AleithiaEmailAuthentication emailService;
+    private final Validator validator;
 
     @Value("${spring.application.url}")
     private String appUrl;
 
-    public DoctorController(DoctorService doctorService, DigitalSignService digitalSignService, AleithiaEmailAuthentication emailService) {
+    public DoctorController(DoctorService doctorService, DigitalSignService digitalSignService, AleithiaEmailAuthentication emailService, Validator validator) {
         this.doctorService = doctorService;
         this.digitalSignService = digitalSignService;
         this.emailService = emailService;
+        this.validator = validator;
     }
 
     @GetMapping("/currentUser")
@@ -95,37 +101,14 @@ public class DoctorController {
     @PutMapping("/update")
     public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
         Doctor doctor = doctorService.getCurrentDoctor();
+        dto.setId(doctor.getId());
 
-
-        if (dto.getEmail() != null && !dto.getEmail().equals(doctor.getEmail())) {
-            if (doctorService.isEmailTaken(dto.getEmail(), doctor.getId())) {
-                return ResponseEntity.badRequest().body("Email is already taken.");
-            }
-            doctor.setEmail(dto.getEmail());
+        Set<ConstraintViolation<DoctorUpdateDto>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(null, violations);
         }
 
 
-        if (dto.getUsername() != null && !dto.getUsername().equals(doctor.getUsername())) {
-            if (doctorService.isUsernameTaken(dto.getUsername(), doctor.getId())) {
-                return ResponseEntity.badRequest().body("Username is already taken.");
-            }
-            doctor.setUsername(dto.getUsername());
-        }
-
-        if (dto.getName() != null) {
-            doctor.setName(dto.getName());
-        }
-
-        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-
-            doctor.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
-        }
-
-        if (dto.getBio() != null) {
-            doctor.setBio(dto.getBio());
-        }
-
-        Doctor updated = doctorService.save(doctor);
-        return ResponseEntity.ok(doctorService.convertToDto(updated));
+        return ResponseEntity.ok(doctorService.convertToDto(doctorService.updateDoctor(doctor, dto)));
     }
 }

@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeartPulse, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
+import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 import React from "react";
 import type { Route } from "./+types/profile";
 import {useAppSelector} from "~/base/hooks";
@@ -8,6 +8,7 @@ import Card from "~/components/Card";
 import Modal from "~/components/modal";
 import Button from "~/components/button";
 import EditProfile from "~/components/edit-profile";
+import Title from "~/components/title";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -29,9 +30,7 @@ export default function DrProfilePage(){
             <div className="flex items-center space-x-4 mb-6">
                 <img src={doctor.image} alt={`${doctor.name}'s Picture`} className="rounded-full size-16" />
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Dr. {doctor.name}
-                    </h1>
+                    <Title>{doctor.name}</Title>
                     <p className="text-gray-500">@{doctor.username}</p>
                 </div>
             </div>

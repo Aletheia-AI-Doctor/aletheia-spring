@@ -3,12 +3,11 @@ package dev.aletheia.doctor.services;
 import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
+import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
 import dev.aletheia.doctor.enums.DoctorSpeciality;
 import dev.aletheia.doctor.enums.DoctorStates;
-import dev.aletheia.doctor.models.ActivityLog;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.models.Hospital;
-import dev.aletheia.doctor.repositories.ActivityLogRepository;
 import dev.aletheia.doctor.repositories.DoctorRepository;
 import dev.aletheia.doctor.repositories.HospitalRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,12 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
-import java.util.Optional;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -36,20 +31,6 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
 
     public DoctorRepository getRepository() {
         return doctorRepository;
-    }
-    public boolean emailExists(String email) {
-        return doctorRepository.existsByEmail(email);
-    }
-    
-    public boolean usernameExists(String username) {
-        return doctorRepository.existsByUsername(username);
-    }
-    public boolean isUsernameTaken(String username, Long currentUserId) {
-        return doctorRepository.existsByUsernameAndIdNot(username, currentUserId);
-    }
-    
-    public boolean isEmailTaken(String email, Long currentUserId) {
-        return doctorRepository.existsByEmailAndIdNot(email, currentUserId);
     }
 
     protected DoctorService() {super(Doctor.class, DoctorDto.class);}
@@ -65,7 +46,6 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         doctor.setUsername(doctorDTO.getUsername());
         doctor.setEmail(doctorDTO.getEmail());
         doctor.setPassword(doctorDTO.getPassword());
-
     
         doctor.setStatus(DoctorStates.PENDING);
         doctor.setSpeciality(DoctorSpeciality.valueOf(doctorDTO.getSpeciality()));
@@ -77,24 +57,46 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
         return save(doctor);
     }
 
-    public boolean confirmDoctor(Long doctorId) {
+    public Doctor updateDoctor(Doctor doctor, DoctorUpdateDto dto) {
+        dto.setId(doctor.getId());
+
+        if (dto.getEmail() != null) {
+            doctor.setEmail(dto.getEmail());
+        }
+
+        if (dto.getUsername() != null) {
+            doctor.setUsername(dto.getUsername());
+        }
+
+        if (dto.getName() != null) {
+            doctor.setName(dto.getName());
+        }
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            doctor.setPassword(dto.getPassword());
+        }
+
+        if (dto.getBio() != null) {
+            doctor.setBio(dto.getBio());
+        }
+
+        return save(doctor);
+    }
+
+    public void confirmDoctor(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid confirmation token"));
 
         doctor.setStatus(DoctorStates.CONFIRMED);
         save(doctor);
-
-        return true;
     }
 
-    public boolean rejectDoctor(Long doctorId) {
+    public void rejectDoctor(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid confirmation token"));
 
         doctor.setStatus(DoctorStates.REJECTED);
         save(doctor);
-
-        return true;
     }
 
     public Doctor getCurrentDoctor() {

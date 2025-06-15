@@ -14,7 +14,8 @@ export default function EditProfile({onCancel} : {onCancel: () => void}) {
         name: "",
         email: "",
         password: "",
-        bio:""
+        bio: "",
+        username: ""
     });
 
     useEffect(() => {
@@ -24,6 +25,7 @@ export default function EditProfile({onCancel} : {onCancel: () => void}) {
                 email: data.email || "",
                 password: "",
                 bio: data.bio || "",
+                username: data.username || ""
             });
         }
     }, [data]);
@@ -33,34 +35,31 @@ export default function EditProfile({onCancel} : {onCancel: () => void}) {
         e.preventDefault();
     
         const updates: any = {
-            name: formData.name, // always send name
-            email: formData.email, // always send email
-            bio: formData.bio, // always send bio
+            name: formData.name,
+            email: formData.email,
+            username: formData.username,
+            bio: formData.bio,
         };
         
         if (formData.password) {
             updates.password = formData.password;
         }
     
-        try {
-            const response = await updateDoctorProfile(updates);
-            if(response.error) {
-                throw new Error(response.error.data.message || "Failed to update profile");
-            }
 
-            alert("Profile updated successfully!");
-            console.log('Payload',formData)
-            onCancel();
-            dispatch(setDoctor(response.data));
-        } catch (err) {
-            console.error("Failed to update profile", err);
-            alert("An error occurred while updating your profile.");
+        const response = await updateDoctorProfile(updates);
+        if(response.error) {
+            return;
         }
+
+        alert("Profile updated successfully!");
+
+        onCancel();
+
+        dispatch(setDoctor(response.data));
     };
 
     return (
         <div>
-
             <div>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
@@ -68,6 +67,7 @@ export default function EditProfile({onCancel} : {onCancel: () => void}) {
                             id="name"
                             name="name"
                             label="Name"
+                            required
                             value={formData.name}
                             onChange={(e) => setFormData({...formData, name: e.target.value})}
                         />
@@ -75,9 +75,18 @@ export default function EditProfile({onCancel} : {onCancel: () => void}) {
 
                     <div>
                         <Input
+                            id="username"
+                            name="username"
+                            required
+                            label="Username"
+                            value={formData.username}
+                            onChange={(e) => setFormData({...formData, username: e.target.value})}
+                        />
+                        <Input
                             id="email"
                             name="email"
                             type="email"
+                            required
                             label="Email"
                             value={formData.email}
                             onChange={(e) => setFormData({...formData, email: e.target.value})}
