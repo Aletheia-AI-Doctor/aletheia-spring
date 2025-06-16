@@ -17,7 +17,7 @@ RUN npm run build
 FROM nginx:1.25-alpine AS production
 COPY --from=build-env /app/build/client /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 3000
+EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]
 
 FROM development-dependencies-env AS development
