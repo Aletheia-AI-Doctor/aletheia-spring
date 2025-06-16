@@ -31,7 +31,7 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
             return;
         }
 
-        onSuccess && onSuccess(response.data);
+        onSuccess && onSuccess(response.data.patient);
 
         setNewPatient({
             name: '',

@@ -25,6 +25,8 @@ import Card from "~/components/Card";
 import PatientDetailsCard from "~/components/patient-details-card";
 import {ROOT_URL} from "~/base/consts";
 import Title from "~/components/title";
+import {useAppDispatch} from "~/base/hooks";
+import {sendErrorNotification, sendSuccessNotification} from "~/features/notifications/notificationSlice";
 
 
 // Register the plugins
@@ -55,8 +57,8 @@ export default function DiagnosisPage() {
 
     const [uploadScan, {isLoading: isDiagnosing}] = useUploadScanMutation();
     const [saveScan, {isLoading: isSavingScan}] = useSaveScanMutation();
-    const [saveMessage, setSaveMessage] = useState<string | null>(null);
     const [open, setOpen] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
 
     async function handleSavePatient(patient: Patient) {
         const response = await saveScan({
@@ -69,11 +71,11 @@ export default function DiagnosisPage() {
 
         if(response.error) {
             // @ts-ignore
-            setSaveMessage(response.error.message ?? "Failed to save scan");
+            dispatch(sendErrorNotification(response.error.message ?? "Failed to save scan"));
             return;
         }
 
-        setSaveMessage("Scan saved successfully");
+        dispatch(sendSuccessNotification("Scan saved successfully"));
         handleSave();
     }
 
@@ -202,11 +204,6 @@ export default function DiagnosisPage() {
                                                 )}
                                         </div>
                                     </If>
-                                    {saveMessage && (
-                                        <div className="mt-4 p-4 bg-green-50 rounded-md">
-                                            <p className="text-green-800">{saveMessage}</p>
-                                        </div>
-                                    )}
 
                                     <Modal onClose={() => setOpen(false)} open={open}>
                                         <PatientForm onSuccess={handleSavePatient} onClose={() => setOpen(false)}/>
