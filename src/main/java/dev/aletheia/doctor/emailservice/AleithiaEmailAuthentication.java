@@ -2,9 +2,9 @@ package dev.aletheia.doctor.emailservice;
 
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +17,7 @@ public class AleithiaEmailAuthentication {
         this.mailSender = mailSender;
     }
 
+    @Async
     public void sendConfirmationRequest(String hrEmail, String doctorName, String doctorSpeciality,
                                         String doctorLicenceNumber, String confirmationLink, String rejectionLink) {
 
@@ -44,13 +45,13 @@ public class AleithiaEmailAuthentication {
                     "</body></html>";
 
             helper.setText(htmlContent, true);
-            System.out.println(confirmationLink);
             mailSender.send(message);
         } catch (Exception e) {
             throw new EmailSendingException("Failed to send confirmation email", e);
         }
     }
 
+    @Async
     public void sendConfirmationDoctor(String doctorEmail, String doctorName,
                                         String hospitalName, String loginLink) {
         try {
@@ -77,6 +78,8 @@ public class AleithiaEmailAuthentication {
             throw new EmailSendingException("Failed to send confirmation email", e);
         }
     }
+
+    @Async
     public void sendRejectionDoctor(String doctorEmail, String doctorName,
                                        String hospitalName, String appealLink) {
         try {
