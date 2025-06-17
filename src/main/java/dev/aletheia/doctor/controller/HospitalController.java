@@ -34,7 +34,7 @@ public class HospitalController {
 
     }
 
-    @GetMapping("/hospitals")
+    @GetMapping
     public ResponseEntity<Object> getHospitals(){
         List<Hospital> hospitals = hospitalService.getAll();
         return ResponseEntity.ok(hospitals.stream().map(hospitalService::convertToDto).toList());
