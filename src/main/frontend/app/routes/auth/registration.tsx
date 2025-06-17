@@ -10,6 +10,7 @@ import {useNavigate} from "react-router";
 import Select from "~/components/select";
 import {useAppDispatch} from "~/base/hooks";
 import {addError, clearAllErrors} from "~/features/errors/errorSlice";
+import {sendSuccessNotification} from "~/features/notifications/notificationSlice";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -72,7 +73,7 @@ export default function registration() {
     const navigation = useNavigate();
     useEffect(() => {
         if (isSuccess && data) {
-
+            dispatch(sendSuccessNotification("Registration successful! An email has been sent to verify your account."));
             dispatch(clearAllErrors());
 
             navigation("/login", {replace: true})

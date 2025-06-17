@@ -1,20 +1,36 @@
 package dev.aletheia.doctor.emailservice;
 
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.io.UnsupportedEncodingException;
 
 @Service
 public class EmailSender {
 
     private final JavaMailSender mailSender;
 
+    @Value("${spring.mail.from_address}")
+    private String fromAddress;
+    @Value("${spring.mail.from_name}")
+    private String fromName;
+
+    private InternetAddress fromInternetAddress;
+
     @Autowired
     public EmailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
+        try {
+            this.fromInternetAddress = new InternetAddress(fromAddress, fromName);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Async
@@ -24,6 +40,9 @@ public class EmailSender {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            message.setFrom(this.fromInternetAddress);
+            helper.setFrom(this.fromInternetAddress);
 
             helper.setTo(hrEmail);
             helper.setSubject("Doctor Registration Confirmation: " + doctorName);
@@ -58,6 +77,8 @@ public class EmailSender {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            message.setFrom(this.fromInternetAddress);
+            helper.setFrom(this.fromInternetAddress);
 
             helper.setTo(doctorEmail);
             helper.setSubject("Doctor Registration Confirmation: " + doctorName);
@@ -87,6 +108,8 @@ public class EmailSender {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            message.setFrom(this.fromInternetAddress);
+            helper.setFrom(this.fromInternetAddress);
 
             helper.setTo(doctorEmail);
             helper.setSubject("Doctor Registration rejected: " + doctorName);
