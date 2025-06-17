@@ -3,6 +3,7 @@ package dev.aletheia.doctor.controller;
 import dev.aletheia.doctor.dtos.hospitals.HospitalDto;
 import dev.aletheia.doctor.models.Hospital;
 import dev.aletheia.doctor.services.HospitalService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class HospitalController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> create(@RequestBody HospitalDto hospitalDto){
+    public ResponseEntity<Object> create(@RequestBody @Valid HospitalDto hospitalDto){
         return ResponseEntity.ok(
           hospitalService.createHospital(hospitalDto)
         );

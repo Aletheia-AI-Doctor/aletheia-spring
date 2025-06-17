@@ -6,6 +6,7 @@ import { useRegisterMutation } from "~/features/hospital/hospitalApiSlice";
 import React, { useEffect } from "react";
 import { useAppDispatch } from "~/base/hooks";
 import Logo from "~/components/app-logo-icon";
+import {sendSuccessNotification} from "~/features/notifications/notificationSlice";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -18,26 +19,18 @@ export default function HospitalSubscription() {
     const [register, { isLoading, isSuccess, isError, error, data }] = useRegisterMutation();
     const [name, setName] = React.useState("");
     const [hrEmail, setHrEmail] = React.useState("");
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     const dispatch = useAppDispatch();
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        register({ name, hr_email: hrEmail });
+        register({ name, hrEmail });
     };
 
     useEffect(() => {
         if (isSuccess && data) {
-            setErrorMessage(null);
-            navigate("/", { replace: true });
-        }
+            dispatch(sendSuccessNotification("Hospital registered successfully!"));
 
-        if (isError) {
-            if ('data' in error) {
-                setErrorMessage((error.data as { message?: string })?.message || "Registration failed");
-            } else {
-                setErrorMessage("Registration failed");
-            }
+            navigate("/", { replace: true });
         }
     }, [isSuccess, isError, data, error, dispatch, navigate]);
 
@@ -46,10 +39,6 @@ export default function HospitalSubscription() {
             <Logo className="mx-auto mb-8" />
             <form onSubmit={submit} className="max-w-md mx-auto">
                 <h1 className="text-2xl font-bold mb-6">Hospital Registration</h1>
-
-                {errorMessage && (
-                    <div className="text-red-500 mb-4">{errorMessage}</div>
-                )}
 
                 <Input
                     id="name"

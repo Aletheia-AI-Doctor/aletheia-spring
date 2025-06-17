@@ -8,12 +8,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AleithiaEmailAuthentication {
+public class EmailSender {
 
     private final JavaMailSender mailSender;
 
     @Autowired
-    public AleithiaEmailAuthentication(JavaMailSender mailSender) {
+    public EmailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
@@ -47,6 +47,7 @@ public class AleithiaEmailAuthentication {
             helper.setText(htmlContent, true);
             mailSender.send(message);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new EmailSendingException("Failed to send confirmation email", e);
         }
     }
@@ -75,6 +76,7 @@ public class AleithiaEmailAuthentication {
             helper.setText(htmlContent, true);
             mailSender.send(message);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new EmailSendingException("Failed to send confirmation email", e);
         }
     }
@@ -103,6 +105,7 @@ public class AleithiaEmailAuthentication {
             helper.setText(htmlContent, true);
             mailSender.send(message);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new EmailSendingException("Failed to send confirmation email", e);
         }
     }
