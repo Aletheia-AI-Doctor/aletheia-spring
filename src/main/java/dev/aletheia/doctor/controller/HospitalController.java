@@ -18,7 +18,10 @@ public class HospitalController {
         this.hospitalService = hospitalService;
     }
     @GetMapping
-    public ResponseEntity<Object> index(){return ResponseEntity.ok(hospitalService.find(1L));}
+    public ResponseEntity<Object> index() {
+        List<Hospital> hospitals = hospitalService.getAll();
+        return ResponseEntity.ok(hospitals.stream().map(hospitalService::convertToDto).toList());
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Object> create(@RequestBody HospitalDto hospitalDto){
@@ -32,11 +35,5 @@ public class HospitalController {
         HospitalDto hospital = hospitalService.convertToDto(hospitalService.findOrFail(hospitalId));
         return ResponseEntity.ok(hospital);
 
-    }
-
-    @GetMapping
-    public ResponseEntity<Object> getHospitals(){
-        List<Hospital> hospitals = hospitalService.getAll();
-        return ResponseEntity.ok(hospitals.stream().map(hospitalService::convertToDto).toList());
     }
 }
