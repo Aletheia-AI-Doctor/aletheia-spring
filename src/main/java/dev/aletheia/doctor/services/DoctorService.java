@@ -4,6 +4,7 @@ import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
 import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
+import dev.aletheia.doctor.emailservice.EmailQueueManager;
 import dev.aletheia.doctor.enums.DoctorSpeciality;
 import dev.aletheia.doctor.enums.DoctorStates;
 import dev.aletheia.doctor.models.Doctor;
@@ -28,6 +29,8 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
 
     @Autowired
     private HospitalRepository hospitalRepository;
+    @Autowired
+    private EmailQueueManager emailQueueManager;
 
     public DoctorRepository getRepository() {
         return doctorRepository;
@@ -54,7 +57,11 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
                 .orElseThrow(() -> new RuntimeException("Hospital not found"));
         doctor.setHospital(hospital);
 
-        return save(doctor);
+        doctor = save(doctor);
+
+        emailQueueManager.queueConfirmationRequest(doctor.getId());
+
+        return doctor;
     }
 
     public Doctor updateDoctor(Doctor doctor, DoctorUpdateDto dto) {
@@ -101,9 +108,7 @@ public class DoctorService extends CRUDService<Doctor, DoctorDto> {
 
     public Doctor getCurrentDoctor() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Doctor doctor = (Doctor) auth.getPrincipal();
-
-        return findOrFail(doctor.getId());
+        return (Doctor) auth.getPrincipal();
     }
 
     public Optional<DoctorPatientsDto> countDoctorPatients(Long doctorId) {
