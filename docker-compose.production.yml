@@ -57,8 +57,6 @@ services:
       dockerfile: Dockerfile
       target: production
     container_name: python_models
-    ports:
-      - "4000:4000"
     networks:
       - app-network
     environment:
@@ -83,8 +81,6 @@ services:
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
     env_file:
       - .env
-    ports:
-      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
