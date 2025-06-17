@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface EmailQueueRepository extends JpaRepository<EmailQueue, Long> {
 
+    @Query("SELECT e FROM EmailQueue e WHERE e.status = :status AND (e.lastAttempt < :threshold OR e.lastAttempt IS NULL)")
     List<EmailQueue> findByStatusAndLastAttemptBeforeOrLastAttemptIsNull(
             EmailQueue.Status status,
             LocalDateTime threshold
