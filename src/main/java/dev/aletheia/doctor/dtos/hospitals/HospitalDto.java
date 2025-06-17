@@ -7,5 +7,5 @@ import lombok.Setter;
 public class HospitalDto {
     private long id;
     private String name;
-    private String hr_email;
+    private String hrEmail;
 }

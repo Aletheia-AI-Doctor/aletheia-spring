@@ -5,12 +5,12 @@ import { defaultHeaders } from "~/base/helpers";
 interface Hospital {
     id: number;
     name: string;
-    hr_email: string;
+    hrEmail: string;
 }
 
 interface RegisterHospitalRequest {
     name: string;
-    hr_email: string;
+    hrEmail: string;
 }
 
 export const hospitalApiSlice = createApi({

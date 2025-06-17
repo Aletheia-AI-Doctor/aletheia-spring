@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/hospitals")
-
 public class HospitalController {
     private final HospitalService hospitalService;
 
@@ -28,12 +27,5 @@ public class HospitalController {
         return ResponseEntity.ok(
           hospitalService.createHospital(hospitalDto)
         );
-    }
-
-    @GetMapping("/{hr_emailOrName}/show")
-    public ResponseEntity<Object> show(@PathVariable Long hospitalId){
-        HospitalDto hospital = hospitalService.convertToDto(hospitalService.findOrFail(hospitalId));
-        return ResponseEntity.ok(hospital);
-
     }
 }
