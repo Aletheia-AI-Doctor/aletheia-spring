@@ -20,7 +20,7 @@ public class Hospital extends BaseModel {
     @Column(name = "hr_email", nullable = false, unique = true)
     // @Unique(table = "doctors", value = "email", message = "Email must be unique")
     @Email(message = "Email should be valid")
-    private String hr_email;
+    private String hrEmail;
 
     @OneToMany(mappedBy = "hospital", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Doctor> doctors;
@@ -31,7 +31,7 @@ public class Hospital extends BaseModel {
         return "Hospital{" +
                 "id='" + getId() + '\'' +
                 " name='" + name + '\'' +
-                ", hr_email='" + hr_email + '\'' +
+                ", hr_email='" + hrEmail + '\'' +
                 '}';
     }
 }
