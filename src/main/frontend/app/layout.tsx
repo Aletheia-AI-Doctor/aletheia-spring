@@ -8,6 +8,10 @@ import {
     MenuItem,
     MenuItems,
     TransitionChild,
+     Popover,
+     PopoverButton,
+     PopoverPanel
+
 } from '@headlessui/react'
 import {
     Bars3Icon,
@@ -25,6 +29,7 @@ import {useAppDispatch, useAppSelector} from "~/base/hooks";
 import {clearAuth, setDoctor} from "~/features/authentication/authenticationApiSlice";
 import {useGetDoctorAttributesQuery} from "~/features/doctor/doctorApiSlice";
 import GlobalNotifications from "~/components/notification";
+import {useGetNotificationsQuery} from "~/features/community/notficationApiSlice";
 
 const userNavigation = [
     { name: 'Your profile', href: '/profile' },
@@ -46,6 +51,7 @@ function PrivateRoute () {
 
     return token ? <Outlet/> : null;
 }
+
 
 export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -83,6 +89,7 @@ export default function Layout() {
             return item;
         }));
     }, [window.location.pathname]);
+    const { data: notifications, isLoading, isError } = useGetNotificationsQuery();
 
     return (
         <>
@@ -188,10 +195,86 @@ export default function Layout() {
                         <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                             <div className="grid flex-1 grid-cols-1" />
                             <div className="flex items-center gap-x-4 lg:gap-x-6">
-                                <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
-                                    <span className="sr-only">View notifications</span>
-                                    <BellIcon aria-hidden="true" className="size-6" />
-                                </button>
+                                <Popover className="relative">
+    <PopoverButton className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 relative">
+        <span className="sr-only">View notifications</span>
+        <BellIcon aria-hidden="true" className="size-6" />
+        {notifications?.replies?.length > 0 && (
+            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-medium text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                {notifications.replies.length}
+            </span>
+        )}
+    </PopoverButton>
+    
+    <PopoverPanel 
+        transition
+        className="absolute right-0 z-10 mt-2.5 w-80 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none data-closed:opacity-0 data-closed:scale-95"
+    >
+        <div className="p-2 max-h-96 overflow-y-auto">
+            {isLoading ? (
+                <div className="text-center text-sm text-gray-500 p-4">
+                    Loading notifications...
+                </div>
+            ) : isError ? (
+                <div className="text-center text-sm text-red-500 p-4">
+                    Failed to load notifications
+                </div>
+            ) : (
+                <>
+                    {/* Votes notification */}
+                    {notifications?.vote && notifications.vote > 0 && (
+                        <div className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
+                            <div className="flex items-start">
+                                <div className="ml-3 flex-1">
+                                    <p className="text-sm font-medium text-gray-900">
+                                        New votes on your posts
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        You received {notifications.vote} new votes
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Replies notifications */}
+                    {notifications?.replies?.length > 0 ? (
+                        notifications.replies.map((reply) => (
+                            <div key={reply.id} className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
+                                <div className="flex items-start">
+                                    <div className="ml-3 flex-1">
+                                        <p className="text-sm font-medium text-gray-900">
+                                            New reply to your post
+                                        </p>
+                                        <p className="text-sm text-gray-500 line-clamp-2">
+                                            {reply.content}
+                                        </p>
+                                        <p className="text-xs text-gray-400 mt-1">
+                                            {new Date(reply.createdAt).toLocaleString()}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center text-sm text-gray-500 p-4">
+                            No new notifications
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+        
+        <div className="border-t border-gray-200 px-4 py-2">
+            <Link
+                to="/notifications"
+                className="block text-center text-sm font-medium text-indigo-600 hover:text-indigo-500"
+            >
+                View all notifications
+            </Link>
+        </div>
+    </PopoverPanel>
+</Popover>
 
                                 {/* Separator */}
                                 <div aria-hidden="true" className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" />

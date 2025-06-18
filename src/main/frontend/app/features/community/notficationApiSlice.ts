@@ -1,27 +1,33 @@
+// notficationApiSlice.ts
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { ROOT_URL } from "~/base/consts";
 import { defaultHeaders } from "~/base/helpers";
-import {type PageRequest, type Pagination, queryParamsFromRequest} from "~/types/pagination";
+import { NotificationDto } from "~/types/notification";
 
-interface notfication{
- id:number;
- votes:number;
- post:string
+import { PostDto } from "~/types/post";
+
+export interface NotificationDto {
+    id: number;
+    userId: number;
+    replies: PostDto[];
+    post: PostDto;
+    vote: number;
+    createdAt: string;
 }
 
-export type { notfication };
-export const notficationApiSlice = createApi({
+export const notificationApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
         prepareHeaders: (headers) => defaultHeaders(headers),
     }),
-    reducerPath: "notficationApi",
-    tagTypes: ["notfication"],
+    reducerPath: "notificationApi",
+    tagTypes: ["Notification"],
     endpoints: (build) => ({
-        getNotfication: build.query<Pagination<notfication>, void>({
-            query: () => `api/notfications/getLastNotification`,
-            providesTags: ['notfication'],
+        getNotifications: build.query<NotificationDto, void>({
+            query: () => `/api/notifications/getLastNotification`,
+            providesTags: ['Notification'],
         }),
     })
 });
-export const { useGetNotficationQuery } = notficationApiSlice;
+
+export const { useGetNotificationsQuery } = notificationApiSlice;
