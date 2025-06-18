@@ -20,8 +20,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM posts p where p.parent IS NULL ORDER BY p.id DESC ")
     Page<Post> findAll(@NotNull Pageable pageable);
 
-    @Query("SELECT p FROM posts p WHERE p.doctor.id =?1 and p.parent IS NULL ORDER BY p.id DESC limit 1")
-    Post findByDoctorId(Long doctorId);
+    @Query("SELECT p FROM posts p WHERE p.doctor.id =?1 and p.parent IS NULL ORDER BY p.id DESC limit 5")
+    List<Post> findByDoctorId(Long doctorId);
 
     @Query("SELECT p FROM posts p WHERE p.parent.id is not NULL and p.parent.doctor.id = ?1 ORDER BY p.id DESC limit 5")
     List<Post> findRepliesByParentId(Long parentId);

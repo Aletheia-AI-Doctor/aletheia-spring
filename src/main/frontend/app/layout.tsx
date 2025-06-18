@@ -226,26 +226,33 @@ export default function Layout() {
 
 <>
     {/* Votes notification */}
-    {notifications && (
-        <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg border-b border-gray-100">
-            <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
-                    </svg>
-                </div>
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">
-                    New Votes Received
-                </p>
+{notifications && notifications.votes && notifications.posts && notifications.votes.length === notifications.posts.length && (
+  <div className="flex flex-col space-y-3 p-3 hover:bg-gray-50 rounded-lg border-b border-gray-100">
+    <p className="text-sm font-medium text-gray-900">
+      New Votes Received
+    </p>
 
-                <p className="text-sm text-gray-500">
-                    You received {notifications.vote} new vote{notifications.vote !== 1 ? 's' : ''} on your posts
-                </p>
-            </div>
+    {notifications.votes.map((voteCount, idx) => (
+      <div key={idx} className="flex items-start space-x-3">
+        <div className="flex-shrink-0">
+          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+            </svg>
+          </div>
         </div>
-    )}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm text-gray-500">
+            <span className="font-semibold">{voteCount}</span> vote{voteCount !== 1 ? 's' : ''} on "<span className="italic">{notifications.posts[idx]?.title || 'Untitled'}"</span>
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
+
+
 
     {/* Replies notifications */}
 
@@ -278,7 +285,7 @@ export default function Layout() {
 
 
     {/* No notifications message */}
-    {notifications && notifications.vote === 0 && (!notifications.replies || notifications.replies.length === 0) && (
+    {notifications && notifications.votes && (!notifications.replies || notifications.replies.length === 0) && (
         <div className="text-center text-sm text-gray-500 p-4">
             No new notifications
         </div>

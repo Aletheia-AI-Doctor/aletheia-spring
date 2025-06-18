@@ -9,6 +9,7 @@ import dev.aletheia.doctor.models.Vote;
 import dev.aletheia.doctor.repositories.PostRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -97,14 +98,22 @@ public class PostService extends CRUDService<Post, PostDto> {
         });
     }
 
-    public Integer getDoctorsVotes() {
-        Doctor doctor = doctorService.getCurrentDoctor();
-        Post posts = postRepository.findByDoctorId(doctor.getId());
-        if (posts == null) {
-            return 0; 
-        }
-        return posts.getVotes() != null ? posts.getVotes() : 0;
-    }
+public List<Post> getRecentPostsByDoctor() {
+    Doctor doctor = doctorService.getCurrentDoctor();
+    return postRepository.findByDoctorId(doctor.getId()); // already limited to 5
+}
+public List<Integer> getVotesForPosts(List<Post> posts) {
+    return posts.stream()
+        .map(post -> voteRepository.sumVotesByPostId(post.getId()).orElse(0))
+        .toList();
+}
+public List<PostDto> convertToDto(List<Post> posts) {
+    return posts.stream()
+        .map(this::convertToDto)
+        .toList();
+}
+
+
 
     public List<PostDto> getLastReplies() {
         Doctor doctor = doctorService.getCurrentDoctor();

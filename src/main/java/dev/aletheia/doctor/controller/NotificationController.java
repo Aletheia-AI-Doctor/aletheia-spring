@@ -26,12 +26,16 @@ public class NotificationController {
     @GetMapping("/getLastNotification")
 public ResponseEntity<NotificationDto> getLastNotification(NotificationDto notificationDto) {
     List<PostDto> replies = postService.getLastReplies();
-    Integer votes = postService.getDoctorsVotes();
+
+    List<Post> recentPosts = postService.getRecentPostsByDoctor();
+    List<Integer> votes = postService.getVotesForPosts(recentPosts);
+    List<PostDto> posts = postService.convertToDto(recentPosts);
 
     notificationDto.setReplies(replies);
-    notificationDto.setVote(votes);
-    System.err.println("NotificationDto: " + notificationDto);
-    return ResponseEntity.ok(notificationDto);
+    notificationDto.setVotes(votes);
+    notificationDto.setPosts(posts);
 
+    return ResponseEntity.ok(notificationDto);
 }
+
 }
