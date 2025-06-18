@@ -35,7 +35,7 @@ public class EmailSender {
             throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        MimeMessageHelper helper = new MimeMessageHelper(message);
 
         helper.setFrom(fromAddress, fromName);
         helper.setTo(hrEmail);
@@ -64,7 +64,7 @@ public class EmailSender {
             throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        MimeMessageHelper helper = new MimeMessageHelper(message);
         helper.setFrom(fromAddress, fromName);
 
         helper.setTo(doctorEmail);
@@ -88,7 +88,7 @@ public class EmailSender {
     public void sendRejectionDoctor(String doctorEmail, String doctorName,
                                     String hospitalName, String appealLink) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        MimeMessageHelper helper = new MimeMessageHelper(message);
         helper.setFrom(fromAddress, fromName);
 
         helper.setTo(doctorEmail);
