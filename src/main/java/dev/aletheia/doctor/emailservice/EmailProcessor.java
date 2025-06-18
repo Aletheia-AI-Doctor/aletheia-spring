@@ -117,7 +117,7 @@ public class EmailProcessor {
 
         if (item.getRetryCount() >= MAX_RETRIES) {
             item.setStatus(EmailQueue.Status.FAILED);
-
+            queueService.markAsFailed(item.getId());
         } else {
             queueService.markForRetry(item.getId());
         }

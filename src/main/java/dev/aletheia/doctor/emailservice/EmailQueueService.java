@@ -45,6 +45,14 @@ public class EmailQueueService {
         repository.incrementRetryCount(id, LocalDateTime.now());
     }
 
+    @Transactional
+    public void markAsFailed(Long id) {
+        repository.findById(id).ifPresent(item -> {
+            item.setStatus(EmailQueue.Status.FAILED);
+            repository.save(item);
+        });
+    }
+
     private long calculateBackoff(int retryCount) {
         if (retryCount <= 0) {
             return 1; // 1 minute for the first retry

@@ -7,10 +7,7 @@ import dev.aletheia.doctor.services.DoctorService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -34,7 +31,7 @@ public class EmailController {
         this.emailQueueManager = emailQueueManager;
     }
 
-    @PostMapping("/appeal/{id}")
+    @GetMapping("/appeal/{id}")
     public ResponseEntity<Object> appeal(@PathVariable Long id, @RequestParam(name = "token") String token) {
         boolean verify = digitalSignService.verifySignature(appUrl + "/api/reject-email/" + id, token);
 
@@ -60,9 +57,9 @@ public class EmailController {
     }
 
 
-    @PostMapping ("/api/confirm-email/{id}")
+    @GetMapping("/api/confirm-email/{id}")
     public ResponseEntity<Void> confirmEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
-        String frontendConfirmUrl = frontendUrl + "/confirm-email/"+id;
+        String frontendConfirmUrl = frontendUrl + "/confirm-email/" + id;
         boolean verify = digitalSignService.verifySignature(appUrl + "/api/confirm-email/" + id, token);
 
         Doctor doctor = doctorService.find(id);
@@ -88,7 +85,7 @@ public class EmailController {
 
 
 
-    @PostMapping ("/api/reject-email/{id}")
+    @GetMapping("/api/reject-email/{id}")
     public ResponseEntity<Void> rejectEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
         String frontendConfirmUrl = frontendUrl + "/confirm-email/" + id;
         boolean verify = digitalSignService.verifySignature(appUrl + "/api/reject-email/" + id, token);
