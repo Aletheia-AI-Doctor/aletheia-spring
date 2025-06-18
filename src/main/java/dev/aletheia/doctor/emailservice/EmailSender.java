@@ -27,7 +27,6 @@ public class EmailSender {
         this.mailSender = mailSender;
     }
 
-    @Async
     public void sendConfirmationRequest(String hrEmail, String doctorName, String doctorSpeciality,
                                         String doctorLicenceNumber,
                                         String confirmationLink,
@@ -58,7 +57,6 @@ public class EmailSender {
         mailSender.send(message);
     }
 
-    @Async
     public void sendConfirmationDoctor(String doctorEmail, String doctorName,
                                        String hospitalName, String loginLink)
             throws MessagingException, UnsupportedEncodingException {
@@ -84,7 +82,6 @@ public class EmailSender {
         mailSender.send(message);
     }
 
-    @Async
     public void sendRejectionDoctor(String doctorEmail, String doctorName,
                                     String hospitalName, String appealLink) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
