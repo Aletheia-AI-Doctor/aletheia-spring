@@ -15,6 +15,10 @@ interface Patient {
 
 export type { Patient };
 
+interface AddPatientResponse {
+    patient: Patient;
+}
+
 export const patientsApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
@@ -27,7 +31,7 @@ export const patientsApiSlice = createApi({
             query: (req) => `api/patients` + queryParamsFromRequest(req),
             providesTags: ['Patients'],
         }),
-        addPatient: build.mutation<Patient, Partial<Patient>>({
+        addPatient: build.mutation<AddPatientResponse, Partial<Patient>>({
             query: (newPatient) => ({
                 url: "api/patients",
                 method: "POST",

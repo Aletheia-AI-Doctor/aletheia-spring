@@ -2,21 +2,16 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.auth.SignInDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
-import dev.aletheia.doctor.emailservice.EmailSender;
 import dev.aletheia.doctor.enums.DoctorStates;
 import dev.aletheia.doctor.exceptions.InvalidCredentialsException;
 import dev.aletheia.doctor.models.Doctor;
-import dev.aletheia.doctor.services.DigitalSignService;
 import dev.aletheia.doctor.services.DoctorService;
 import dev.aletheia.doctor.services.JWTService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Map;
 
 
@@ -24,21 +19,11 @@ import java.util.Map;
 public class AuthenticationController {
 
     private final DoctorService doctorService;
-    private final EmailSender emailService;
     private final JWTService jwtService;
 
-    private final DigitalSignService digitalSignService;
-
-    @Value("${spring.application.url}")
-    private String appUrl;
-    @Value("${spring.application.frontend_url}")
-    private String frontendUrl;
-
-    public AuthenticationController(DoctorService doctorService, EmailSender emailService, JWTService jwtService, DigitalSignService digitalSignService) {
+    public AuthenticationController(DoctorService doctorService, JWTService jwtService) {
         this.doctorService = doctorService;
-        this.emailService = emailService;
         this.jwtService = jwtService;
-        this.digitalSignService = digitalSignService;
     }
 
     @PostMapping("/api/login")
