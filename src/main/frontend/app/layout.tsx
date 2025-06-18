@@ -94,7 +94,6 @@ export default function Layout() {
         }));
     }, [window.location.pathname]);
     const { data: notifications, isLoading, isError } = useGetNotificationsQuery();
-
     return (
         <>
             <div>
@@ -224,11 +223,10 @@ export default function Layout() {
                     Failed to load notifications
                 </div>
             ) : (
-                // Replace the empty notification sections in your PopoverPanel with this code:
 
 <>
     {/* Votes notification */}
-    {notifications && notifications.vote > 0 && (
+    {notifications && (
         <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg border-b border-gray-100">
             <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -241,11 +239,9 @@ export default function Layout() {
                 <p className="text-sm font-medium text-gray-900">
                     New Votes Received
                 </p>
+
                 <p className="text-sm text-gray-500">
                     You received {notifications.vote} new vote{notifications.vote !== 1 ? 's' : ''} on your posts
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                    {new Date(notifications.createdAt).toLocaleDateString()}
                 </p>
             </div>
         </div>
@@ -253,8 +249,8 @@ export default function Layout() {
 
     {/* Replies notifications */}
 
-    {notifications && notifications.replies && notifications.replies.length > 0 && (
-    <div className="space-y-2">
+{Array.isArray(notifications?.replies) && notifications.replies.length > 0 && (
+    <div className="space-y-2 max-h-80 overflow-y-auto">
         <div className="px-3 py-2 border-b border-gray-100">
             <h4 className="text-sm font-medium text-gray-900">New Replies</h4>
         </div>
@@ -268,18 +264,18 @@ export default function Layout() {
                     </div>
                 </div>
                 <div className="flex-1 min-w-0">
-
                     <p className="text-sm font-medium text-gray-900">
                         New reply from {reply.doctor?.name || 'Unknown'}
                     </p>
                     <p className="text-sm text-gray-500 line-clamp-2">
-                        {reply.body || ''?.length > 100 ? '...' : ''}
+                        {stripHtmlTags(reply.body)}
                     </p>
                 </div>
             </div>
         ))}
     </div>
 )}
+
 
     {/* No notifications message */}
     {notifications && notifications.vote === 0 && (!notifications.replies || notifications.replies.length === 0) && (
@@ -290,8 +286,6 @@ export default function Layout() {
 </>
             )}
         </div>
-        
-
     </PopoverPanel>
 </Popover>
 

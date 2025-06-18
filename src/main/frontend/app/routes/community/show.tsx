@@ -45,7 +45,7 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
     }
 
     return (
-        <div className={!parent ? 'pl-4 ml-2 mt-4' : ''}>
+        <div className={!parent ? 'pl-4 ml-2 mt-4' : ''} id={"post-" + post.id}>
             <div className="bg-white shadow-sm rounded-lg p-4 relative">
                 <DoctorMedia doctor={post.doctor} />
 

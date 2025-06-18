@@ -8,7 +8,7 @@ import type { PageRequest, Pagination } from "~/types/pagination";
 
 interface Notification {
     length: number;
-    replies: Post["replies"];
+    replies: Post[];
     vote: number;
     createdAt: string;
 }

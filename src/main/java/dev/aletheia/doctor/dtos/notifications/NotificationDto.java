@@ -13,9 +13,7 @@ public class NotificationDto {
     private long id;
     private long userId;
     private List<PostDto> replies;
-    private PostDto post;
     private Integer vote;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private String createdAt;
 }

@@ -1,5 +1,6 @@
 package dev.aletheia.doctor.services;
 
+import dev.aletheia.doctor.dtos.notifications.NotificationDto;
 import dev.aletheia.doctor.dtos.posts.PostDto;
 import dev.aletheia.doctor.models.BaseModel;
 import dev.aletheia.doctor.models.Doctor;
@@ -105,9 +106,11 @@ public class PostService extends CRUDService<Post, PostDto> {
         return posts.getVotes() != null ? posts.getVotes() : 0;
     }
 
-    public List<Post> getLastReplies() {
+    public List<PostDto> getLastReplies() {
         Doctor doctor = doctorService.getCurrentDoctor();
 
-        return postRepository.findRepliesByParentId(doctor.getId());
+        return postRepository.findRepliesByParentId(doctor.getId()).stream()
+                .map(this::convertToDto)
+                .toList();
     }
 }
