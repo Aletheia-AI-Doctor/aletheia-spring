@@ -16,7 +16,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAll();
 
     @NotNull
-    @Query("SELECT p FROM posts p where p.parent IS NULL ORDER BY p.id DESC")
+    @Query("""
+            SELECT p FROM posts p
+            LEFT JOIN FETCH p.replies pr
+            LEFT JOIN FETCH p.doctor d
+            where p.parent IS NULL
+            ORDER BY p.id DESC
+            """)
     Page<Post> findAll(@NotNull Pageable pageable);
 
     @Query("SELECT p FROM posts p WHERE p.doctor.id =?1 and p.parent IS NULL ORDER BY p.id DESC")
