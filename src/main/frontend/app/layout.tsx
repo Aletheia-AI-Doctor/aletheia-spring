@@ -53,8 +53,12 @@ function PrivateRoute () {
 }
 
 
+
 export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const stripHtmlTags = (html: string): string => {
+        return html?.replace(/<[^>]*>/g, '').trim() || '';
+    };
 
     const [navigation, setNavigation] = useState([
         { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
@@ -199,11 +203,11 @@ export default function Layout() {
     <PopoverButton className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 relative">
         <span className="sr-only">View notifications</span>
         <BellIcon aria-hidden="true" className="size-6" />
-        {notifications?.replies?.length > 0 && (
-            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-medium text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
-                {notifications.replies.length}
-            </span>
-        )}
+        {
+            notifications && notifications.length > 0 && (
+                <span className="absolute top-0 right-0 inline-flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+            )
+        }
     </PopoverButton>
     
     <PopoverPanel 
@@ -220,59 +224,74 @@ export default function Layout() {
                     Failed to load notifications
                 </div>
             ) : (
-                <>
-                    {/* Votes notification */}
-                    {notifications?.vote && notifications.vote > 0 && (
-                        <div className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
-                            <div className="flex items-start">
-                                <div className="ml-3 flex-1">
-                                    <p className="text-sm font-medium text-gray-900">
-                                        New votes on your posts
-                                    </p>
-                                    <p className="text-sm text-gray-500">
-                                        You received {notifications.vote} new votes
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                // Replace the empty notification sections in your PopoverPanel with this code:
 
-                    {/* Replies notifications */}
-                    {notifications?.replies?.length > 0 ? (
-                        notifications.replies.map((reply) => (
-                            <div key={reply.id} className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
-                                <div className="flex items-start">
-                                    <div className="ml-3 flex-1">
-                                        <p className="text-sm font-medium text-gray-900">
-                                            New reply to your post
-                                        </p>
-                                        <p className="text-sm text-gray-500 line-clamp-2">
-                                            {reply.content}
-                                        </p>
-                                        <p className="text-xs text-gray-400 mt-1">
-                                            {new Date(reply.createdAt).toLocaleString()}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="text-center text-sm text-gray-500 p-4">
-                            No new notifications
-                        </div>
-                    )}
-                </>
+<>
+    {/* Votes notification */}
+    {notifications && notifications.vote > 0 && (
+        <div className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg border-b border-gray-100">
+            <div className="flex-shrink-0">
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                    </svg>
+                </div>
+            </div>
+            <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900">
+                    New Votes Received
+                </p>
+                <p className="text-sm text-gray-500">
+                    You received {notifications.vote} new vote{notifications.vote !== 1 ? 's' : ''} on your posts
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                    {new Date(notifications.createdAt).toLocaleDateString()}
+                </p>
+            </div>
+        </div>
+    )}
+
+    {/* Replies notifications */}
+
+    {notifications && notifications.replies && notifications.replies.length > 0 && (
+    <div className="space-y-2">
+        <div className="px-3 py-2 border-b border-gray-100">
+            <h4 className="text-sm font-medium text-gray-900">New Replies</h4>
+        </div>
+        {notifications.replies.map((reply, index) => (
+            <div key={reply.id || index} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg">
+                <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </div>
+                </div>
+                <div className="flex-1 min-w-0">
+
+                    <p className="text-sm font-medium text-gray-900">
+                        New reply from {reply.doctor?.name || 'Unknown'}
+                    </p>
+                    <p className="text-sm text-gray-500 line-clamp-2">
+                        {reply.body || ''?.length > 100 ? '...' : ''}
+                    </p>
+                </div>
+            </div>
+        ))}
+    </div>
+)}
+
+    {/* No notifications message */}
+    {notifications && notifications.vote === 0 && (!notifications.replies || notifications.replies.length === 0) && (
+        <div className="text-center text-sm text-gray-500 p-4">
+            No new notifications
+        </div>
+    )}
+</>
             )}
         </div>
         
-        <div className="border-t border-gray-200 px-4 py-2">
-            <Link
-                to="/notifications"
-                className="block text-center text-sm font-medium text-indigo-600 hover:text-indigo-500"
-            >
-                View all notifications
-            </Link>
-        </div>
+
     </PopoverPanel>
 </Popover>
 

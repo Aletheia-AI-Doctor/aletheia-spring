@@ -23,8 +23,7 @@ public class NotificationController {
     }
 
     @GetMapping("/getLastNotification")
-public ResponseEntity<NotificationDto> getLastNotification() {
-    NotificationDto notificationDto = new NotificationDto();
+public ResponseEntity<NotificationDto> getLastNotification(NotificationDto notificationDto) {
     List<Post> replies = postService.getLastReplies();
     Integer votes = postService.getDoctorsVotes();
 

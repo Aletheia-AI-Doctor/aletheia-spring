@@ -16,7 +16,6 @@ export default [
         route("login", "./routes/auth/login.tsx"),
         route("registration", "./routes/auth/registration.tsx"),
         route("hospital_subscription", "./routes/auth/hospital-sub.tsx")
-        route()
     ]),
 
     layout("./routes/confirmationLayout.tsx",[

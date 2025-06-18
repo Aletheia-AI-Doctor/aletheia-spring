@@ -2,19 +2,17 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { ROOT_URL } from "~/base/consts";
 import { defaultHeaders } from "~/base/helpers";
-import { NotificationDto } from "~/types/notification";
+import type { Post } from "./postsApiSlice";
+import type { PageRequest, Pagination } from "~/types/pagination";
 
-import { PostDto } from "~/types/post";
 
-export interface NotificationDto {
-    id: number;
-    userId: number;
-    replies: PostDto[];
-    post: PostDto;
+interface Notification {
+    length: number;
+    replies: Post["replies"];
     vote: number;
     createdAt: string;
 }
-
+export type { Notification };
 export const notificationApiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: ROOT_URL,
@@ -23,7 +21,7 @@ export const notificationApiSlice = createApi({
     reducerPath: "notificationApi",
     tagTypes: ["Notification"],
     endpoints: (build) => ({
-        getNotifications: build.query<NotificationDto, void>({
+        getNotifications: build.query<Notification, void>({
             query: () => `/api/notifications/getLastNotification`,
             providesTags: ['Notification'],
         }),
