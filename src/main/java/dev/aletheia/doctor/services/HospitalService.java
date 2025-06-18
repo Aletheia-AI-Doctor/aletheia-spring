@@ -16,20 +16,14 @@ public class HospitalService extends CRUDService<Hospital, HospitalDto>
     @Autowired
     private HospitalRepository hospitalRepository;
     public HospitalRepository getRepository() { return hospitalRepository; }
-    protected HospitalService() {super(Hospital.class, HospitalDto.class);}
 
-    public Optional<Hospital> getByHr_emailOrName(String hr_emailOrName) {
-        return hospitalRepository.findByHr_emailOrName(hr_emailOrName);
-    }
-    public Optional<Hospital> getByIdentifier(String identifier) {
-        return hospitalRepository.findById(Long.valueOf(identifier));
-    }
+    protected HospitalService() {super(Hospital.class, HospitalDto.class);}
 
     public Hospital createHospital(HospitalDto hospitalDTO) {
         Hospital hospital = new Hospital();
 
         hospital.setName(hospitalDTO.getName());
-        hospital.setHr_email(hospitalDTO.getHr_email());
+        hospital.setHrEmail(hospitalDTO.getHrEmail());
         return save(hospital);
     }
 }

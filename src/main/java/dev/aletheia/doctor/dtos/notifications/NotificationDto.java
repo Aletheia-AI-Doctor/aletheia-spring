@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dev.aletheia.doctor.dtos.posts.PostDto;
-import dev.aletheia.doctor.models.Post;
 import lombok.Getter;
 import lombok.Setter;
 

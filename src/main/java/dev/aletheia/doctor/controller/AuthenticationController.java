@@ -2,7 +2,7 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.auth.SignInDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorRegistrationDTO;
-import dev.aletheia.doctor.emailservice.AleithiaEmailAuthentication;
+import dev.aletheia.doctor.emailservice.EmailSender;
 import dev.aletheia.doctor.enums.DoctorStates;
 import dev.aletheia.doctor.exceptions.InvalidCredentialsException;
 import dev.aletheia.doctor.models.Doctor;
@@ -18,15 +18,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 
 @RestController
 public class AuthenticationController {
 
     private final DoctorService doctorService;
-    private final AleithiaEmailAuthentication emailService;
+    private final EmailSender emailService;
     private final JWTService jwtService;
 
     private final DigitalSignService digitalSignService;
@@ -36,7 +34,7 @@ public class AuthenticationController {
     @Value("${spring.application.frontend_url}")
     private String frontendUrl;
 
-    public AuthenticationController(DoctorService doctorService, AleithiaEmailAuthentication emailService, JWTService jwtService, DigitalSignService digitalSignService) {
+    public AuthenticationController(DoctorService doctorService, EmailSender emailService, JWTService jwtService, DigitalSignService digitalSignService) {
         this.doctorService = doctorService;
         this.emailService = emailService;
         this.jwtService = jwtService;
@@ -70,29 +68,6 @@ public class AuthenticationController {
     @PostMapping("/api/register")
     public ResponseEntity<Object> create(@RequestBody @Valid DoctorRegistrationDTO doctorDTO) {
         Doctor doctor = doctorService.createDoctor(doctorDTO);
-        String tokenConfirm;
-        String tokenReject;
-        String confirmationUrl = appUrl + "/api/confirm-email/" + doctor.getId();
-        String rejectionUrl = appUrl + "/api/reject-email/" + doctor.getId();
-
-        try {
-             tokenConfirm = digitalSignService.signData(confirmationUrl);
-             tokenReject = digitalSignService.signData(rejectionUrl);
-        } catch (Exception e) {
-            throw new RuntimeException("Error signing data: " + e.getMessage(), e);
-        }
-
-        confirmationUrl += "?token=" + tokenConfirm;
-        rejectionUrl += "?token=" + tokenReject;
-
-        emailService.sendConfirmationRequest(
-                doctor.getHospital().getHr_email(),
-                doctor.getName(),
-                doctor.getSpeciality().toString(),
-                doctor.getLicenseNumber(),
-                confirmationUrl,
-                rejectionUrl
-        );
 
         return ResponseEntity.ok(Map.of(
                 "message", "Registration successful! Please check your email for confirmation instructions.",
@@ -100,95 +75,4 @@ public class AuthenticationController {
                 "success", true
         ));
     }
-
-    @PostMapping ("/api/confirm-email/{id}")
-    public ResponseEntity<Void> confirmEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
-        String frontendConfirmUrl = frontendUrl + "/confirm-email/"+id;
-        boolean verify = false;
-       try{
-           verify = digitalSignService.verifySignature(appUrl + "/api/confirm-email/" + id, token);
-       }catch(Exception e) {
-           e.printStackTrace();
-       }
-
-        // Attempt to find the doctor by the token
-        Doctor doctor = doctorService.find(id);
-        if (doctor == null || !verify) {
-            // Redirect to frontend with error status
-            response.sendRedirect(frontendConfirmUrl + "?status=error");
-            return null;
-        }
-
-        if (doctor.getStatus()== DoctorStates.CONFIRMED) {
-            // Doctor is already confirmed
-            response.sendRedirect(frontendConfirmUrl + "?status=already-confirmed");
-            return null;
-        }
-
-        // Confirm the doctor
-        doctorService.confirmDoctor(id);
-
-        // Send confirmation email
-        String loginURL = "http://localhost:3000/login";
-        if (doctor.getHospital() != null) {
-            emailService.sendConfirmationDoctor(
-                    doctor.getEmail(),
-                    doctor.getName(),
-                    doctor.getHospital().getName(),
-                    loginURL
-            );
-        }
-
-        // Redirect to frontend with success status
-        response.sendRedirect(frontendConfirmUrl + "?status=success");
-        return null;
-    }
-
-
-
-    @PostMapping ("/api/reject-email/{id}")
-    public ResponseEntity<Void> rejectEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
-        String frontendConfirmUrl = frontendUrl + "/confirm-email/"+id;
-        boolean verify = false;
-        try{
-            verify = digitalSignService.verifySignature(appUrl + "/api/reject-email/" + id, token);
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        // Attempt to find the doctor by the token
-        Doctor doctor = doctorService.find(id);
-        if (doctor == null || !verify) {
-            // Redirect to frontend with error status
-            response.sendRedirect(frontendConfirmUrl + "?status=error");
-            return null;
-        }
-
-
-        // Confirm the doctor
-        doctorService.rejectDoctor(id);
-        String tokenAppeal;
-        String appealURL = appUrl + "/api/doctors/appeal/"+id;
-        // Send confirmation email
-        try {
-            tokenAppeal= digitalSignService.signData(appealURL);
-        } catch (Exception e) {
-            throw new RuntimeException("Error signing data: " + e.getMessage(), e);
-        }
-
-        appealURL += "?token=" + tokenAppeal;
-        if (doctor.getHospital() != null) {
-            emailService.sendRejectionDoctor(
-                    doctor.getEmail(),
-                    doctor.getName(),
-                    doctor.getHospital().getName(),
-                    appealURL
-            );
-        }
-
-        // Redirect to frontend with success status
-        response.sendRedirect(frontendConfirmUrl + "?status=success");
-        return null;
-    }
-
 }

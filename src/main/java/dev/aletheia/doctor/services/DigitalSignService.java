@@ -37,13 +37,22 @@ public class DigitalSignService {
         return Base64.getUrlEncoder().encodeToString(sigBytes);
     }
 
-    public boolean verifySignature(String data, String signature) throws GeneralSecurityException {
-        KeyPair kp = getKeyPair();
-        Signature verifier = Signature.getInstance("SHA1withRSA");
-        verifier.initVerify(kp.getPublic());
-        // verify against the same raw bytes
-        verifier.update(data.getBytes(StandardCharsets.UTF_8));
-        byte[] sigBytes = Base64.getUrlDecoder().decode(signature);
-        return verifier.verify(sigBytes);
+    public boolean verifySignature(String data, String signature) {
+        try {
+            KeyPair kp = getKeyPair();
+            Signature verifier = Signature.getInstance("SHA1withRSA");
+            verifier.initVerify(kp.getPublic());
+            // verify against the same raw bytes
+            verifier.update(data.getBytes(StandardCharsets.UTF_8));
+            byte[] sigBytes = Base64.getUrlDecoder().decode(signature);
+            return verifier.verify(sigBytes);
+        }catch (GeneralSecurityException e) {
+            return false;
+        }
+    }
+
+    public String getSignedUrl(String url) throws GeneralSecurityException {
+        String signedData = signData(url);
+        return url + "?token=" + signedData;
     }
 }

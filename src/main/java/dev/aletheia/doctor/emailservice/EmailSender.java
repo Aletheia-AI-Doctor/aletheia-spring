@@ -1,28 +1,48 @@
 package dev.aletheia.doctor.emailservice;
 
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+
 @Service
-public class AleithiaEmailAuthentication {
+public class EmailSender {
 
     private final JavaMailSender mailSender;
 
+    @Value("${spring.mail.from_address}")
+    private String fromAddress;
+    @Value("${spring.mail.from_name}")
+    private String fromName;
+
+    private InternetAddress fromInternetAddress;
+
     @Autowired
-    public AleithiaEmailAuthentication(JavaMailSender mailSender) {
+    public EmailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
+        try {
+            this.fromInternetAddress = new InternetAddress(fromAddress, fromName);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    @Async
     public void sendConfirmationRequest(String hrEmail, String doctorName, String doctorSpeciality,
                                         String doctorLicenceNumber, String confirmationLink, String rejectionLink) {
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            message.setFrom(this.fromInternetAddress);
+            helper.setFrom(this.fromInternetAddress);
 
             helper.setTo(hrEmail);
             helper.setSubject("Doctor Registration Confirmation: " + doctorName);
@@ -44,18 +64,21 @@ public class AleithiaEmailAuthentication {
                     "</body></html>";
 
             helper.setText(htmlContent, true);
-            System.out.println(confirmationLink);
             mailSender.send(message);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new EmailSendingException("Failed to send confirmation email", e);
         }
     }
 
+    @Async
     public void sendConfirmationDoctor(String doctorEmail, String doctorName,
                                         String hospitalName, String loginLink) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            message.setFrom(this.fromInternetAddress);
+            helper.setFrom(this.fromInternetAddress);
 
             helper.setTo(doctorEmail);
             helper.setSubject("Doctor Registration Confirmation: " + doctorName);
@@ -74,14 +97,19 @@ public class AleithiaEmailAuthentication {
             helper.setText(htmlContent, true);
             mailSender.send(message);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new EmailSendingException("Failed to send confirmation email", e);
         }
     }
+
+    @Async
     public void sendRejectionDoctor(String doctorEmail, String doctorName,
                                        String hospitalName, String appealLink) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            message.setFrom(this.fromInternetAddress);
+            helper.setFrom(this.fromInternetAddress);
 
             helper.setTo(doctorEmail);
             helper.setSubject("Doctor Registration rejected: " + doctorName);
@@ -100,6 +128,7 @@ public class AleithiaEmailAuthentication {
             helper.setText(htmlContent, true);
             mailSender.send(message);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new EmailSendingException("Failed to send confirmation email", e);
         }
     }

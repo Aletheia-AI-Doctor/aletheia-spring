@@ -2,7 +2,7 @@ package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.doctors.DoctorDto;
 import dev.aletheia.doctor.dtos.doctors.DoctorPatientsDto;
-import dev.aletheia.doctor.emailservice.AleithiaEmailAuthentication;
+import dev.aletheia.doctor.emailservice.EmailSender;
 import dev.aletheia.doctor.enums.DoctorStates;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DigitalSignService;
@@ -13,7 +13,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import dev.aletheia.doctor.dtos.doctors.DoctorUpdateDto;
 
@@ -28,17 +27,11 @@ import java.util.Optional;
 public class DoctorController {
 
     private final DoctorService doctorService;
-    private final DigitalSignService digitalSignService;
-    private final AleithiaEmailAuthentication emailService;
+
     private final Validator validator;
 
-    @Value("${spring.application.url}")
-    private String appUrl;
-
-    public DoctorController(DoctorService doctorService, DigitalSignService digitalSignService, AleithiaEmailAuthentication emailService, Validator validator) {
+    public DoctorController(DoctorService doctorService, Validator validator) {
         this.doctorService = doctorService;
-        this.digitalSignService = digitalSignService;
-        this.emailService = emailService;
         this.validator = validator;
     }
 
@@ -61,43 +54,6 @@ public class DoctorController {
         return ResponseEntity.ok(allCounts);
     }
 
-    @PostMapping("/appeal/{id}")
-    public ResponseEntity<Object> appeal(@PathVariable Long id, @RequestParam(name = "token") String token) throws IOException {
-        String tokenConfirm;
-        String tokenReject;
-        String confirmationUrl = appUrl + "/api/confirm-email/" + id;
-        String rejectionUrl = appUrl + "/api/reject-email/" + id;
-
-        try {
-            tokenConfirm = digitalSignService.signData(confirmationUrl);
-            tokenReject = digitalSignService.signData(rejectionUrl);
-        } catch (Exception e) {
-            throw new RuntimeException("Error signing data: " + e.getMessage(), e);
-        }
-
-        Doctor doctor = doctorService.findOrFail(id);
-
-        confirmationUrl += "?token=" + tokenConfirm;
-        rejectionUrl += "?token=" + tokenReject;
-
-        emailService.sendConfirmationRequest(
-                doctor.getHospital().getHr_email(),
-                doctor.getName(),
-                doctor.getSpeciality().toString(),
-                doctor.getLicenseNumber(),
-                confirmationUrl,
-                rejectionUrl
-        );
-        doctor.setStatus(DoctorStates.PENDING);
-        doctorService.save(doctor);
-
-        return ResponseEntity.ok(Map.of(
-                "message", "Appeal successful! Please check your email for confirmation instructions.",
-                "success", true
-        ));
-
-    }
-
     @PutMapping("/update")
     public ResponseEntity<Object> updateDoctor(@RequestBody DoctorUpdateDto dto) {
         Doctor doctor = doctorService.getCurrentDoctor();
@@ -107,7 +63,6 @@ public class DoctorController {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(null, violations);
         }
-
 
         return ResponseEntity.ok(doctorService.convertToDto(doctorService.updateDoctor(doctor, dto)));
     }
