@@ -85,7 +85,6 @@ export default function PatientForm({onClose, onSuccess} : PatientFormProps) {
                 <div className="flex justify-end space-x-3 mt-6">
                     <Button
                         type="submit"
-                        color="heavy-green"
                         disabled={isLoading}
                     >
                         {isLoading ? "Loading..." : "Save Patient"}

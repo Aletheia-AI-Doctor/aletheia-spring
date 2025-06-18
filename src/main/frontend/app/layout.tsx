@@ -119,7 +119,7 @@ export default function Layout() {
                                                     <li key={item.name}>
                                                         <Link
                                                             to={item.href}
-
+                                                            onClick={() => setSidebarOpen(false)}
                                                             className={classNames(
                                                                 item.current
                                                                     ? 'bg-gray-800 text-white'
@@ -155,6 +155,7 @@ export default function Layout() {
                                         {navigation.map((item) => (
                                             <li key={item.name}>
                                                 <Link
+                                                    onClick={() => setSidebarOpen(false)}
                                                     to={item.href}
                                                     className={classNames(
                                                         item.current
