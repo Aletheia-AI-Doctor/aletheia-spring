@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.services.DigitalSignService;
 import dev.aletheia.doctor.services.DoctorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class EmailProcessor {
 
+    private static final Logger log = LoggerFactory.getLogger(EmailProcessor.class);
     private final EmailSender emailSender;
     private final EmailQueueService queueService;
     private final ObjectMapper objectMapper;
@@ -110,7 +113,7 @@ public class EmailProcessor {
     }
 
     private void handleFailure(EmailQueue item, Exception e) {
-        e.printStackTrace();
+        log.error("Failed to process email item {}: {}", item.getId(), e.getMessage());
 
         if (item.getRetryCount() >= MAX_RETRIES) {
             item.setStatus(EmailQueue.Status.FAILED);
