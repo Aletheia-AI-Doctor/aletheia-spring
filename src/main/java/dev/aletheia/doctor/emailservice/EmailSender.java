@@ -1,120 +1,110 @@
 package dev.aletheia.doctor.emailservice;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.simpleemail.model.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import java.io.UnsupportedEncodingException;
 
 @Service
 public class EmailSender {
-
-    private final JavaMailSender mailSender;
 
     @Value("${spring.mail.from_address}")
     private String fromAddress;
     @Value("${spring.mail.from_name}")
     private String fromName;
 
-    @Autowired
-    public EmailSender(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    @Value("${aws.region}")
+    private String awsRegion;
+
+
+    public void sendConfirmationRequest(
+            String hrEmail,
+            String doctorName,
+            String doctorSpeciality,
+            String doctorLicenceNumber,
+            String confirmationLink,
+            String rejectionLink
+    ) {
+        String subject = "Doctor Registration Confirmation: " + doctorName;
+        String htmlBody = "<html><body style=\"font-family:Arial,sans-serif;\">"
+                + "<p>Dear HR Team,</p>"
+                + "<p>Please confirm the registration of Dr. " + doctorName
+                + " (License: " + doctorLicenceNumber + ", Field: " + doctorSpeciality + ")</p>"
+                + "<p>"
+                + actionButton(confirmationLink, "Confirm Registration", "#4CAF50")
+                + "&nbsp;&nbsp;"
+                + actionButton(rejectionLink, "Reject Registration", "#f44336")
+                + "</p></body></html>";
+
+        send(hrEmail, subject, htmlBody);
     }
 
-    public void sendConfirmationRequest(String hrEmail, String doctorName, String doctorSpeciality,
-                                        String doctorLicenceNumber,
-                                        String confirmationLink,
-                                        String rejectionLink)
-            throws MessagingException, UnsupportedEncodingException {
+    public void sendConfirmationDoctor(
+            String doctorEmail,
+            String doctorName,
+            String hospitalName,
+            String loginLink
+    ) {
+        String subject = "Doctor Registration Confirmation: " + doctorName;
+        String htmlBody = "<html><body style=\"font-family:Arial,sans-serif;\">"
+                + "<p>Dear Dr. " + doctorName + ",</p>"
+                + "<p>Your registration has been confirmed by " + hospitalName + " hospital.</p>"
+                + "<p>Click the link below to login:</p>"
+                + "<p>" + actionButton(loginLink, "Login Now", "#4CAF50") + "</p>"
+                + "</body></html>";
 
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-
-        helper.setFrom(fromAddress, fromName);
-        helper.setTo(hrEmail);
-        helper.setSubject("Doctor Registration Confirmation: " + doctorName);
-
-        String htmlContent = "<html><body style=\"font-family: Arial, sans-serif;\">" +
-                "<p>Dear HR Team,</p>" +
-                "<p>Please confirm the registration of Dr. " + doctorName +
-                " (License: " + doctorLicenceNumber + ", Field: " + doctorSpeciality + ")</p>" +
-                "<p>" +
-                "<a href=\"" + confirmationLink + "\" style=\"" + getButtonStyle("#4CAF50") + "\">" +
-                "Confirm Registration</a>" +
-                "&nbsp;&nbsp;" +
-                "<a href=\"" + rejectionLink + "\" style=\"" + getButtonStyle("#f44336") + "\">" +
-                "Reject Registration</a>" +
-                "</p>" +
-                "</body></html>";
-
-        helper.setText(htmlContent, true);
-        mailSender.send(message);
+        send(doctorEmail, subject, htmlBody);
     }
 
-    public void sendConfirmationDoctor(String doctorEmail, String doctorName,
-                                       String hospitalName, String loginLink)
-            throws MessagingException, UnsupportedEncodingException {
+    public void sendRejectionDoctor(
+            String doctorEmail,
+            String doctorName,
+            String hospitalName,
+            String appealLink
+    ) {
+        String subject = "Doctor Registration Rejected: " + doctorName;
+        String htmlBody = "<html><body style=\"font-family:Arial,sans-serif;\">"
+                + "<p>Dear Dr. " + doctorName + ",</p>"
+                + "<p>We regret to inform you that " + hospitalName + " hospital has rejected your registration request.</p>"
+                + "<p>You may click below to appeal this decision:</p>"
+                + "<p>" + actionButton(appealLink, "Submit Appeal", "#4CAF50") + "</p>"
+                + "</body></html>";
 
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom(fromAddress, fromName);
-
-        helper.setTo(doctorEmail);
-        helper.setSubject("Doctor Registration Confirmation: " + doctorName);
-
-        String htmlContent = "<html><body style=\"font-family: Arial, sans-serif;\">" +
-                "<p>Dear Dr. " + doctorName + ",</p>" +
-                "<p>Your registration has been confirmed by " + hospitalName + " hospital.</p>" +
-                "<p>Click the link below to login:</p>" +
-                "<p>" +
-                "<a href=\"" + loginLink + "\" style=\"" + getButtonStyle("#4CAF50") + "\">" +
-                "Login Now</a>" +
-                "</p>" +
-                "</body></html>";
-
-        helper.setText(htmlContent, true);
-        mailSender.send(message);
+        send(doctorEmail, subject, htmlBody);
     }
 
-    public void sendRejectionDoctor(String doctorEmail, String doctorName,
-                                    String hospitalName, String appealLink) throws MessagingException, UnsupportedEncodingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        helper.setFrom(fromAddress, fromName);
+    private void send(String to, String subject, String htmlBody) {
+        SendEmailRequest request = new SendEmailRequest().withDestination(
+                        new Destination().withToAddresses(to))
+                .withMessage(new Message()
+                        .withBody(new Body()
+                                .withHtml(new Content()
+                                        .withCharset("UTF-8").withData(htmlBody)))
+                        .withSubject(new Content()
+                                .withCharset("UTF-8").withData(subject)))
+                .withSource(fromAddress);
 
-        helper.setTo(doctorEmail);
-        helper.setSubject("Doctor Registration Rejected: " + doctorName);
+        AmazonSimpleEmailService ses = AmazonSimpleEmailServiceClientBuilder.standard()
+                .withRegion(awsRegion)
+                .build();
 
-        String htmlContent = "<html><body style=\"font-family: Arial, sans-serif;\">" +
-                "<p>Dear Dr. " + doctorName + ",</p>" +
-                "<p>We regret to inform you that " + hospitalName + " hospital " +
-                "has rejected your registration request.</p>" +
-                "<p>You may click below to appeal this decision:</p>" +
-                "<p>" +
-                "<a href=\"" + appealLink + "\" style=\"" + getButtonStyle("#4CAF50") + "\">" +
-                "Submit Appeal</a>" +
-                "</p>" +
-                "</body></html>";
-
-        helper.setText(htmlContent, true);
-        mailSender.send(message);
+        ses.sendEmail(request);
     }
 
-    private String getButtonStyle(String bgColor) {
-        return "display: inline-block; " +
-                "background-color: " + bgColor + "; " +
-                "color: white; " +
-                "padding: 10px 20px; " +
-                "text-align: center; " +
-                "text-decoration: none; " +
-                "border-radius: 5px; " +
-                "font-weight: bold; " +
-                "cursor: pointer;";
+    private String formatFromHeader() {
+        return String.format("\"%s\" <%s>", fromName, fromAddress);
+    }
+
+    private String actionButton(String url, String label, String bgColor) {
+        return "<a href=\"" + url + "\" style=\""
+                + "display:inline-block;"
+                + "background-color:" + bgColor + ";"
+                + "color:white;"
+                + "padding:10px 20px;"
+                + "text-decoration:none;"
+                + "border-radius:5px;"
+                + "font-weight:bold;\">"
+                + label + "</a>";
     }
 }
