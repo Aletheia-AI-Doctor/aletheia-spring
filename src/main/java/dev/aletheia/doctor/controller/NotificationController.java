@@ -1,6 +1,7 @@
 package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.notifications.NotificationDto;
+import dev.aletheia.doctor.dtos.posts.PostDto;
 import dev.aletheia.doctor.models.Post;
 import dev.aletheia.doctor.services.PostService;
 
@@ -23,12 +24,18 @@ public class NotificationController {
     }
 
     @GetMapping("/getLastNotification")
-    public ResponseEntity<Object> getLastNotification(@RequestParam NotificationDto notificationDto) {
-        List<Post> replies = postService.getLastReplies();
-        Integer votes = postService.getDoctorsVotes();
+public ResponseEntity<NotificationDto> getLastNotification(NotificationDto notificationDto) {
+    List<PostDto> replies = postService.getLastReplies();
 
-        notificationDto.setReplies(replies.stream().map(postService::convertToDto).toList());
-        notificationDto.setVote(votes);
-        return ResponseEntity.ok(notificationDto);
-    }
+    List<Post> recentPosts = postService.getRecentPostsByDoctor();
+    List<Integer> votes = postService.getVotesForPosts(recentPosts);
+    List<PostDto> posts = postService.convertToDto(recentPosts);
+
+    notificationDto.setReplies(replies);
+    notificationDto.setVotes(votes);
+    notificationDto.setPosts(posts);
+
+    return ResponseEntity.ok(notificationDto);
+}
+
 }

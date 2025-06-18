@@ -13,7 +13,7 @@ import {diagnosisApiSlice} from "~/features/diagnosis/diagnosisApiSlice";
 import { errorMiddleware } from "~/features/errors/globalErrorMiddleware";
 import errorsReducer from "~/features/errors/errorSlice";
 import notificationReducer from "~/features/notifications/notificationSlice";
-
+import { notificationApiSlice } from "~/features/community/notficationApiSlice";
 const rootReducer = combineSlices(
     scansApiSlice,
     authenticationApiSlice,
@@ -24,6 +24,7 @@ const rootReducer = combineSlices(
     hospitalApiSlice,
     doctorActivityApiSlice,
     postsApiSlice,
+    notificationApiSlice,
     diagnosisApiSlice,
     {
         reducerPath: 'globalErrors',
@@ -55,7 +56,8 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
                 .concat(doctorActivityApiSlice.middleware)
                 .concat(postsApiSlice.middleware)
                 .concat(hospitalApiSlice.middleware)
-                .concat(diagnosisApiSlice.middleware);
+                .concat(diagnosisApiSlice.middleware)
+                .concat(notificationApiSlice.middleware);
 
         },
         preloadedState
