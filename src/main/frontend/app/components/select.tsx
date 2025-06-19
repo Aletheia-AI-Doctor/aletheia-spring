@@ -62,7 +62,7 @@ export default function Select(props: SelectProps) {
                         " focus:-outline-offset-2 sm:text-sm/6 "
                         + (errors && errors.length > 0 ? "border-red-500 focus:border-red-500 text-red-900 focus:outline-red-600 pr-10 placeholder:text-red-300 pl-3" : "text-gray-900 focus:outline-blue-600 placeholder:text-gray-400 px-3")}
                 >
-                    (props.placeholder && <option value="">{props.placeholder}</option>)
+                    {props.placeholder && <option value="">{props.placeholder}</option>}
 
                     {props.options.map(({label, value}) => (
                         <option key={value} value={value}>{label}</option>
