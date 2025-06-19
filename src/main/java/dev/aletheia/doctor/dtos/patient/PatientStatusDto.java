@@ -7,6 +7,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class PatientStatusDto {
+    private Long id;
+
     @Pattern(regexp = "^(PENDING|DIAGNOSED)$", message = "Status must either pending or diagnosed")
     private String status;
 }
