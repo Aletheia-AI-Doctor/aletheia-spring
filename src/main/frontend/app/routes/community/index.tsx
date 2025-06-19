@@ -60,7 +60,12 @@ export default function Doxa() {
                                 className="w-full h-full block"
                             >
                                 <div className="p-6">
-                                    <DoctorMedia doctor={post.doctor}/>
+                                    <div className="flex items-start justify-between gap-2">
+                                        <DoctorMedia doctor={post.doctor}/>
+                                        <div className="text-xs font-medium text-gray-400">
+                                            {new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString()}
+                                        </div>
+                                    </div>
                                     <h2 className="text-gray-900 text-lg mt-4">{post.title}</h2>
 
                                     <div

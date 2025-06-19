@@ -8,7 +8,10 @@ export default function DoctorMedia({doctor}: { doctor:Doctor  }) {
                 alt={doctor.name}
                 className="w-8 h-8 rounded-full object-cover"
             />
-            <span className="text-sm font-medium text-gray-800">{doctor.name}</span>
+            <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-800">{doctor.name}</span>
+                <span className="text-xs font-medium text-gray-400">@{doctor.username}</span>
+            </div>
         </div>
     );
 }

@@ -12,6 +12,7 @@ interface Post {
     replies: Post[];
     votes: number;
     myVote: number;
+    createdAt: string;
 }
 
 interface PostForm {

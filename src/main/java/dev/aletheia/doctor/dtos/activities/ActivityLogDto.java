@@ -1,5 +1,6 @@
 package dev.aletheia.doctor.dtos.activities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +12,6 @@ public class ActivityLogDto {
     private Long id;
     private String action;
     private String description;
-    private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private String createdAt;
 }

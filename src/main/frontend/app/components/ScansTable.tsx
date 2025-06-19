@@ -122,7 +122,7 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
                         <tr key={item.id}>
                             <Td first>#{item.id}</Td>
                             <Td>
-                                <img src={item.imageUrl} alt="Scan" className="w-[100px] h-[100px]" />
+                                <img src={item.imageUrl} alt="Scan" className="w-auto h-[100px]" />
                             </Td>
                             <Td>
                                 {item.imageResponseUrl ? (

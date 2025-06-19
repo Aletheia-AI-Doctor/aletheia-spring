@@ -47,19 +47,25 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
     return (
         <div className={!parent ? 'pl-4 ml-2 mt-4' : ''} id={"post-" + post.id}>
             <div className="bg-white shadow-sm rounded-lg p-4 relative">
-                <DoctorMedia doctor={post.doctor} />
+                <div className="flex items-start justify-between gap-2">
+                    <DoctorMedia doctor={post.doctor}/>
+                    <div className="text-xs font-medium text-gray-400">
+                        {new Date(post.createdAt).toLocaleDateString()} {new Date(post.createdAt).toLocaleTimeString()}
+                    </div>
+                </div>
 
                 <div className={"flex items-center " + (parent ? "justify-between" : "justify-end")}>
                     {parent && <Title>{post.title}</Title>}
                     {currentDoctor!.id === post.doctor.id && !editing && (
-                        <Button className="absolute right-0 top-0 mr-4 mt-4" width="w-auto" color="gray" onClick={() => setEditing(true)}>Edit</Button>
+                        <Button className="absolute right-0 top-0 mr-4 mt-4" width="w-auto" color="gray"
+                                onClick={() => setEditing(true)}>Edit</Button>
                     )}
                 </div>
 
                 {editing ? (
                     <div className="mx-auto w-full mt-6">
                         <form onSubmit={handleSubmit}>
-                            <TextareaWysiwyg value={content} onChange={setContent} />
+                            <TextareaWysiwyg value={content} onChange={setContent}/>
 
                             <div className="mt-4 flex justify-end">
                                 <Button
@@ -80,19 +86,19 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
                             </div>
                         </form>
                     </div>
-                    ) : (
+                ) : (
                     <div
                         className={"text-gray-700 " + (parent ? "mt-2 prose" : "prose-sm")}
-                        dangerouslySetInnerHTML={{ __html: post.body }}
+                        dangerouslySetInnerHTML={{__html: post.body}}
                     />
                 )}
 
                 <div className="mt-4 flex items-center justify-between">
-                    <Votes post={post} />
+                    <Votes post={post}/>
                 </div>
 
                 <div className="mt-4">
-                    <CreatePost onSubmit={refetch} parentId={post.id} />
+                    <CreatePost onSubmit={refetch} parentId={post.id}/>
                 </div>
             </div>
 
