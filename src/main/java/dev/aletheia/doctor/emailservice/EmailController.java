@@ -33,17 +33,22 @@ public class EmailController {
     }
 
     @GetMapping("/appeal/{id}")
-    public ResponseEntity<Object> appeal(@PathVariable Long id, @RequestParam(name = "token") String token) {
-        boolean verify = digitalSignService.verifySignature(appUrl + "/api/reject-email/" + id, token);
+    public ResponseEntity<Object> appeal(@PathVariable Long id, @RequestParam(name = "token") String token, HttpServletResponse response) throws IOException {
+        boolean verify = digitalSignService.verifySignature(appUrl + "/api/appeal/" + id, token);
+
+        String frontendResponseUrl = frontendUrl + "/email-response";
 
         if (!verify) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "message", "Invalid token",
-                    "success", false
-            ));
+            response.sendRedirect(frontendResponseUrl + "?status=error");
+            return null;
         }
 
         Doctor doctor = doctorService.findOrFail(id);
+
+        if (doctor.getStatus() == DoctorStates.CONFIRMED) {
+            response.sendRedirect(frontendResponseUrl + "?status=alreadyConfirmed");
+            return null;
+        }
 
         emailQueueManager.queueConfirmationRequest(doctor.getId());
 
@@ -51,26 +56,19 @@ public class EmailController {
 
         doctorService.save(doctor);
 
-        return ResponseEntity.ok(Map.of(
-                "message", "Appeal successful! Please check your email for confirmation instructions.",
-                "success", true
-        ));
+        response.sendRedirect(frontendResponseUrl + "?status=appeal");
+        return null;
     }
 
 
     @GetMapping("/confirm-email/{id}")
     public ResponseEntity<Void> confirmEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
-        String frontendConfirmUrl = frontendUrl + "/confirm-email/" + id;
+        String frontendResponseUrl = frontendUrl + "/email-response";
         boolean verify = digitalSignService.verifySignature(appUrl + "/api/confirm-email/" + id, token);
 
         Doctor doctor = doctorService.find(id);
         if (doctor == null || !verify) {
-            response.sendRedirect(frontendConfirmUrl + "?status=error");
-            return null;
-        }
-
-        if (doctor.getStatus() == DoctorStates.CONFIRMED) {
-            response.sendRedirect(frontendConfirmUrl + "?status=already-confirmed");
+            response.sendRedirect(frontendResponseUrl + "?status=error");
             return null;
         }
 
@@ -80,7 +78,7 @@ public class EmailController {
             emailQueueManager.queueConfirmationDoctor(doctor.getId());
         }
 
-        response.sendRedirect(frontendConfirmUrl + "?status=success");
+        response.sendRedirect(frontendResponseUrl + "?status=confirmed");
         return null;
     }
 
@@ -88,12 +86,12 @@ public class EmailController {
 
     @GetMapping("/reject-email/{id}")
     public ResponseEntity<Void> rejectEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
-        String frontendConfirmUrl = frontendUrl + "/confirm-email/" + id;
+        String frontendResponseUrl = frontendUrl + "/email-response";
         boolean verify = digitalSignService.verifySignature(appUrl + "/api/reject-email/" + id, token);
 
         Doctor doctor = doctorService.find(id);
         if (doctor == null || !verify) {
-            response.sendRedirect(frontendConfirmUrl + "?status=error");
+            response.sendRedirect(frontendResponseUrl + "?status=error");
             return null;
         }
 
@@ -103,7 +101,7 @@ public class EmailController {
             emailQueueManager.queueRejectionDoctor(doctor.getId());
         }
 
-        response.sendRedirect(frontendConfirmUrl + "?status=success");
+        response.sendRedirect(frontendResponseUrl + "?status=rejected");
         return null;
     }
 

@@ -19,7 +19,7 @@ export default [
     ]),
 
     layout("./routes/confirmationLayout.tsx",[
-        route("/confirm-email/:id","routes/auth/confirm-email.tsx")
+        route("/email-response","routes/auth/email-response.tsx")
     ])
     
 
