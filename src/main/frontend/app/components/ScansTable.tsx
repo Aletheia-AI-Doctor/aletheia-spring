@@ -24,7 +24,7 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
 
     const { data: diagnosisList, isLoading: isLoadingDiagnoses } = useGetAllDiagnosesQuery();
 
-    const diagnosisByModel = useMemo(() => {
+    const diagnosisByModel = (() => {
         const modelDiagnosisMap: Record<number, Diagnosis[]> = {};
         if (!diagnosisList) return modelDiagnosisMap;
 
@@ -36,7 +36,7 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
             modelDiagnosisMap[diagnosis.model.id].push(diagnosis);
         });
         return modelDiagnosisMap;
-    }, [diagnosisList, isLoadingDiagnoses]);
+    })();
 
     const [params, setParams] = useSearchParams();
     const req: GetScansRequest = {
