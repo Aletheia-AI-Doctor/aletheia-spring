@@ -22,10 +22,12 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
     const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
     const [isSettingDiagnosis, setIsSettingDiagnosis] = useState<Record<string, boolean>>({});
 
-    const { data: diagnosisList = [], isLoading: isLoadingDiagnoses } = useGetAllDiagnosesQuery();
+    const { data: diagnosisList, isLoading: isLoadingDiagnoses } = useGetAllDiagnosesQuery();
 
     const diagnosisByModel = useMemo(() => {
         const modelDiagnosisMap: Record<number, Diagnosis[]> = {};
+        if (!diagnosisList) return modelDiagnosisMap;
+
         diagnosisList.forEach((diagnosis) => {
             if (!modelDiagnosisMap[diagnosis.model.id]) {
                 modelDiagnosisMap[diagnosis.model.id] = [];
