@@ -10,11 +10,11 @@ import lombok.Setter;
 public class HospitalDto {
     private long id;
 
-    @Unique(message = "Hospital already exists with this name", table = "hospital", value = "name")
+    @Unique(message = "Hospital already exists with this name", table = "hospitals", value = "name")
     @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters.")
     private String name;
 
-    @Unique(message = "HR email already exists", table = "hospital", value = "hr_email")
+    @Unique(message = "HR email already exists", table = "hospitals", value = "hr_email")
     @Email
     private String hrEmail;
 }
