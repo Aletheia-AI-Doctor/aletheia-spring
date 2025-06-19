@@ -143,7 +143,7 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
                                         }
                                         placeholder="-- Select diagnosis --"
                                         options={
-                                            diagnosisByModel[item.model.id].map((d) => ({
+                                            (diagnosisByModel[item.model.id] ?? []).map((d) => ({
                                                 label: d.name,
                                                 value: String(d.id),
                                             }))
