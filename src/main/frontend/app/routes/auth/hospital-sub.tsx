@@ -42,6 +42,7 @@ export default function HospitalSubscription() {
 
                 <Input
                     id="name"
+                    name="name"
                     label="Hospital Name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -52,6 +53,7 @@ export default function HospitalSubscription() {
                 <Input
                     id="email"
                     label="HR Email"
+                    name="hrEmail"
                     type="email"
                     value={hrEmail}
                     onChange={(e) => setHrEmail(e.target.value)}
