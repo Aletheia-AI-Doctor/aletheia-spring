@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api")
 public class EmailController {
 
     private final DigitalSignService digitalSignService;
@@ -57,7 +58,7 @@ public class EmailController {
     }
 
 
-    @GetMapping("/api/confirm-email/{id}")
+    @GetMapping("/confirm-email/{id}")
     public ResponseEntity<Void> confirmEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
         String frontendConfirmUrl = frontendUrl + "/confirm-email/" + id;
         boolean verify = digitalSignService.verifySignature(appUrl + "/api/confirm-email/" + id, token);
@@ -85,7 +86,7 @@ public class EmailController {
 
 
 
-    @GetMapping("/api/reject-email/{id}")
+    @GetMapping("/reject-email/{id}")
     public ResponseEntity<Void> rejectEmail(@PathVariable Long id, HttpServletResponse response, @RequestParam(name = "token") String token) throws IOException {
         String frontendConfirmUrl = frontendUrl + "/confirm-email/" + id;
         boolean verify = digitalSignService.verifySignature(appUrl + "/api/reject-email/" + id, token);

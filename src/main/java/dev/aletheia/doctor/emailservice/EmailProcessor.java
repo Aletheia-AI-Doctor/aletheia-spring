@@ -101,7 +101,7 @@ public class EmailProcessor {
     }
 
     private String getAppealLink(Doctor doctor) {
-        return getSignedUrl(appUrl + "/api/doctors/appeal/" + doctor.getId());
+        return getSignedUrl(appUrl + "/api/appeal/" + doctor.getId());
     }
 
     private String getSignedUrl(String url) {
