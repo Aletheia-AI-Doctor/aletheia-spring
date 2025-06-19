@@ -8,6 +8,10 @@ import {
     MenuItem,
     MenuItems,
     TransitionChild,
+     Popover,
+     PopoverButton,
+     PopoverPanel
+
 } from '@headlessui/react'
 import {
     Bars3Icon,
@@ -25,6 +29,7 @@ import {useAppDispatch, useAppSelector} from "~/base/hooks";
 import {clearAuth, setDoctor} from "~/features/authentication/authenticationApiSlice";
 import {useGetDoctorAttributesQuery} from "~/features/doctor/doctorApiSlice";
 import GlobalNotifications from "~/components/notification";
+import {useGetNotificationsQuery} from "~/features/community/notficationApiSlice";
 
 const userNavigation = [
     { name: 'Your profile', href: '/profile' },
@@ -47,8 +52,13 @@ function PrivateRoute () {
     return token ? <Outlet/> : null;
 }
 
+
+
 export default function Layout() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const stripHtmlTags = (html: string): string => {
+        return html?.replace(/<[^>]*>/g, '').trim() || '';
+    };
 
     const [navigation, setNavigation] = useState([
         { name: 'Dashboard', href: '/', icon: HomeIcon, current: true },
@@ -83,7 +93,7 @@ export default function Layout() {
             return item;
         }));
     }, [window.location.pathname]);
-
+    const { data: notifications, isLoading, isError } = useGetNotificationsQuery();
     return (
         <>
             <div>
@@ -189,10 +199,103 @@ export default function Layout() {
                         <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                             <div className="grid flex-1 grid-cols-1" />
                             <div className="flex items-center gap-x-4 lg:gap-x-6">
-                                <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
-                                    <span className="sr-only">View notifications</span>
-                                    <BellIcon aria-hidden="true" className="size-6" />
-                                </button>
+                                <Popover className="relative">
+    <PopoverButton className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 relative">
+        <span className="sr-only">View notifications</span>
+        <BellIcon aria-hidden="true" className="size-6" />
+        {
+            notifications && notifications.length > 0 && (
+                <span className="absolute top-0 right-0 inline-flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+            )
+        }
+    </PopoverButton>
+    
+    <PopoverPanel 
+        transition
+        className="absolute right-0 z-10 mt-2.5 w-80 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none data-closed:opacity-0 data-closed:scale-95"
+    >
+        <div className="p-2 max-h-96 overflow-y-auto">
+            {isLoading ? (
+                <div className="text-center text-sm text-gray-500 p-4">
+                    Loading notifications...
+                </div>
+            ) : isError ? (
+                <div className="text-center text-sm text-red-500 p-4">
+                    Failed to load notifications
+                </div>
+            ) : (
+
+<>
+    {/* Votes notification */}
+{notifications && notifications.votes && notifications.posts && notifications.votes.length === notifications.posts.length && (
+  <div className="flex flex-col space-y-3 p-3 hover:bg-gray-50 rounded-lg border-b border-gray-100">
+    <p className="text-sm font-medium text-gray-900">
+      New Votes Received
+    </p>
+
+    {notifications.votes.map((voteCount, idx) => (
+      <div key={idx} className="flex items-start space-x-3">
+        <div className="flex-shrink-0">
+          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+            </svg>
+          </div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm text-gray-500">
+            <span className="font-semibold">{voteCount}</span> vote{voteCount !== 1 ? 's' : ''} on "<span className="italic">{notifications.posts[idx]?.title || 'Untitled'}"</span>
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
+
+
+
+    {/* Replies notifications */}
+
+{Array.isArray(notifications?.replies) && notifications.replies.length > 0 && (
+    <div className="space-y-2 max-h-80 overflow-y-auto">
+        <div className="px-3 py-2 border-b border-gray-100">
+            <h4 className="text-sm font-medium text-gray-900">New Replies</h4>
+        </div>
+        {notifications.replies.map((reply, index) => (
+            <div key={reply.id || index} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg">
+                <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900">
+                        New reply from {reply.doctor?.name || 'Unknown'}
+                    </p>
+                    <p className="text-sm text-gray-500 line-clamp-2">
+                        {stripHtmlTags(reply.body)}
+                    </p>
+                </div>
+            </div>
+        ))}
+    </div>
+)}
+
+
+    {/* No notifications message */}
+    {notifications && notifications.votes && (!notifications.replies || notifications.replies.length === 0) && (
+        <div className="text-center text-sm text-gray-500 p-4">
+            No new notifications
+        </div>
+    )}
+</>
+            )}
+        </div>
+    </PopoverPanel>
+</Popover>
 
                                 {/* Separator */}
                                 <div aria-hidden="true" className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" />

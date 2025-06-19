@@ -1,6 +1,7 @@
 package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.PaginationDTO;
+import dev.aletheia.doctor.dtos.notifications.NotificationDto;
 import dev.aletheia.doctor.dtos.posts.CreatePostDto;
 import dev.aletheia.doctor.dtos.posts.PostDto;
 import dev.aletheia.doctor.dtos.votes.SetVoteDto;
@@ -66,9 +67,7 @@ public class PostController {
 		Post createdPost = postService.save(post);
 		PostDto dto = postService.convertToDto(createdPost);
 		voteService.vote(createdPost.getId(), 1);
-
 		dto.setMyVote(1);
-
 		return ResponseEntity.status(HttpStatus.CREATED).body(dto);
 	}
 
@@ -91,7 +90,6 @@ public class PostController {
 		Post updatedPost = postService.save(post);
 		PostDto dto = postService.convertToDto(updatedPost);
 		dto.setMyVote(voteService.getMyVote(postId));
-
 		return ResponseEntity.ok(dto);
 	}
 
