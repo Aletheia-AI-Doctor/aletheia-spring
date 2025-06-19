@@ -34,7 +34,7 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
             modelDiagnosisMap[diagnosis.model.id].push(diagnosis);
         });
         return modelDiagnosisMap;
-    }, [diagnosisList]);
+    }, [diagnosisList, isLoadingDiagnoses]);
 
     const [params, setParams] = useSearchParams();
     const req: GetScansRequest = {
@@ -135,21 +135,26 @@ export default function ScansTable({ refetchNow, patientId }: ScansTableProps) {
                             <Td>{item.modelDiagnosis?.name ?? "-"}</Td>
                             <Td>
                                 <div className="flex flex-col gap-2">
-                                    <Select
-                                        id={`diagnosis-${item.id}`}
-                                        value={selectedDiagnoses[item.id] || item.doctorDiagnosis?.id?.toString() || ""}
-                                        onChange={(e) =>
-                                            handleDiagnosisChange(String(item.id), e.target.value)
-                                        }
-                                        placeholder="-- Select diagnosis --"
-                                        options={
-                                            (diagnosisByModel[item.model.id] ?? []).map((d) => ({
-                                                label: d.name,
-                                                value: String(d.id),
-                                            }))
-                                        }
-                                        disabled={isLoadingDiagnoses || isSettingDiagnosis[String(item.id)] || !item.model?.id}
-                                    />
+                                    {
+                                        !isLoadingDiagnoses && diagnosisByModel[item.model.id] !== undefined && (
+                                            <Select
+                                                id={`diagnosis-${item.id}`}
+                                                value={selectedDiagnoses[item.id] || item.doctorDiagnosis?.id?.toString() || ""}
+                                                onChange={(e) =>
+                                                    handleDiagnosisChange(String(item.id), e.target.value)
+                                                }
+                                                placeholder="-- Select diagnosis --"
+                                                options={
+                                                    (diagnosisByModel[item.model.id] ?? []).map((d) => ({
+                                                        label: d.name,
+                                                        value: String(d.id),
+                                                    }))
+                                                }
+                                                disabled={isLoadingDiagnoses || isSettingDiagnosis[String(item.id)] || !item.model?.id}
+                                            />
+                                        )
+                                    }
+
                                     {errorMessages[String(item.id)] && (
                                         <div className="text-red-500 text-sm">{errorMessages[String(item.id)]}</div>
                                     )}
