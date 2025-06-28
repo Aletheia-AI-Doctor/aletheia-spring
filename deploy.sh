@@ -30,12 +30,6 @@ check_health() {
     echo "✅ $service health check passed"
 }
 
-# Backend health check
-check_health "app" "9000" "http://app_$NEW:9000/health" || exit 1
-
-# Frontend health check
-check_health "frontend" "80" "http://frontend_$NEW:80/health" || exit 1
-
 # Update Nginx configuration
 echo "🔄 Updating dynamic.conf for $NEW environment"
 cat > dynamic.conf <<EOL
@@ -61,5 +55,12 @@ sleep 10
 # Stop old environment
 echo "🛑 Stopping $CURRENT environment"
 docker compose -f docker-compose.production.yml --profile $CURRENT down
+
+# Backend health check
+check_health "app" "9000" "http://app_$NEW:9000/health" || exit 1
+
+# Frontend health check
+check_health "frontend" "80" "http://frontend_$NEW:80/health" || exit 1
+
 
 echo "🎉 Deployment complete! $NEW environment active"
