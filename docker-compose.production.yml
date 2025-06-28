@@ -1,10 +1,16 @@
 services:
-  app:
+  app_blue:
+    profiles: ["blue"]
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: ai_doctor_container
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    container_name: ai_doctor_container_blue
     depends_on:
       - db
       - python_models
@@ -14,6 +20,37 @@ services:
       - app-network
     environment:
       - SPRING_PROFILES_ACTIVE=production
+    labels:
+      - "com.docker.compose.profile=blue"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./uploads:/uploads
+      - ~/.m2:/root/.m2
+
+  app_green:
+    profiles: ["green"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    container_name: ai_doctor_container_green
+    depends_on:
+      - db
+      - python_models
+    env_file:
+      - .env
+    networks:
+      - app-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+    labels:
+      - "com.docker.compose.profile=green"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -28,25 +65,58 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./dynamic.conf:/etc/nginx/conf.d/dynamic.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./certbot/www:/var/www/certbot
       - /root/.aws:/root/.aws:ro
+      - nginx_pid:/run
     networks:
       - app-network
-    depends_on:
-      - frontend
-      - app
+    labels:
+      - "com.docker.compose.project=aletheia"
+    command: ["nginx", "-g", "daemon off;"]
 
-  frontend:
+  frontend_blue:
+    profiles: ["blue"]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     build:
       context: ./src/main/frontend
       dockerfile: Dockerfile
       target: production
-    container_name: react_frontend
+    labels:
+      - "com.docker.compose.profile=blue"
+    container_name: react_frontend_blue
     environment:
       - NODE_ENV=production
     depends_on:
-      - app
+      - app_blue
+    networks:
+      - app-network
+    volumes:
+      - ./src/main/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  frontend_green:
+    profiles: [ "green" ]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "com.docker.compose.profile=green"
+    build:
+      context: ./src/main/frontend
+      dockerfile: Dockerfile
+      target: production
+    container_name: react_frontend_green
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - app_green
     networks:
       - app-network
     volumes:
@@ -64,6 +134,8 @@ services:
       - FLASK_ENV=production
     depends_on:
       - db
+    labels:
+      - "com.docker.compose.project=aletheia"
     volumes:
       - ./src/main/models:/app
       - ./src/main/models/weights:/app/weights
@@ -80,6 +152,8 @@ services:
       MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+    labels:
+      - "com.docker.compose.project=aletheia"
     env_file:
       - .env
     volumes:
@@ -92,8 +166,10 @@ services:
 volumes:
   mysql_data:
   weights:
+  nginx_pid:
 
 
 networks:
   app-network:
+    external: true
     driver: bridge
