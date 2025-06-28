@@ -2,7 +2,7 @@ name: Production Deployment
 
 on:
   push:
-    branches: [production]
+    branches: [master]
 
 jobs:
   deploy:

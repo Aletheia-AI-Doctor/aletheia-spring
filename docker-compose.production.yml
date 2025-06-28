@@ -68,6 +68,8 @@ services:
       - nginx_pid:/run
     networks:
       - app-network
+    labels:
+      - "com.docker.compose.project=aletheia"
     command: ["nginx", "-g", "daemon off;"]
 
   frontend_blue:
@@ -124,6 +126,8 @@ services:
       - FLASK_ENV=production
     depends_on:
       - db
+    labels:
+      - "com.docker.compose.project=aletheia"
     volumes:
       - ./src/main/models:/app
       - ./src/main/models/weights:/app/weights
@@ -140,6 +144,8 @@ services:
       MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_USER: ${DATABASE_USER}
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+    labels:
+      - "com.docker.compose.project=aletheia"
     env_file:
       - .env
     volumes:
@@ -157,4 +163,5 @@ volumes:
 
 networks:
   app-network:
+    external: true
     driver: bridge
