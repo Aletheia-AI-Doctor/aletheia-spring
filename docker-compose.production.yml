@@ -20,6 +20,8 @@ services:
       - app-network
     environment:
       - SPRING_PROFILES_ACTIVE=production
+    labels:
+      - "com.docker.compose.profile=blue"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -47,6 +49,8 @@ services:
       - app-network
     environment:
       - SPRING_PROFILES_ACTIVE=production
+    labels:
+      - "com.docker.compose.profile=green"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -83,6 +87,8 @@ services:
       context: ./src/main/frontend
       dockerfile: Dockerfile
       target: production
+    labels:
+      - "com.docker.compose.profile=blue"
     container_name: react_frontend_blue
     environment:
       - NODE_ENV=production
@@ -100,6 +106,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    labels:
+      - "com.docker.compose.profile=green"
     build:
       context: ./src/main/frontend
       dockerfile: Dockerfile

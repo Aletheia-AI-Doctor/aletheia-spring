@@ -42,15 +42,22 @@ docker compose -f docker-compose.production.yml restart reverse-proxy
 echo "⏳ Draining connections (15s)..."
 sleep 15
 
-# Stop and remove only the services in the old profile
-echo "🛑 Stopping $CURRENT environment services"
-# List services that belong to the $CURRENT profile:
-SERVICES=$(docker compose -f docker-compose.production.yml --profile $CURRENT config --services)
+# Stop and remove only containers that belong to the old profile
+echo "🛑 Shutting down $CURRENT-profile containers only"
 
-# Stop them (graceful 30s shutdown)
-docker compose -f docker-compose.production.yml stop -t 30 $SERVICES
+# Find all running container IDs labeled with the old profile
+OLD_CONTAINERS=$(docker ps -q \
+  --filter "label=com.docker.compose.profile=$CURRENT" \
+  --filter "label=com.docker.compose.oneoff=False")
 
-# And remove their containers only
-docker compose -f docker-compose.production.yml rm -f $SERVICES
+if [ -n "$OLD_CONTAINERS" ]; then
+  # Gracefully stop them
+  docker stop -t 30 $OLD_CONTAINERS
+
+  # Then remove their containers
+  docker rm $OLD_CONTAINERS
+else
+  echo "No containers found for profile \"$CURRENT\""
+fi
 
 echo "🎉 Deployment complete! $NEW environment active"
