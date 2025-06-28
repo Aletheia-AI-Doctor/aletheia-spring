@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: ai_doctor_container
+    container_name: ai_doctor_container_blue
     depends_on:
       - db
       - python_models
@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: ai_doctor_container
+    container_name: ai_doctor_container_green
     depends_on:
       - db
       - python_models
@@ -51,6 +51,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./dynamic.conf:/etc/nginx/conf.d/dynamic.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./certbot/www:/var/www/certbot
       - /root/.aws:/root/.aws:ro
@@ -69,7 +70,7 @@ services:
       context: ./src/main/frontend
       dockerfile: Dockerfile
       target: production
-    container_name: react_frontend
+    container_name: react_frontend_blue
     environment:
       - NODE_ENV=production
     depends_on:
@@ -85,7 +86,7 @@ services:
       context: ./src/main/frontend
       dockerfile: Dockerfile
       target: production
-    container_name: react_frontend
+    container_name: react_frontend_green
     environment:
       - NODE_ENV=production
     depends_on:

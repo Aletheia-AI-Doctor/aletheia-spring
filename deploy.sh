@@ -31,7 +31,7 @@ check_health() {
 }
 
 # Backend health check
-check_health "app" "9000" "http://app_$NEW:9000/actuator/health" || exit 1
+check_health "app" "9000" "http://app_$NEW:9000/health" || exit 1
 
 # Frontend health check
 check_health "frontend" "80" "http://frontend_$NEW:80/health" || exit 1
