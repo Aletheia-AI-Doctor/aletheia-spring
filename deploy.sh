@@ -36,15 +36,21 @@ sleep 5
 # Reload Nginx
 echo "🔁 Reloading reverse proxy"
 docker compose -f docker-compose.production.yml exec reverse-proxy nginx -s reload || \
-  docker compose -f docker-compose.production.yml restart reverse-proxy
+docker compose -f docker-compose.production.yml restart reverse-proxy
 
 # Wait for connections to drain
 echo "⏳ Draining connections (15s)..."
 sleep 15
 
-# Stop and remove only containers in the old profile
-echo "🛑 Stopping $CURRENT environment"
-docker compose -f docker-compose.production.yml --profile $CURRENT stop -t 30
-docker compose -f docker-compose.production.yml --profile $CURRENT rm -f
+# Stop and remove only the services in the old profile
+echo "🛑 Stopping $CURRENT environment services"
+# List services that belong to the $CURRENT profile:
+SERVICES=$(docker compose -f docker-compose.production.yml --profile $CURRENT config --services)
+
+# Stop them (graceful 30s shutdown)
+docker compose -f docker-compose.production.yml stop -t 30 $SERVICES
+
+# And remove their containers only
+docker compose -f docker-compose.production.yml rm -f $SERVICES
 
 echo "🎉 Deployment complete! $NEW environment active"
