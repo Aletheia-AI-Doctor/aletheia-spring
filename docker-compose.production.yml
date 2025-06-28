@@ -161,4 +161,3 @@ volumes:
 networks:
   app-network:
     driver: bridge
-    attachable: true
