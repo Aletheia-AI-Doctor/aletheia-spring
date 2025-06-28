@@ -1,5 +1,28 @@
 services:
-  app:
+  app_blue:
+    profiles: ["blue"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: ai_doctor_container
+    depends_on:
+      - db
+      - python_models
+    env_file:
+      - .env
+    networks:
+      - app-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./uploads:/uploads
+      - ~/.m2:/root/.m2
+
+  app_green:
+    profiles: ["green"]
     build:
       context: .
       dockerfile: Dockerfile
@@ -33,11 +56,18 @@ services:
       - /root/.aws:/root/.aws:ro
     networks:
       - app-network
+    command: >
+      /bin/sh -c "nginx -g 'daemon off;' & 
+      while :; do
+        sleep 6h
+        nginx -s reload
+      done"
     depends_on:
       - frontend
       - app
 
-  frontend:
+  frontend_blue:
+    profiles: ["blue"]
     build:
       context: ./src/main/frontend
       dockerfile: Dockerfile
