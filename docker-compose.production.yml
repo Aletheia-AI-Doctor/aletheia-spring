@@ -5,6 +5,11 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     container_name: ai_doctor_container_blue
     depends_on:
       - db
@@ -27,6 +32,11 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     container_name: ai_doctor_container_green
     depends_on:
       - db
@@ -66,6 +76,11 @@ services:
 
   frontend_blue:
     profiles: ["blue"]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     build:
       context: ./src/main/frontend
       dockerfile: Dockerfile
@@ -82,6 +97,11 @@ services:
 
   frontend_green:
     profiles: [ "green" ]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     build:
       context: ./src/main/frontend
       dockerfile: Dockerfile
