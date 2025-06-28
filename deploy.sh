@@ -19,11 +19,12 @@ docker compose -f docker-compose.production.yml --profile $NEW up -d --build --w
 check_health() {
   service=$1
   port=$2
+  url="http://$service:$port/health"  # Add this line
+
   echo "⏳ Checking $service health..."
 
   if ! docker run --network app-network curlimages/curl \
-      --retry 6 --retry-delay 10 --retry-connrefused --fail -s \
-      "http://$service:$port/health"; then
+      --retry 6 --retry-delay 10 --retry-connrefused --fail -s "$url"; then
     echo "❌ $service health check failed"
     return 1
   fi
@@ -44,7 +45,8 @@ EOL
 
 # Reload Nginx
 echo "🔁 Reloading reverse proxy"
-docker compose -f docker-compose.production.yml exec reverse-proxy nginx -s reload
+docker compose -f docker-compose.production.yml exec reverse-proxy sh -c "nginx -s reload || nginx"
+
 
 # Wait for connections to drain
 echo "⏳ Draining connections (15s)..."
