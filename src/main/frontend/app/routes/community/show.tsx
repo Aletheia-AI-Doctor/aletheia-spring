@@ -57,7 +57,7 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
                 <div className={"flex items-center " + (parent ? "justify-between" : "justify-end")}>
                     {parent && <Title>{post.title}</Title>}
                     {currentDoctor!.id === post.doctor.id && !editing && (
-                        <Button className="absolute right-0 top-0 mr-4 mt-4" width="w-auto" color="gray"
+                        <Button className="absolute right-0 top-0 mr-4 mt-12" width="w-auto" color="gray"
                                 onClick={() => setEditing(true)}>Edit</Button>
                     )}
                 </div>

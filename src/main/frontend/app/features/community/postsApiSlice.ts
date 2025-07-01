@@ -72,7 +72,9 @@ export const postsApiSlice = createApi({
             query: (req) => ({
                 url: `api/posts/${req.id}/edit`,
                 method: "PUT",
-                body: req,
+                body: {
+                    body: req.body,
+                },
             }),
             invalidatesTags: (result, error, {id}) => [{type: 'Posts', id: id}],
         }),
