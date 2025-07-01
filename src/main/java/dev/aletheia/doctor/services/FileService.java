@@ -60,12 +60,10 @@ public class FileService {
             return null;
         }
 
-        ByteArrayResource resource = null;
         try {
-            resource = new ByteArrayResource(Files.readAllBytes(file.getAbsoluteFile().toPath()));
+            return new ByteArrayResource(Files.readAllBytes(file.getAbsoluteFile().toPath()));
         } catch (IOException e) {
             return null;
         }
-        return resource;
     }
 }

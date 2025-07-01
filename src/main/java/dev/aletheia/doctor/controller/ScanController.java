@@ -7,6 +7,7 @@ import dev.aletheia.doctor.models.Diagnosis;
 import dev.aletheia.doctor.models.Patient;
 import dev.aletheia.doctor.models.Scan;
 import dev.aletheia.doctor.services.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
@@ -20,19 +21,24 @@ import java.util.Map;
 @RestController
 public class ScanController {
 
+    @Value("${spring.application.url}")
+    private String appUrl;
+
     private final ScanService scanService;
     private final DoctorService doctorService;
     private final FileService fileService;
     private final PatientService patientService;
 
     private final DiagnosisService diagnosisService;
+    private final DigitalSignService digitalSignService;
 
-    public ScanController(ScanService scanService, DoctorService doctorService, FileService fileService, PatientService patientService, DiagnosisService diagnosisService) {
+    public ScanController(ScanService scanService, DoctorService doctorService, FileService fileService, PatientService patientService, DiagnosisService diagnosisService, DigitalSignService digitalSignService) {
         this.scanService = scanService;
         this.doctorService = doctorService;
         this.fileService = fileService;
         this.patientService = patientService;
         this.diagnosisService = diagnosisService;
+        this.digitalSignService = digitalSignService;
     }
 
     @PostMapping
@@ -60,7 +66,13 @@ public class ScanController {
     }
 
     @GetMapping("/{path}/image")
-    public ResponseEntity<ByteArrayResource> getImage(@PathVariable String path) {
+    public ResponseEntity<ByteArrayResource> getImage(@PathVariable String path,
+                                                     @RequestParam @Nullable String token) {
+        boolean verify = digitalSignService.verifySignature("/api/scans/" + path + "/image", token);
+        if (!verify) {
+            throw new NotFoundException("Image not found");
+        }
+
         path = path.replaceAll(",", "/");
 
         ByteArrayResource image = fileService.getImage(path);
