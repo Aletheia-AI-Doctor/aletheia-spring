@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/register").permitAll()
                         .requestMatchers("/api/hospitals/**").permitAll()
                         .requestMatchers("/api/scans/*/image").permitAll()
+                        .requestMatchers("/api/posts/*/image").permitAll()
                         .requestMatchers("/api/confirm-email/*").permitAll()
                         .requestMatchers("/api/appeal/*").permitAll()
                         .requestMatchers("/api/reject-email/*").permitAll()

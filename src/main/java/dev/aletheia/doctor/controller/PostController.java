@@ -1,22 +1,28 @@
 package dev.aletheia.doctor.controller;
 
 import dev.aletheia.doctor.dtos.PaginationDTO;
+import dev.aletheia.doctor.dtos.models.UploadScanDto;
 import dev.aletheia.doctor.dtos.notifications.NotificationDto;
 import dev.aletheia.doctor.dtos.posts.CreatePostDto;
 import dev.aletheia.doctor.dtos.posts.PostDto;
+import dev.aletheia.doctor.dtos.posts.UploadImageDto;
 import dev.aletheia.doctor.dtos.votes.SetVoteDto;
+import dev.aletheia.doctor.exceptions.NotFoundException;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.models.Post;
 import dev.aletheia.doctor.models.Vote;
-import dev.aletheia.doctor.services.DoctorService;
-import dev.aletheia.doctor.services.PostService;
-import dev.aletheia.doctor.services.VoteService;
+import dev.aletheia.doctor.services.*;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.GeneralSecurityException;
 import java.util.Map;
 
 @RestController
@@ -26,11 +32,18 @@ public class PostController {
 	private final PostService postService;
 	private final DoctorService doctorService;
 	private final VoteService voteService;
+	private final DigitalSignService digitalSignService;
+	private final FileService fileService;
 
-	public PostController(PostService postService, DoctorService doctorService, VoteService voteService) {
+	@Value("${spring.application.url}")
+	private String appUrl;
+
+	public PostController(PostService postService, DoctorService doctorService, VoteService voteService, DigitalSignService digitalSignService, FileService fileService) {
 		this.postService = postService;
 		this.doctorService= doctorService;
 		this.voteService = voteService;
+		this.digitalSignService = digitalSignService;
+		this.fileService = fileService;
 	}
 
 	@GetMapping
@@ -71,6 +84,27 @@ public class PostController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(dto);
 	}
 
+	@GetMapping("/{path}/image")
+	public ResponseEntity<ByteArrayResource> getImage(@PathVariable String path,
+													  @RequestParam @Nullable String token) {
+		boolean verify = digitalSignService.verifySignature("/api/posts/" + path + "/image", token);
+		if (!verify) {
+			throw new NotFoundException("Image not found");
+		}
+
+		path = path.replaceAll(",", "/");
+
+		ByteArrayResource image = fileService.getImage(path);
+
+		if (image == null) {
+			throw new NotFoundException("Image not found");
+		}
+
+		return ResponseEntity.ok()
+				.contentType(MediaType.IMAGE_JPEG)
+				.body(image);
+	}
+
 	@PutMapping("/{postId}/edit")
 	public ResponseEntity<Object> update(@PathVariable Long postId,
 										 @Valid @RequestBody CreatePostDto updatePostDto) {
@@ -102,6 +136,17 @@ public class PostController {
 				"votes", voteService.getPostVotes(postId),
 				"myVote", myVote != null ? myVote.getValue() : 0
 		));
+	}
+
+	@PutMapping("/upload")
+	public ResponseEntity<Object> upload(@ModelAttribute UploadImageDto uploadImageDto) throws GeneralSecurityException {
+		String imagePath = postService.uploadImage(uploadImageDto.getImage());
+		return ResponseEntity.ok(
+				Map.of(
+						"message", "Image uploaded successfully",
+						"imageUrl", appUrl + digitalSignService.getSignedUrl("/api/posts/" + imagePath + "/image")
+				)
+		);
 	}
 
 	@DeleteMapping("/{postId}")

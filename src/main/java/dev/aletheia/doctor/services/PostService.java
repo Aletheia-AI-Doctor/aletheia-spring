@@ -2,6 +2,7 @@ package dev.aletheia.doctor.services;
 
 import dev.aletheia.doctor.dtos.notifications.NotificationDto;
 import dev.aletheia.doctor.dtos.posts.PostDto;
+import dev.aletheia.doctor.dtos.posts.UploadImageDto;
 import dev.aletheia.doctor.models.BaseModel;
 import dev.aletheia.doctor.models.Doctor;
 import dev.aletheia.doctor.models.Post;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PostService extends CRUDService<Post, PostDto> {
@@ -30,10 +32,16 @@ public class PostService extends CRUDService<Post, PostDto> {
     private DoctorService doctorService;
     @Autowired
     private VoteRepository voteRepository;
+    @Autowired
+    private FileService fileService;
 
-    protected PostService() {super(Post.class, PostDto.class);}
+    protected PostService() {
+        super(Post.class, PostDto.class);
+    }
 
-    public PostRepository getRepository() {return postRepository;}
+    public PostRepository getRepository() {
+        return postRepository;
+    }
 
     private List<Long> getAllPostIds(Post post) {
         List<Long> postIds = new ArrayList<>();
@@ -85,7 +93,7 @@ public class PostService extends CRUDService<Post, PostDto> {
     public Page<PostDto> getAllDTO(Pageable pageable) {
         Page<Post> posts = postRepository.findAll(pageable);
         Doctor currentDoctor = doctorService.getCurrentDoctor();
-        if(currentDoctor == null) {
+        if (currentDoctor == null) {
             return posts.map(this::convertToDto);
         }
 
@@ -98,21 +106,22 @@ public class PostService extends CRUDService<Post, PostDto> {
         });
     }
 
-public List<Post> getRecentPostsByDoctor() {
-    Doctor doctor = doctorService.getCurrentDoctor();
-    return postRepository.findByDoctorId(doctor.getId()); // already limited to 5
-}
-public List<Integer> getVotesForPosts(List<Post> posts) {
-    return posts.stream()
-        .map(post -> voteRepository.sumVotesByPostId(post.getId()).orElse(0))
-        .toList();
-}
-public List<PostDto> convertToDto(List<Post> posts) {
-    return posts.stream()
-        .map(this::convertToDto)
-        .toList();
-}
+    public List<Post> getRecentPostsByDoctor() {
+        Doctor doctor = doctorService.getCurrentDoctor();
+        return postRepository.findByDoctorId(doctor.getId()); // already limited to 5
+    }
 
+    public List<Integer> getVotesForPosts(List<Post> posts) {
+        return posts.stream()
+                .map(post -> voteRepository.sumVotesByPostId(post.getId()).orElse(0))
+                .toList();
+    }
+
+    public List<PostDto> convertToDto(List<Post> posts) {
+        return posts.stream()
+                .map(this::convertToDto)
+                .toList();
+    }
 
 
     public List<PostDto> getLastReplies() {
@@ -121,5 +130,9 @@ public List<PostDto> convertToDto(List<Post> posts) {
         return postRepository.findRepliesByParentId(doctor.getId()).stream()
                 .map(this::convertToDto)
                 .toList();
+    }
+
+    public String uploadImage(MultipartFile image) {
+        return fileService.saveFile(image);
     }
 }

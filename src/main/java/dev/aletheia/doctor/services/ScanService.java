@@ -2,6 +2,7 @@ package dev.aletheia.doctor.services;
 
 import dev.aletheia.doctor.dtos.scans.SaveScanDto;
 import dev.aletheia.doctor.dtos.scans.ScanDto;
+import dev.aletheia.doctor.dtos.scans.ScanWithUrlDto;
 import dev.aletheia.doctor.models.*;
 import dev.aletheia.doctor.repositories.ScanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
     private PatientService patientService;
     @Autowired
     private DoctorService doctorService;
+    @Autowired
+    private DigitalSignService digitalSignService;
 
     protected ScanService() {super(Scan.class, ScanDto.class);}
 
@@ -46,11 +49,18 @@ public class ScanService extends CRUDService<Scan, ScanDto> {
         return scanRepository.save(scan);
     }
 
-    public Page<ScanDto> getAllForDoctor(Doctor doctor, Patient patient, Pageable pageable) {
+    public Page<ScanWithUrlDto> getAllForDoctor(Doctor doctor, Patient patient, Pageable pageable) {
         Page<Scan> scans = patient == null
                 ? scanRepository.findAllByDoctor(doctor, pageable)
                 : scanRepository.findAllByDoctorAndPatient(doctor, patient, pageable);
-        return scans.map(this::convertToDto);
+        return scans
+                .map(this::convertToDto)
+                .map(scan -> {
+                    ScanWithUrlDto scanWithUrlDto = new ScanWithUrlDto(digitalSignService);
+                    scanWithUrlDto.populateFromScan(scan);
+                    return scanWithUrlDto;
+                })
+                ;
     }
 
     public void setDoctorDiagnosis(Scan scan, Diagnosis diagnosis) {
