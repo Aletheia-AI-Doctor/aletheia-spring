@@ -6,11 +6,11 @@ import CreatePost from "~/components/create-post";
 import Title from "~/components/title";
 import DoctorMedia from "~/components/doctor-media";
 import {useAppDispatch, useAppSelector} from "~/base/hooks";
-import {useState} from "react";
+import {type FormEvent, useState} from "react";
 import Button from "~/components/button";
 import TextareaWysiwyg from "~/components/textarea-wysiwyg";
 import Votes from "~/components/votes";
-import {sendSuccessNotification} from "~/features/notifications/notificationSlice";
+import {sendErrorNotification, sendSuccessNotification} from "~/features/notifications/notificationSlice";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -26,7 +26,9 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
     const [content, setContent] = useState(post.body);
 
     const dispatch = useAppDispatch();
-    async function handleSubmit() {
+    async function handleSubmit(event : FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
         const response = await updatePost({
             id: post.id,
             body: content,
@@ -35,6 +37,7 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
         if (response.error) {
             // @ts-ignore
             console.error(response.error);
+            dispatch(sendErrorNotification("Post must have a body"));
             return;
         }
 
