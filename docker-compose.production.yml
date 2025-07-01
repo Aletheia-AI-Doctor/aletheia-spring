@@ -7,9 +7,9 @@ services:
       target: production
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      interval: 15s
+      timeout: 10s
+      retries: 10
     container_name: ai_doctor_container_blue
     depends_on:
       - db
@@ -36,9 +36,9 @@ services:
       target: production
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      interval: 15s
+      timeout: 10s
+      retries: 10
     container_name: ai_doctor_container_green
     depends_on:
       - db
