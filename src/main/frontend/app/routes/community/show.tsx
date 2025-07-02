@@ -28,6 +28,7 @@ function PostComponent({ post, refetch, parent }: { post: Post, refetch: () => v
     const dispatch = useAppDispatch();
     async function handleSubmit(event : FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        event.stopPropagation();
 
         const response = await updatePost({
             id: post.id,
