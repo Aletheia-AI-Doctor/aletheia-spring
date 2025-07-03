@@ -87,11 +87,14 @@ public class ModelService extends CRUDService<Model, ModelDto> {
                     diagnosisService.getByName(getValue(jsonResponse, "name"))
             );
             try {
+                String path = getValue(jsonResponse, "image_path");
+
                 String url = digitalSignService.getSignedUrl(
-                        "/api/scans/" + getValue(jsonResponse, "image_path") + "/image"
+                        "/api/scans/" + path + "/image"
                 );
 
                 diagnosis.setImageResponseUrl(appUrl + url);
+                diagnosis.setImageResponsePath(path);
             } catch (Exception ignored) {}
 
             diagnosis.setImagePath(imagePath);
