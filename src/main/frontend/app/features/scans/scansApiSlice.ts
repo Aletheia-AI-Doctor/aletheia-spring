@@ -81,12 +81,6 @@ export const scansApiSlice = createApi({
                     formData: true,
                 };
             },
-            transformResponse: (response: Diagnosis, meta, arg) => {
-                return {
-                    ...response,
-                    imageResponseUrl: `${ROOT_URL}/api/scans/${response.imageResponsePath}/image`,
-                };
-            }
         }),
 
         saveScan: build.mutation<void, SaveScanApiRequest>({
