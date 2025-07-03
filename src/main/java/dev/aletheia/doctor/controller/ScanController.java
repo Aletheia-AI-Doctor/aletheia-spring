@@ -21,9 +21,6 @@ import java.util.Map;
 @RestController
 public class ScanController {
 
-    @Value("${spring.application.url}")
-    private String appUrl;
-
     private final ScanService scanService;
     private final DoctorService doctorService;
     private final FileService fileService;

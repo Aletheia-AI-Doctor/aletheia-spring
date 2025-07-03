@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +25,11 @@ public class ModelService extends CRUDService<Model, ModelDto> {
     private final FileService fileService;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private DigitalSignService digitalSignService;
 
+    @Value("${spring.application.url}")
+    private String appUrl;
 
     public ModelRepository getRepository() {
         return modelRepository;
@@ -81,7 +86,13 @@ public class ModelService extends CRUDService<Model, ModelDto> {
             DiagnosisDto diagnosis = diagnosisService.convertToDto(
                     diagnosisService.getByName(getValue(jsonResponse, "name"))
             );
-            diagnosis.setImageResponsePath(getValue(jsonResponse, "image_path"));
+            try {
+                String url = digitalSignService.getSignedUrl(
+                        "/api/scans/" + getValue(jsonResponse, "image_path") + "/image"
+                );
+
+                diagnosis.setImageResponsePath(appUrl + "/" + url);
+            } catch (Exception ignored) {}
 
             diagnosis.setImagePath(imagePath);
 
