@@ -91,7 +91,7 @@ public class ModelService extends CRUDService<Model, ModelDto> {
                         "/api/scans/" + getValue(jsonResponse, "image_path") + "/image"
                 );
 
-                diagnosis.setImageResponsePath(appUrl + "/" + url);
+                diagnosis.setImageResponseUrl(appUrl + "/" + url);
             } catch (Exception ignored) {}
 
             diagnosis.setImagePath(imagePath);
