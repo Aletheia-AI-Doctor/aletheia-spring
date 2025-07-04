@@ -43,6 +43,6 @@ public class ScanWithUrlDto {
     }
 
     public String getImageResponseUrl() throws GeneralSecurityException {
-        return imageResponse == null || imageResponse.isBlank() ? this.digitalSignService.getSignedUrl("/api/scans/" + imageResponse + "/image") : "";
+        return imageResponse == null || imageResponse.isBlank() ? "" : this.digitalSignService.getSignedUrl("/api/scans/" + imageResponse + "/image");
     }
 }
